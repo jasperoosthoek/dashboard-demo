@@ -1,48 +1,78 @@
 import { http, HttpResponse } from 'msw';
-import { db } from './handlers';
+import type { HttpHandler } from 'msw';
+import type { factory } from '@mswjs/data';
 
 type WithId<T> = T & { id: number };
 
-export function createRestHandlers<T extends object>(
-  entity: keyof typeof db,
+export function createRestHandlers<
+  S extends Record<string, any>,
+  K extends keyof S,
+  T extends object = S[K]
+>(
+  db: ReturnType<typeof factory<S>>,
+  schema: S,
+  entity: K,
   basePath: string,
   {
     onDelete,
   }: {
     onDelete?: (deleted: WithId<T>) => void;
   } = {}
-) {
+): HttpHandler[] {
+  const serializeRelations = (record: any): any => {
+    const entitySchema = schema[entity];
+    const result: Record<string, any> = { ...record };
+
+    for (const [key, def] of Object.entries(entitySchema)) {
+      if (
+        (def as any)?.kind === 'ONE_OF' &&
+        typeof record[key] === 'object' &&
+        record[key]?.id != null
+      ) {
+        result[`${key}_id`] = record[key].id;
+        delete result[key];
+      }
+    }
+
+    return result;
+  };
+
   return [
     http.get(basePath, () => {
-      const all = (db[entity] as any).getAll() as WithId<T>[];
-      return HttpResponse.json(all);
+      // @ts-ignore
+      const all = db[entity].getAll() as WithId<T>[];
+      return HttpResponse.json(all.map(serializeRelations));
     }),
 
     http.post(basePath, async ({ request }) => {
-      const data = await request.json() as Omit<WithId<T>, 'id'>;
-      const created = (db[entity] as any).create(data);
-      return HttpResponse.json(created, { status: 201 });
+      const data = (await request.json()) as Omit<WithId<T>, 'id'>;
+      const created = db[entity].create(data as any);
+      return HttpResponse.json(serializeRelations(created), { status: 201 });
     }),
 
     http.put(`${basePath}/:id`, async ({ params, request }) => {
       const id = Number(params.id);
       const updated = await request.json();
-      const result = (db[entity] as any).update({
-        where: { id: { equals: id } },
-        data: updated,
+      const result = db[entity].update({
+      // @ts-ignore
+
+        where: { id: { equals: id } },         data: updated,
       });
-      return HttpResponse.json(result);
+      return HttpResponse.json(serializeRelations(result));
     }),
 
     http.delete(`${basePath}/:id`, ({ params }) => {
       const id = Number(params.id);
-      const deleted = (db[entity] as any).findFirst({
+      const deleted = db[entity].findFirst({
+      // @ts-ignore
         where: { id: { equals: id } },
       });
 
+      // @ts-ignore
       if (deleted && onDelete) onDelete(deleted);
 
-      (db[entity] as any).delete({ where: { id: { equals: id } } });
+      // @ts-ignore
+      db[entity].delete({ where: { id: { equals: id } } });
       return new HttpResponse(null, { status: 204 });
     }),
   ];
