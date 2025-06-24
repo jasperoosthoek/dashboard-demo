@@ -1,6 +1,20 @@
 import { primaryKey, oneOf } from '@mswjs/data';
 
 export const schema = {
+
+  role: {
+    id: primaryKey(Number),
+    name: String,
+  },
+  
+  user: {
+    id: primaryKey(Number),
+    name: String,
+    email: String,
+    role_id: oneOf('role'),
+    order: Number,
+  },
+
   employee: {
     id: primaryKey(Number),
     name: String,

@@ -8,6 +8,9 @@
   },
   "files": [],
   "include": [],
+  "paths": {
+    "~/*": ["./app/*"]
+  },
   "references": [
     {
       "path": "./tsconfig.app.json"

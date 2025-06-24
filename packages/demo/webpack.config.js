@@ -83,7 +83,7 @@ if (true || process.env.DEVELOP_REACT_TOOLBOX === 'true') {
         ...config.resolve.alias || {},
         // '@jasperoosthoek/zustand-crud-registry': zustandCrudRegistryPath,
         'zustand': resolve(__dirname, '../../node_modules/zustand'),
-        // 'tslib': resolve(__dirname, '../../node_modules/tslib'),
+        'tslib': resolve(__dirname, '../../node_modules/tslib'),
         ...aliasReactDom,
       }
     };

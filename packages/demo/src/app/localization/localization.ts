@@ -4,6 +4,8 @@ import { AdditionalLocalization, combineLocalization } from '@jasperoosthoek/rea
 const localization = combineLocalization(
   {
     nl: {
+      not_found: 'Niet gevonden',
+
       page_not_found: 'Pagina kan niet worden gevonden.',
       language_full: "Nederlands",
 
@@ -11,6 +13,8 @@ const localization = combineLocalization(
       link_form: 'Formulieren',
     },
     en: {
+      not_found: 'Not found',
+
       page_not_found: 'Page cannot be found.',
       language_full: "English",
       link_datatable: 'Data tabels',

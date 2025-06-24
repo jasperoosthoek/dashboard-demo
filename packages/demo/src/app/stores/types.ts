@@ -1,3 +1,16 @@
+export type User = {
+	id: number;
+	name: string;
+	email: string;
+	role_id: number;
+	order: number;
+}
+
+export type Role = {
+	id: number;
+	name: string;
+}
+
 export type Employee = {
   id: number;
   name: string;
@@ -65,6 +78,8 @@ export type Task = {
 
 
 export type CrudModels = {
+  users: User;
+  roles: Role;
   employees: Employee;
   customers: Customer;
   contacts: Contact;

@@ -7,7 +7,8 @@ export const { getOrCreateCrudStore } = createCrudStoreRegistry<CrudModels>();
 
 const axios = Axios.create({
   // Replace by 
-  baseURL: process.env.NX_BASE_URL,
+  // baseURL: process.env.NX_BASE_URL,
+  baseURL: 'http://localhost:4200/api',
 });
 
 const defaultConfig = {
@@ -20,6 +21,23 @@ const defaultConfig = {
     delete: true,
   },
 };
+
+
+export const useUserStore = getOrCreateCrudStore(
+  'users',
+  {
+    ...defaultConfig,
+    route: '/users',
+  }
+);
+
+export const useRoleStore = getOrCreateCrudStore(
+  'roles',
+  {
+    ...defaultConfig,
+    route: '/roles',
+  }
+);
 
 export const useEmployeeStore = getOrCreateCrudStore(
   'employees',
@@ -106,13 +124,15 @@ export const useTaskStore = getOrCreateCrudStore(
   }
 );
 
-const use = {
+export const use = {
   // projects: () => {
   //   const projects = useDataResource(useEmployeeStore)
 
   //   projects.getList.sideEffects = (list: Project[]) => projects.setState({ counter: list.length })
   //   return projects;
   // },
+  roles: () => useDataResource(useRoleStore),
+  users: () => useDataResource(useUserStore),
   employees: () => useDataResource(useEmployeeStore),
   customers: () => useDataResource(useCustomerStore),
   contacts: () => useDataResource(useContactStore),
@@ -125,4 +145,3 @@ const use = {
 }
 
 
-export { use };

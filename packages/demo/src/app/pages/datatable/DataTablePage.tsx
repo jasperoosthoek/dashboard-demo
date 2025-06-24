@@ -1,24 +1,36 @@
+import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import {
   DataTable,
   FormCreateModalButton,
   FormModalProvider,
-  useLocalStorage,
+  useLocalization,
   DeleteConfirmButton,
   ConfirmButton,
   ResetButton,
 } from '@jasperoosthoek/react-toolbox';
 
-import usersBase, { User } from './users';
-import { useState } from 'react';
+import { User } from '../../stores/types';
+import { use } from '../../stores/crudRegistry'
 
 const DataTablePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   // Store users in localStorage so it persists
-  const [users, setUsers] = useLocalStorage('users', usersBase);
-  // const { lang } = useLocalization();
+  // const [users, setUsers] = useLocalStorage('users', usersBase);
+  const { text } = useLocalization();
+
+  const users = use.users();
+  const roles = use.roles();
+  useEffect(() => {
+    users.getList();
+    roles.getList();
+  }, []);
+
+  console.log({ roles })
   
   const CreateUserButton = () => <FormCreateModalButton title='Create new user'/>
+
+  if (!users.list || !roles.list) return null;
   return (
     <Container className='container-list'>
       <FormModalProvider
@@ -27,8 +39,7 @@ const DataTablePage = () => {
           name: '',
           email: '',
           role: '',
-          id: users.length + 1,
-          order: users.length,
+          order: users.list.length,
         }}
         createModalTitle={'Create new user'}
         editModalTitle={'Edit user'}
@@ -55,7 +66,7 @@ const DataTablePage = () => {
           }
         }}
         onCreate={(user, closeModal: () => void) => {
-          setUsers([...users, user as User]);
+          users.create(user);
 
           // Fake 500 ms loading time in the backend
           setIsLoading(true);
@@ -64,16 +75,16 @@ const DataTablePage = () => {
             closeModal();
           }, 500);
         }}
-        onUpdate={(user, closeModal: () => void) => {
-          setUsers(users.map((u: User) => u.id === user.id ? user as User : u));
+        // onUpdate={(user, closeModal: () => void) => {
+        //   setUsers(users.map((u: User) => u.id === user.id ? user as User : u));
           
-          // Fake 500 ms loading time in the backend
-          setIsLoading(true);
-          setTimeout(() => {
-            setIsLoading(false);
-            closeModal();
-          }, 500);
-        }}
+        //   // Fake 500 ms loading time in the backend
+        //   setIsLoading(true);
+        //   setTimeout(() => {
+        //     setIsLoading(false);
+        //     closeModal();
+        //   }, 500);
+        // }}
       >
         <h2>The DataTable component</h2>
         <p>
@@ -97,17 +108,17 @@ const DataTablePage = () => {
           You can add new users below by pressing the create button below or here <CreateUserButton />,
           delete users and update users by clicking the row,
           or reset data by clicking
-          <ConfirmButton
+          {/* <ConfirmButton
             modalTitle='Reset user data'
             buttonComponent={ResetButton}
             onConfirm={() => setUsers(usersBase)}
-          />.
+          />. */}
         </p>
         
         <DataTable
           orderByDefault='order'
           showEditModalOnClickRow
-          filterColumn={({ name, email, role}: User) => `${name} ${email} ${role}`}
+          // filterColumn={({ name, email, role}: User) => `${name} ${email} ${role}`}
           columns={[
             {
               // Display column name
@@ -119,13 +130,16 @@ const DataTablePage = () => {
             {
               name: 'Email',
               // Select using function which outputs string, number or ReactNode
+              // @ts-ignore
               selector: ({ email }: User) => (
                 <a href={`mailto: ${email}`}>{email}</a>
               ),
             },
             {
               name: 'Company role',
-              selector: 'role',
+              selector: ({ role_id}: User) => (
+                roles.list?.find(({ id }) => id === role_id)?.name || <i>{text`not_found`}</i>
+              ),
               orderBy: 'role',
             },
             {
@@ -134,38 +148,33 @@ const DataTablePage = () => {
                 <DeleteConfirmButton
                   modalTitle={`Delete user "${user.name}?`}
                   onDelete={() => {
-                    // Get index of item to delete
-                    const index = users.findIndex(u => u.id === user.id);
-                    // Remove from users list
-                    users.splice(index, 1)
-                    // Store users and make sure to update order field
-                    setUsers(users.map((u, order) => ({...u, order })));
+                    users.delete(user);
                   }}
                 />
               )
             }
           ]}
-          data={users}
+          data={users.list}
           onMove={({ item, target }) => {
-            // Use onMove to store new position for instance by modifying the 'order' field
-            // with django-ordered-model in a Django backend
+            // // Use onMove to store new position for instance by modifying the 'order' field
+            // // with django-ordered-model in a Django backend
 
-            // Find index of the item to move
-            const fromIndex = users.findIndex(user => user.id === item.id);
-            if (fromIndex === -1) return; // If not found, return original array
+            // // Find index of the item to move
+            // const fromIndex = users.findIndex(user => user.id === item.id);
+            // if (fromIndex === -1) return; // If not found, return original array
 
-            // Find index of the target position (user with `orderId` as their order)
-            const targetIndex = users.findIndex(user => user.id === target.id);
-            if (targetIndex === -1) return; // If target not found, return original array
+            // // Find index of the target position (user with `orderId` as their order)
+            // const targetIndex = users.findIndex(user => user.id === target.id);
+            // if (targetIndex === -1) return; // If target not found, return original array
 
-            // Remove the item from its current position
-            const [movedUser] = users.splice(fromIndex, 1);
+            // // Remove the item from its current position
+            // const [movedUser] = users.splice(fromIndex, 1);
 
-            // Insert the item at the target position
-            users.splice(targetIndex, 0, movedUser);
+            // // Insert the item at the target position
+            // users.splice(targetIndex, 0, movedUser);
 
-            users.map(u => console.log(u.id))
-            setUsers(users.map((u, order) => ({...u, order })));
+            // users.map(u => console.log(u.id))
+            // setUsers(users.map((u, order) => ({...u, order })));
           }}
         />
         <CreateUserButton />

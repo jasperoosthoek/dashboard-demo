@@ -9,18 +9,15 @@ import {
   ConfirmButton,
   ResetButton,
 } from '@jasperoosthoek/react-toolbox';
-
-import { useState } from 'react';
+import { use } from '../../stores/crudRegistry'
 
 const DashboardPage = () => {
+  const employees = use.employees();
+  const customers = use.customers();
   useEffect(() => {
-    const employees = fetch("/api/employees")
-      .then(res => res.json())
-    console.log({ employees })
-    const customers = fetch("/api/customers")
-      .then(res => res.json())
-    console.log({ customers })
-  }, [])
+    employees.getList();
+    customers.getList();
+  }, []);
   
   const CreateUserButton = () => <FormCreateModalButton title='Create new user'/>
   return (
