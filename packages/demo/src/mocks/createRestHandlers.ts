@@ -6,10 +6,11 @@ type WithId<T> = T & { id: number };
 
 export function createRestHandlers<
   S extends Record<string, any>,
+  F extends ReturnType<typeof factory<S>>,
   K extends keyof S,
   T extends object = S[K]
 >(
-  db: ReturnType<typeof factory<S>>,
+  db: F,
   schema: S,
   entity: K,
   basePath: string,
@@ -39,8 +40,7 @@ export function createRestHandlers<
 
   return [
     http.get(basePath, () => {
-      // @ts-ignore
-      const all = db[entity].getAll() as WithId<T>[];
+      const all = db[entity].getAll() as unknown as WithId<T>[];
       return HttpResponse.json(all.map(serializeRelations));
     }),
 
@@ -54,9 +54,8 @@ export function createRestHandlers<
       const id = Number(params.id);
       const updated = await request.json();
       const result = db[entity].update({
-      // @ts-ignore
-
-        where: { id: { equals: id } },         data: updated,
+        where: { id: { equals: id } } as any,
+        data: updated as any,
       });
       return HttpResponse.json(serializeRelations(result));
     }),
@@ -64,15 +63,12 @@ export function createRestHandlers<
     http.delete(`${basePath}/:id`, ({ params }) => {
       const id = Number(params.id);
       const deleted = db[entity].findFirst({
-      // @ts-ignore
-        where: { id: { equals: id } },
+        where: { id: { equals: id } } as any,
       });
 
-      // @ts-ignore
-      if (deleted && onDelete) onDelete(deleted);
+      if (deleted && onDelete) onDelete(deleted as any);
 
-      // @ts-ignore
-      db[entity].delete({ where: { id: { equals: id } } });
+      db[entity].delete({ where: { id: { equals: id } } } as any);
       return new HttpResponse(null, { status: 204 });
     }),
   ];
