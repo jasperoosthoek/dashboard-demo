@@ -62,7 +62,7 @@ export function createRestHandlers<
           });
 
           if (related) {
-            record[relationKey] = 'related';
+            record[relationKey] = related;
             continue;
           }
         }
