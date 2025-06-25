@@ -6,54 +6,49 @@ import {
   FormModalProvider,
   useLocalization,
   DeleteConfirmButton,
-  ConfirmButton,
-  ResetButton,
+  FormDropdown,
+  FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import { User } from '../../stores/types';
+import { Role, User } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 
 const DataTablePage = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  // Store users in localStorage so it persists
-  // const [users, setUsers] = useLocalStorage('users', usersBase);
   const { text } = useLocalization();
-
   const users = use.users();
   const roles = use.roles();
+
   useEffect(() => {
     users.getList();
     roles.getList();
   }, []);
 
-  console.log({ roles })
-  
-  const CreateUserButton = () => <FormCreateModalButton title='Create new user'/>
 
   if (!users.list || !roles.list) return null;
   return (
     <Container className='container-list'>
       <FormModalProvider
-        loading={isLoading}
+        loading={users.create.isLoading || users.update.isLoading}
         initialState={{
           name: '',
           email: '',
-          role: '',
-          order: users.list.length,
+          role_id: '',
         }}
-        createModalTitle={'Create new user'}
-        editModalTitle={'Edit user'}
+        createModalTitle={text`create_new_user`}
+        editModalTitle={text`edit_user`}
         formFields={{
           name: {
-            label: 'Name',
+            label: text`name`,
             required: true,
           },
           email: {
-            label: 'Email address',
+            label: text`email_address`,
             required: true,
           },
-          role: {
-            label: 'Role'
+          role_id: {
+            formProps: { list: roles.list?.sort((r1, r2) => r1.name > r2.name ? 1 : -1) || [] },
+            component: FormDropdown,
+            label: text`role`,
           }
         }}
         validate={({ email }) => {
@@ -61,74 +56,32 @@ const DataTablePage = () => {
           const es = email.split('@')
           if (es.length !== 2) {
             return {
-              email: 'Email address should contain at least one @',
+              email: text`error_email_requires_at`,
             }
           }
         }}
         onCreate={(user, closeModal: () => void) => {
-          users.create(user);
-
-          // Fake 500 ms loading time in the backend
-          setIsLoading(true);
-          setTimeout(() => {
-            setIsLoading(false);
-            closeModal();
-          }, 500);
+          users.create(user, { callback: () => closeModal()});
         }}
-        // onUpdate={(user, closeModal: () => void) => {
-        //   setUsers(users.map((u: User) => u.id === user.id ? user as User : u));
-          
-        //   // Fake 500 ms loading time in the backend
-        //   setIsLoading(true);
-        //   setTimeout(() => {
-        //     setIsLoading(false);
-        //     closeModal();
-        //   }, 500);
-        // }}
+        onUpdate={(user, closeModal: () => void) => {
+          users.update(user, { callback: () => closeModal()});
+        }}
       >
-        <h2>The DataTable component</h2>
-        <p>
-          This is a <strong>highly customizable and interactive DataTable component</strong>.
-          It provides a seamless user experience with powerful features, making it ideal for displaying and managing data efficiently while keeping development time to a minimum.
-        </p>
-
-        <h3>Key Features</h3>
-        <ul>
-          <li><strong>Column Sorting</strong> – Click column headers to sort data in ascending or descending order.</li>
-          <li><strong>Pagination</strong> – Navigate through large datasets smoothly with built-in pagination.</li>
-          <li><strong>Drag & Drop</strong> – Easily reorder rows or columns via intuitive drag-and-drop functionality.</li>
-          <li><strong>Row Click to Edit</strong> – Open a modal with an edit form when clicking a row for quick updates.</li>
-          <li><strong>Search & Filter</strong> – Instantly find relevant data with a real-time search input.</li>
-        </ul>
-
-        <p>
-          This component is designed for <strong>performance, accessibility, and flexibility</strong>,
-          making it a powerful solution for handling complex data visualization in any React application. 🚀
-          Play around with the DataTable component, all changes are kept in <code>localStorage</code>.
-          You can add new users below by pressing the create button below or here <CreateUserButton />,
-          delete users and update users by clicking the row,
-          or reset data by clicking
-          {/* <ConfirmButton
-            modalTitle='Reset user data'
-            buttonComponent={ResetButton}
-            onConfirm={() => setUsers(usersBase)}
-          />. */}
-        </p>
         
         <DataTable
           orderByDefault='order'
           showEditModalOnClickRow
-          // filterColumn={({ name, email, role}: User) => `${name} ${email} ${role}`}
+          filterColumn={({ name, email}: User) => `${name} ${email}`}
           columns={[
             {
               // Display column name
-              name: 'Name',
+              name: text`name`,
               // Select by key
               selector: 'name',
               orderBy: 'name',
             },
             {
-              name: 'Email',
+              name: text`email_address`,
               // Select using function which outputs string, number or ReactNode
               // @ts-ignore
               selector: ({ email }: User) => (
@@ -136,17 +89,17 @@ const DataTablePage = () => {
               ),
             },
             {
-              name: 'Company role',
+              name: text`role`,
               selector: ({ role_id}: User) => (
                 roles.list?.find(({ id }) => id === role_id)?.name || <i>{text`not_found`}</i>
               ),
               orderBy: 'role',
             },
             {
-              name: 'Actions',
+              name: text`actions`,
               selector: (user) => (
                 <DeleteConfirmButton
-                  modalTitle={`Delete user "${user.name}?`}
+                  modalTitle={text`delete_user${user.name}`}
                   onDelete={() => {
                     users.delete(user);
                   }}
@@ -177,7 +130,7 @@ const DataTablePage = () => {
             // setUsers(users.map((u, order) => ({...u, order })));
           }}
         />
-        <CreateUserButton />
+        <FormCreateModalButton title={text`create_new_user`}/>
       </FormModalProvider>
 
     </Container>

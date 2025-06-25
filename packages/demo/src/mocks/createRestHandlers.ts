@@ -2,6 +2,9 @@ import { http, HttpResponse } from 'msw';
 import type { HttpHandler } from 'msw';
 import type { factory } from '@mswjs/data';
 
+
+
+
 type WithId<T> = T & { id: number };
 
 export function createRestHandlers<
@@ -37,6 +40,38 @@ export function createRestHandlers<
 
     return result;
   };
+  function getNextId(): number {
+    const all = db[entity].getAll();
+    const maxId = all.length > 0 ? Math.max(...all.map((r: any) => r.id || 0)) : 0;
+    return maxId + 1;
+  }
+  
+  // Translate relation fields (e.g., role_id → role)
+  const entitySchema = schema[entity];
+
+  function updateRecord(record: any, data: any) {
+    for (const [key, value] of Object.entries(data)) {
+      if (key.endsWith('_id')) {
+        const relationKey = key.slice(0, -3);
+        const def = entitySchema[relationKey];
+
+        if ((def as any)?.kind === 'ONE_OF') {
+          const relatedEntity = (def as any).target.modelName;
+          const related = db[relatedEntity].findFirst({
+            where: { id: { equals: parseInt(value as any) } } as any,
+          });
+
+          if (related) {
+            record[relationKey] = 'related';
+            continue;
+          }
+        }
+      }
+
+      record[key] = value;
+    }
+    return record;
+  }
 
   return [
     http.get(basePath, () => {
@@ -45,17 +80,23 @@ export function createRestHandlers<
     }),
 
     http.post(basePath, async ({ request }) => {
+      // const { id, ...raw } =  as any;
       const data = (await request.json()) as Omit<WithId<T>, 'id'>;
-      const created = db[entity].create(data as any);
+
+      // Generate new ID
+      const id = getNextId();
+
+      const record =  updateRecord({ id }, data);
+      const created = db[entity].create(record);
       return HttpResponse.json(serializeRelations(created), { status: 201 });
     }),
 
-    http.put(`${basePath}/:id`, async ({ params, request }) => {
+    http.patch(`${basePath}/:id`, async ({ params, request }) => {
       const id = Number(params.id);
       const updated = await request.json();
       const result = db[entity].update({
         where: { id: { equals: id } } as any,
-        data: updated as any,
+        data: updateRecord({}, updated),
       });
       return HttpResponse.json(serializeRelations(result));
     }),

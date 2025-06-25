@@ -1,7 +1,9 @@
 import Axios from "axios";
+import { create } from 'zustand';
 import { createCrudStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
 import { useDataResource } from "@jasperoosthoek/zustand-crud-registry";
 import type { CrudModels } from "./types";
+import { toast } from 'react-toastify';
 
 export const { getOrCreateCrudStore } = createCrudStoreRegistry<CrudModels>();
 
@@ -10,6 +12,24 @@ const axios = Axios.create({
   // baseURL: process.env.NX_BASE_URL,
   baseURL: 'http://localhost:4200/api',
 });
+
+interface ToastMessageStore {
+  getMessage: () => string;
+  setMessage: (fn: () => string) => void;
+}
+
+export const toastMessageStore = create<ToastMessageStore>((set) => ({
+  getMessage: () => 'default message',
+  setMessage: (fn) => set({ getMessage: fn }),
+}));
+
+export const setToastMessage = (message: string) => toastMessageStore.getState().setMessage(() => message);
+
+export const toastOnError = (error: any) => {
+
+  // toast.error(useToastMessageStore.getState().getMessage());
+  console.error(toastMessageStore.getState().getMessage(), error)
+};
 
 const defaultConfig = {
   axios,
@@ -20,6 +40,7 @@ const defaultConfig = {
     update: true,
     delete: true,
   },
+  onError: toastOnError,
 };
 
 

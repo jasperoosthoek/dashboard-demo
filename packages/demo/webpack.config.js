@@ -65,6 +65,7 @@ if (true || process.env.DEVELOP_REACT_TOOLBOX === 'true') {
         '@jasperoosthoek/react-toolbox': reactToolboxPath,
         'react-dnd': resolve(__dirname, '../../node_modules/react-dnd'),
         'react-dnd-html5-backend': resolve(__dirname, '../../node_modules/react-dnd-html5-backend'),
+        'react-toastify': resolve(__dirname, '../../node_modules/react-toastify'),
         ...aliasReactDom,
       }
     };
