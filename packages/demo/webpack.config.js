@@ -5,8 +5,6 @@ const { join, resolve } = require('path');
 const path = require('path');
 const fs = require('fs');
 
-// const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-
 const config = {
   output: {
     path: join(__dirname, '../dist/demo'),
@@ -48,7 +46,7 @@ const config = {
   ],
 };
 
-if (true || process.env.DEVELOP_REACT_TOOLBOX === 'true') {
+if (process.env.DEVELOP_REACT_TOOLBOX === 'true') {
   const reactToolboxPath = path.resolve(__dirname, '../../../react-toolbox/src');
   const aliasReactDom = {
     'react': resolve(__dirname, '../../node_modules/react'),
@@ -73,7 +71,7 @@ if (true || process.env.DEVELOP_REACT_TOOLBOX === 'true') {
     console.log('Failed to locate the @jasperoosthoek/react-toolbox module at', reactToolboxPath);
   }
   
-  const zustandCrudRegistryPath = path.resolve(__dirname, '../../../react-router-zustand/app/crud');
+  const zustandCrudRegistryPath = path.resolve(__dirname, '../../../zustand-crud-registry/src');
   if (fs.existsSync(zustandCrudRegistryPath)) {
     console.log(`Loading module @jasperoosthoek/zustand-crud-registry from ${zustandCrudRegistryPath}`);
 
@@ -84,7 +82,6 @@ if (true || process.env.DEVELOP_REACT_TOOLBOX === 'true') {
         ...config.resolve.alias || {},
         // '@jasperoosthoek/zustand-crud-registry': zustandCrudRegistryPath,
         'zustand': resolve(__dirname, '../../node_modules/zustand'),
-        'tslib': resolve(__dirname, '../../node_modules/tslib'),
         ...aliasReactDom,
       }
     };
