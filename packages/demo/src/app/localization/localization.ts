@@ -7,8 +7,8 @@ const localization = combineLocalization(
       not_found: 'Niet gevonden',
       page_not_found: 'Pagina kan niet worden gevonden.',
       language_full: "Nederlands",
-      link_datatable: 'Datatabellen',
-      link_form: 'Formulieren',
+      link_users: 'Gebruikers',
+      link_roles: 'Rollen',
       on_error: 'Er is iets fout gegaan',
 
       create_new_user: 'Nieuwe gebruiker aanmaken',
@@ -24,8 +24,8 @@ const localization = combineLocalization(
       not_found: 'Not found',
       page_not_found: 'Page cannot be found.',
       language_full: "English",
-      link_datatable: 'Data tabels',
-      link_form: 'Forms',
+      link_users: 'Users',
+      link_roles: 'Roles',
       on_error: 'Something went wrong',
 
       create_new_user: 'Create new user',
@@ -41,8 +41,8 @@ const localization = combineLocalization(
       not_found: 'Non trouvé',
       page_not_found: 'Page introuvable.',
       language_full: "Français",
-      link_datatable: 'Tableaux de données',
-      link_form: 'Formulaires',
+      link_users: 'Utilisateurs',
+      link_roles: 'Rôles',
       on_error: 'Une erreur s\'est produite',
 
       create_new_user: 'Créer un nouvel utilisateur',

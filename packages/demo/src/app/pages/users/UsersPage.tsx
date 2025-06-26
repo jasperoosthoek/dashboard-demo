@@ -7,13 +7,12 @@ import {
   useLocalization,
   DeleteConfirmButton,
   FormDropdown,
-  FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
 import { Role, User } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 
-const DataTablePage = () => {
+const UsersPage = () => {
   const { text } = useLocalization();
   const users = use.users();
   const roles = use.roles();
@@ -82,11 +81,7 @@ const DataTablePage = () => {
             },
             {
               name: text`email_address`,
-              // Select using function which outputs string, number or ReactNode
-              // @ts-ignore
-              selector: ({ email }: User) => (
-                <a href={`mailto: ${email}`}>{email}</a>
-              ),
+              selector: ({ email }: User) => email,
             },
             {
               name: text`role`,
@@ -137,4 +132,4 @@ const DataTablePage = () => {
   )
 }
 
-export default DataTablePage;
+export default UsersPage;

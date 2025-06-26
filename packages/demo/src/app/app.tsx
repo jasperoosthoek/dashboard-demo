@@ -13,7 +13,7 @@ import { LocalizationProvider, useLocalization } from '@jasperoosthoek/react-too
 import localization from './localization/localization';
 import Dashboard from './components/Dashboard';
 import DashboardPage from './pages/dashboard/DashboardPage';
-import DataTablePage from './pages/datatable/DataTablePage';
+import UsersPage from './pages/users/UsersPage';
 import NoMatchPage from './pages/NoMatchPage';
 import { setToastMessage } from './stores/crudRegistry';
 
@@ -43,7 +43,7 @@ export function App() {
               />
               <Route
                 path="datatable"
-                element={<DataTablePage />}
+                element={<UsersPage />}
               />
             </Route>            
             <Route path="*"
