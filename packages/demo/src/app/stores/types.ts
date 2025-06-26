@@ -75,18 +75,3 @@ export type Task = {
   status: string;
   due_date: string;
 };
-
-
-export type CrudModels = {
-  users: User;
-  roles: Role;
-  employees: Employee;
-  customers: Customer;
-  contacts: Contact;
-  quotations: Quotation;
-  invoices: Invoice;
-  payments: Payment;
-  leaveRequests: LeaveRequest;
-  notes: Note;
-  tasks: Task;
-};

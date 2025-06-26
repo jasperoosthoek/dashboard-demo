@@ -1,11 +1,12 @@
 import Axios from "axios";
 import { create } from 'zustand';
-import { createCrudStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
-import { useDataResource } from "@jasperoosthoek/zustand-crud-registry";
-import type { CrudModels } from "./types";
+import { createCrudStoreRegistry as createStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
+import { useDataResource as useStore } from "@jasperoosthoek/zustand-crud-registry";
+import type { User, Role, Employee, Customer, Contact, Quotation, Invoice, Payment, LeaveRequest, Note, Task } from "./types";
 import { toast } from 'react-toastify';
 
-export const { getOrCreateCrudStore } = createCrudStoreRegistry<CrudModels>();
+
+
 
 const axios = Axios.create({
   // Replace by 
@@ -31,6 +32,21 @@ export const toastOnError = (error: any) => {
   console.error(toastMessageStore.getState().getMessage(), error)
 };
 
+
+export const { getOrCreateCrudStore: getOrCreateStore } = createStoreRegistry<{
+  users: User;
+  roles: Role;
+  employees: Employee;
+  customers: Customer;
+  contacts: Contact;
+  quotations: Quotation;
+  invoices: Invoice;
+  payments: Payment;
+  leaveRequests: LeaveRequest;
+  notes: Note;
+  tasks: Task;
+}>();
+
 const defaultConfig = {
   axios,
   actions: {
@@ -44,23 +60,22 @@ const defaultConfig = {
 };
 
 
-export const useUserStore = getOrCreateCrudStore(
-  'users',
-  {
-    ...defaultConfig,
-    route: '/users',
-  }
-);
-
-export const useRoleStore = getOrCreateCrudStore(
-  'roles',
-  {
-    ...defaultConfig,
-    route: '/roles',
-  }
-);
-
-export const useEmployeeStore = getOrCreateCrudStore(
+const s = {
+  users: getOrCreateStore(
+    'users',
+    {
+      ...defaultConfig,
+      route: '/users',
+    }
+  ),
+  roles: getOrCreateStore(
+    'roles',
+    {
+      ...defaultConfig,
+      route: '/roles',
+    }
+  ),
+  employees: getOrCreateStore(
   'employees',
   {
     ...defaultConfig,
@@ -70,99 +85,96 @@ export const useEmployeeStore = getOrCreateCrudStore(
       counter: 0,
     },
     customActions: {
-      synchronize: {
-        route: '/users',
-      },
-    }
-  },
-);
-
-export const useCustomerStore = getOrCreateCrudStore(
+        synchronize: {
+          route: '/users',
+        },
+      }
+    },
+  ),
+  customers: getOrCreateStore(
   'customers',
   {
     ...defaultConfig,
-    route: '/customers',
-    actions: {
-      getList: true,
+      route: '/customers',
+      actions: {
+        getList: true,
+      },
+    }
+  ),
+
+  contacts: getOrCreateStore(
+    'contacts',
+    {
+      ...defaultConfig,
+      route: '/contacts'
     },
-  }
-);
-
-
-export const useContactStore = getOrCreateCrudStore(
-  'contacts',
-  {
-    ...defaultConfig,
-    route: '/contacts'
-  },
-);
-
-export const useQuotationStore = getOrCreateCrudStore(
-  'quotations',
-  {
-    ...defaultConfig,
-    route: '/quotations',
-  },
-);
-
-export const useInvoiceStore = getOrCreateCrudStore(
-  'invoices',
-  {
-    ...defaultConfig,
-    route: '/invoices'
-  },
-);
-
-export const usePaymentStore = getOrCreateCrudStore(
-  'payments',
-  {
-    ...defaultConfig,
-    route: '/payments'
-  },
-);
-
-export const useLeaveRequestStore = getOrCreateCrudStore(
-  'leaveRequests',
-  {
-    ...defaultConfig,
-    route: '/leaveRequests',
-  },
-);
-
-export const useNoteStore = getOrCreateCrudStore(
-  'notes',
-  {
-    ...defaultConfig,
-    route: '/notes',
-  }
-);
-
-export const useTaskStore = getOrCreateCrudStore(
-  'tasks',
-  {
-    ...defaultConfig,
-    route: '/tasks',
-  }
-);
+  ),
+  quotations: getOrCreateStore(
+    'quotations',
+    {
+      ...defaultConfig,
+      route: '/quotations',
+    },
+  ),
+  invoices: getOrCreateStore(
+    'invoices',
+    {
+      ...defaultConfig,
+      route: '/invoices'
+    },
+  ),
+  payments: getOrCreateStore(
+    'payments',
+    {
+      ...defaultConfig,
+      route: '/payments'
+    },
+  ),
+  leaveRequests: getOrCreateStore(
+    'leaveRequests',
+    {
+      ...defaultConfig,
+      route: '/leaveRequests',
+    },
+  ),
+  notes: getOrCreateStore(
+    'notes',
+    {
+      ...defaultConfig,
+      route: '/notes',
+    }
+  ),
+  tasks: getOrCreateStore(
+    'tasks',
+    {
+      ...defaultConfig,
+      route: '/tasks',
+    }
+  ),
+};
 
 export const use = {
-  // projects: () => {
-  //   const projects = useDataResource(useEmployeeStore)
-
-  //   projects.getList.sideEffects = (list: Project[]) => projects.setState({ counter: list.length })
-  //   return projects;
-  // },
-  roles: () => useDataResource(useRoleStore),
-  users: () => useDataResource(useUserStore),
-  employees: () => useDataResource(useEmployeeStore),
-  customers: () => useDataResource(useCustomerStore),
-  contacts: () => useDataResource(useContactStore),
-  quotations: () => useDataResource(useQuotationStore),
-  invoices: () => useDataResource(useInvoiceStore),
-  payments: () => useDataResource(usePaymentStore),
-  leaveRequests: () => useDataResource(useLeaveRequestStore),
-  notes: () => useDataResource(useNoteStore),
-  tasks: () => useDataResource(useTaskStore),
+  roles: () => {
+    const roles = useStore(s.roles);
+    const users = useStore(s.users);
+    roles.update.sideEffects = () => users.getList();
+    roles.create.sideEffects = () => users.getList();
+    return roles
+  },
+  users: () => {
+    const users = useStore(s.users);
+    const roles = useStore(s.roles);
+    users.update.sideEffects = () => roles.getList();
+    users.create.sideEffects = () => roles.getList();
+    return users
+  },
+  employees: () => useStore(s.employees),
+  customers: () => useStore(s.customers),
+  contacts: () => useStore(s.contacts),
+  quotations: () => useStore(s.quotations),
+  invoices: () => useStore(s.invoices),
+  payments: () => useStore(s.payments),
+  leaveRequests: () => useStore(s.leaveRequests),
+  notes: () => useStore(s.notes),
+  tasks: () => useStore(s.tasks),
 }
-
-
