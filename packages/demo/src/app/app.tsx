@@ -4,10 +4,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './app.module.scss';
 
 import { useEffect } from 'react';
-import { RouterProvider } from "react-router";
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { LocalizationProvider, useLocalization } from '@jasperoosthoek/react-toolbox';
 
 import localization from './localization/localization';

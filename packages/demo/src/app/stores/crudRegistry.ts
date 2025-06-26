@@ -27,9 +27,9 @@ export const toastMessageStore = create<ToastMessageStore>((set) => ({
 export const setToastMessage = (message: string) => toastMessageStore.getState().setMessage(() => message);
 
 export const toastOnError = (error: any) => {
-
-  // toast.error(useToastMessageStore.getState().getMessage());
-  console.error(toastMessageStore.getState().getMessage(), error)
+  toast.error(toastMessageStore.getState().getMessage());
+  
+  console.error(error)
 };
 
 

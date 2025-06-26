@@ -19,6 +19,10 @@ const localization = combineLocalization(
       email_address: 'E-mailadres',
       actions: 'Acties',
       error_email_requires_at: 'E-mailadres moet minstens één @ bevatten',
+
+      create_new_role: 'Nieuwe rol aanmaken',
+      edit_role: 'Rol bewerken',
+      delete_role: (name) => `Rol "${name}" verwijderen?`,
     },
     en: {
       not_found: 'Not found',
@@ -36,6 +40,10 @@ const localization = combineLocalization(
       email_address: 'Email address',
       actions: 'Actions',
       error_email_requires_at: 'Email address should contain at least one @',
+
+      create_new_role: 'Create new role',
+      edit_role: 'Edit role',
+      delete_role: (name) => `Delete role "${name}"?`,
     },
     fr: {
       not_found: 'Non trouvé',
@@ -53,8 +61,13 @@ const localization = combineLocalization(
       email_address: 'Adresse e-mail',
       actions: 'Actions',
       error_email_requires_at: 'L\'adresse e-mail doit contenir au moins un @',
+
+      create_new_role: 'Créer un nouveau rôle',
+      edit_role: 'Modifier le rôle',
+      delete_role: (name) => `Supprimer le rôle "${name}" ?`,
     }
   }
+
 ) as AdditionalLocalization;
 
 export default localization;
