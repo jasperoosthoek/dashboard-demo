@@ -18,7 +18,6 @@ import { setToastMessage } from './stores/crudRegistry';
 const SetToastMessageOnChangeLanguage = () => {
   const { lang, text } = useLocalization()
   useEffect(() => {
-    console.log(text`on_error`);
     setToastMessage(text`on_error`)
   }, [lang, !!text])
   return null;

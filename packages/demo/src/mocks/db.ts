@@ -39,11 +39,9 @@ export function seedDatabase<S extends Record<string, any>>(
           const related = (db as any)[relatedEntity].findFirst({
             where: { id: { equals: foreignId } },
           });
-          // console.log(entity, relationType, key, )
 
           if (related) {
             record[key] = related;
-            // delete record[key];
           }
         }
       }

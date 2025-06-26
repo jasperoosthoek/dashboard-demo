@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
+import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from "react-router";
 
 import Dashboard from "./components/Dashboard";
 import DashboardPage from "./pages/dashboard/DashboardPage";
@@ -6,6 +6,11 @@ import UsersPage from "./pages/users/UsersPage";
 import RolesPage from "./pages/users/RolesPage";
 import NoMatchPage from "./pages/NoMatchPage";
 import { useLocalization } from '@jasperoosthoek/react-toolbox';
+
+export type RouteDef = RouteObject & {
+  title?: string;
+  children?: RouteDef[]; // recursive typing for nav tree
+};
 
 export const useNavRoutes = () => {
   const { text } = useLocalization();
@@ -27,7 +32,7 @@ export const useNavRoutes = () => {
         },
       ],
     }
-  ];
+  ] as RouteDef[];
 }
 
 const BrowserRouter = () => {

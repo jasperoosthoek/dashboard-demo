@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from "react-dom";
 import { Navbar, Nav, Row, Col } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router';
 
 import { MenuButton } from '@jasperoosthoek/react-toolbox';
+import { useNavRoutes } from '../router';
 import NavLinks from './NavLinks';
 import LanguageDropdown from './LanguageDropdown';
 
 const Dashboard = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const navRoutes = useNavRoutes();
 
   return (
     <>
@@ -20,8 +23,8 @@ const Dashboard = () => {
           onClick={() => setShowMenu(!showMenu)}
         />
         <Nav className='mr-auto'>
-          <Navbar.Text className='dashboard-title'>
-            <div></div>
+          <Navbar.Text id='dashboard-title'>
+            <div />
           </Navbar.Text>
         </Nav>
         <Navbar.Collapse className='justify-content-end'>
@@ -42,7 +45,10 @@ const Dashboard = () => {
           <div className='p-0 d-md-none ms-3'>
             <div className='divider' />
             <Nav className='d-block'>
-              <NavLinks />
+              <NavLinks
+                routes={navRoutes} 
+                onClick={() => setShowMenu(!showMenu)}
+              />
             </Nav>
           </div>
         </div>
@@ -53,8 +59,7 @@ const Dashboard = () => {
         <Col md="2" className="sidebar d-none d-md-block">
           <Nav className="nav-sidebar no-wrap bg-light fluid">
             <div>
-
-              <NavLinks />
+              <NavLinks routes={navRoutes} />
             </div>
           </Nav>
         </Col>
@@ -69,3 +74,15 @@ const Dashboard = () => {
 }
 
 export default Dashboard;
+
+export const DashboardTitle = ({ children }: { children: React.ReactNode }) => {
+  const [element, setElement] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setElement(document.getElementById("dashboard-title"));
+  }, []);
+
+  if (!element) return null;
+
+  return createPortal(children, element);
+};

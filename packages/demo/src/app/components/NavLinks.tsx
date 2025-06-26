@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
 import { Nav } from 'react-bootstrap';
-import { Link } from 'react-router';
-
-import { useLocalization } from '@jasperoosthoek/react-toolbox';
+import { Link, useLocation } from 'react-router';
+import { DashboardTitle } from './Dashboard';
+import type { RouteDef } from '../router';
 
 const NavLink = ({ to, children }: { to: string; children: ReactNode }) => (
   <Nav.Item>
@@ -12,15 +12,64 @@ const NavLink = ({ to, children }: { to: string; children: ReactNode }) => (
   </Nav.Item>
 );
 
-const NavLinks = () => {
-  const { text } = useLocalization();
 
+type NavLinksProps = {
+  routes: RouteDef[];
+  path?: string;
+  breadcrumb?: React.ReactNode;
+  onClick?: () => void;
+};
+
+export const NavLinks = ({
+  routes,
+  path: pathRoot = "",
+  breadcrumb,
+  onClick,
+}: NavLinksProps) => {
+  const { pathname } = useLocation();
   return (
     <>
-      <NavLink to="../users">{text`link_users`}</NavLink>
-      <NavLink to="../users/roles">{text`link_roles`}</NavLink>
-    </>
-  )
-}
+      {routes
+        .filter((route) => !route.index && route.path) // skip index routes
+        .map((route, key) => {
+          const { path, title, children } = route;
 
-export default NavLinks;
+          const newPath = `${pathRoot}/${path}`.replace(/\/+/g, "/");
+          const isActive = pathname.startsWith(newPath);
+
+          const newBreadcrumb = (
+            <>
+              {breadcrumb}
+              {breadcrumb && " / "}
+              <Link to={newPath}>{title}</Link>
+            </>
+          );
+
+          return (
+            <div onClick={onClick} key={key}>
+              <NavLink to={newPath}>
+                {title}
+              </NavLink>
+
+              {children && isActive && (
+                <div style={{ marginLeft: "20px" }}>
+                  <NavLinks
+                    routes={children}
+                    path={newPath}
+                    breadcrumb={newBreadcrumb}
+                    onClick={onClick} 
+                  />
+                </div>
+              )}
+      
+              {pathname === newPath && (
+                <DashboardTitle>{newBreadcrumb}</DashboardTitle>
+              )}
+            </div>
+          );
+        })}
+    </>
+  );
+};
+
+export default NavLinks
