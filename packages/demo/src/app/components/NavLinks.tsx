@@ -17,8 +17,8 @@ const NavLinks = () => {
 
   return (
     <>
-      <NavLink to="../datatable">{text`link_users`}</NavLink>
-      <NavLink to="../form">{text`link_roles`}</NavLink>
+      <NavLink to="../users">{text`link_users`}</NavLink>
+      <NavLink to="../users/roles">{text`link_roles`}</NavLink>
     </>
   )
 }

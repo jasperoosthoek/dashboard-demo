@@ -1,0 +1,4 @@
+#!/bin/bash
+export DEVELOP_REACT_TOOLBOX=true
+export DEVELOP_ZUSTAND_CRUD_REPOSITORY=true
+nx serve demo

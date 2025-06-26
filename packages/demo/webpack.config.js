@@ -48,10 +48,7 @@ const config = {
 
 if (process.env.DEVELOP_REACT_TOOLBOX === 'true') {
   const reactToolboxPath = path.resolve(__dirname, '../../../react-toolbox/src');
-  const aliasReactDom = {
-    'react': resolve(__dirname, '../../node_modules/react'),
-    'react-dom': resolve(__dirname, '../../node_modules/react-dom'),
-  }
+
   if (fs.existsSync(reactToolboxPath)) {
     console.log(`Loading module @jasperoosthoek/react-toolbox from ${reactToolboxPath}`);
 
@@ -64,13 +61,15 @@ if (process.env.DEVELOP_REACT_TOOLBOX === 'true') {
         'react-dnd': resolve(__dirname, '../../node_modules/react-dnd'),
         'react-dnd-html5-backend': resolve(__dirname, '../../node_modules/react-dnd-html5-backend'),
         'react-toastify': resolve(__dirname, '../../node_modules/react-toastify'),
-        ...aliasReactDom,
+        'react': resolve(__dirname, '../../node_modules/react'),
+        'react-dom': resolve(__dirname, '../../node_modules/react-dom'),
       }
     };
   } else {
     console.log('Failed to locate the @jasperoosthoek/react-toolbox module at', reactToolboxPath);
   }
-  
+}
+if (process.env.DEVELOP_ZUSTAND_CRUD_REPOSITORY === 'true') {
   const zustandCrudRegistryPath = path.resolve(__dirname, '../../../zustand-crud-registry/src');
   if (fs.existsSync(zustandCrudRegistryPath)) {
     console.log(`Loading module @jasperoosthoek/zustand-crud-registry from ${zustandCrudRegistryPath}`);
@@ -80,9 +79,10 @@ if (process.env.DEVELOP_REACT_TOOLBOX === 'true') {
       symlinks: false,
       alias: {
         ...config.resolve.alias || {},
-        // '@jasperoosthoek/zustand-crud-registry': zustandCrudRegistryPath,
+        '@jasperoosthoek/zustand-crud-registry': zustandCrudRegistryPath,
         'zustand': resolve(__dirname, '../../node_modules/zustand'),
-        ...aliasReactDom,
+        'react': resolve(__dirname, '../../node_modules/react'),
+        'react-dom': resolve(__dirname, '../../node_modules/react-dom'),
       }
     };
   } else {
