@@ -83,17 +83,18 @@
 	margin-top: 20px;
 }
 
+/* Ensure the outer .dropdown and inner button take full width */
+.dropdown{
+  width: 100%;
+}
+
+.dropdown-toggle{
+  width: 100%;
+  text-align: left; /* optional: left-align the selected text */
+}
+
 .dropdown-menu.show {
   max-height: 200px;
   overflow-y: auto;
-}
-
-/* Ensure the outer .dropdown and inner button take full width */
-.form-group .dropdown .button{
   width: 100%;
-}
-
-.form-group .dropdown-toggle .button{
-  width: 100%;
-  text-align: left; /* optional: left-align the selected text */
 }
