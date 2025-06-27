@@ -10,31 +10,31 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Role, User } from '../../stores/types';
+import { Role, Employee } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 
-const UsersPage = () => {
+const EmployeesPage = () => {
   const { text } = useLocalization();
-  const users = use.users();
+  const employees = use.employees();
   const roles = use.roles();
 
   useEffect(() => {
-    users.getList();
+    employees.getList();
     roles.getList();
   }, []);
 
   return (
     <Container className='container-list'>
-      {(!users.list || !roles.list || !roles.record) ? <SmallSpinner /> : 
+      {(!employees.list || !roles.list || !roles.record) ? <SmallSpinner /> : 
         <FormModalProvider
-          loading={users.create.isLoading || users.update.isLoading}
+          loading={employees.create.isLoading || employees.update.isLoading}
           initialState={{
             name: '',
             email: '',
             role_id: '',
           }}
-          createModalTitle={text`create_new_user`}
-          editModalTitle={text`edit_user`}
+          createModalTitle={text`create_new_employee`}
+          editModalTitle={text`edit_employee`}
           formFields={{
             name: {
               label: text`name`,
@@ -59,11 +59,11 @@ const UsersPage = () => {
               }
             }
           }}
-          onCreate={(user, closeModal: () => void) => {
-            users.create(user, { callback: () => closeModal()});
+          onCreate={(employee, closeModal: () => void) => {
+            employees.create(employee, { callback: () => closeModal()});
           }}
-          onUpdate={(user, closeModal: () => void) => {
-            users.update(user, { callback: () => closeModal()});
+          onUpdate={(employee, closeModal: () => void) => {
+            employees.update(employee, { callback: () => closeModal()});
           }}
         >
           <DataTable
@@ -74,12 +74,12 @@ const UsersPage = () => {
               pagination: true,
               customHeader: (
                 <FormCreateModalButton>
-                  {text`create_new_user`}
+                  {text`create_new_employee`}
                 </FormCreateModalButton> 
               )
             }}
             showEditModalOnClickRow
-            filterColumn={({ name, email}: User) => `${name} ${email}`}
+            filterColumn={({ name, email}: Employee) => `${name} ${email}`}
             columns={[
               {
                 // Display column name
@@ -90,48 +90,48 @@ const UsersPage = () => {
               },
               {
                 name: text`email_address`,
-                selector: ({ email }: User) => email,
+                selector: ({ email }: Employee) => email,
               },
               {
                 name: text`role`,
-                selector: ({ role_id}: User) => (
+                selector: ({ role_id }: Employee) => (
                   roles.record[role_id]?.name || <i>{text`not_found`}</i>
                 ),
                 orderBy: 'role',
               },
               {
                 name: text`actions`,
-                selector: (user) => (
+                selector: (employee) => (
                   <DeleteConfirmButton
-                    modalTitle={text`delete_user${user.name}`}
+                    modalTitle={text`delete_employee${employee.name}`}
                     onDelete={() => {
-                      users.delete(user);
+                      employees.delete(employee);
                     }}
                   />
                 )
               }
             ]}
-            data={users.list}
+            data={employees.list}
             onMove={({ item, target }) => {
               // // Use onMove to store new position for instance by modifying the 'order' field
               // // with django-ordered-model in a Django backend
 
               // // Find index of the item to move
-              // const fromIndex = users.findIndex(user => user.id === item.id);
+              // const fromIndex = employees.findIndex(employee => employee.id === item.id);
               // if (fromIndex === -1) return; // If not found, return original array
 
-              // // Find index of the target position (user with `orderId` as their order)
-              // const targetIndex = users.findIndex(user => user.id === target.id);
+              // // Find index of the target position (employee with `orderId` as their order)
+              // const targetIndex = employees.findIndex(employee => employee.id === target.id);
               // if (targetIndex === -1) return; // If target not found, return original array
 
               // // Remove the item from its current position
-              // const [movedUser] = users.splice(fromIndex, 1);
+              // const [movedEmployee] = employees.splice(fromIndex, 1);
 
               // // Insert the item at the target position
-              // users.splice(targetIndex, 0, movedUser);
+              // employees.splice(targetIndex, 0, movedEmployee);
 
-              // users.map(u => console.log(u.id))
-              // setUsers(users.map((u, order) => ({...u, order })));
+              // employees.map(u => console.log(u.id))
+              // setEmployees(employees.map((u, order) => ({...u, order })));
             }}
           />
         </FormModalProvider>
@@ -140,4 +140,4 @@ const UsersPage = () => {
   )
 }
 
-export default UsersPage;
+export default EmployeesPage;

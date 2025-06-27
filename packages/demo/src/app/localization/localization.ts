@@ -7,13 +7,13 @@ const localization = combineLocalization(
       not_found: 'Niet gevonden',
       page_not_found: 'Pagina kan niet worden gevonden.',
       language_full: "Nederlands",
-      link_users: 'Gebruikers',
+      link_employees: 'Medewerkers',
       link_roles: 'Rollen',
       on_error: 'Er is iets fout gegaan',
 
-      create_new_user: 'Nieuwe gebruiker aanmaken',
-      edit_user: 'Gebruiker bewerken',
-      delete_user: (name) => `Gebruiker "${name}" verwijderen?`,
+      create_new_employee: 'Nieuwe medewerker aanmaken',
+      edit_employee: 'Medewerker bewerken',
+      delete_employee: (name) => `Medewerker "${name}" verwijderen?`,
       name: 'Naam',
       role: 'Rol',
       email_address: 'E-mailadres',
@@ -28,13 +28,13 @@ const localization = combineLocalization(
       not_found: 'Not found',
       page_not_found: 'Page cannot be found.',
       language_full: "English",
-      link_users: 'Users',
+      link_employees: 'Employees',
       link_roles: 'Roles',
       on_error: 'Something went wrong',
 
-      create_new_user: 'Create new user',
-      edit_user: 'Edit user',
-      delete_user: (name) => `Delete user "${name}"?`,
+      create_new_employee: 'Create new employee',
+      edit_employee: 'Edit employee',
+      delete_employee: (name) => `Delete employee "${name}"?`,
       name: 'Name',
       role: 'Role',
       email_address: 'Email address',
@@ -49,13 +49,13 @@ const localization = combineLocalization(
       not_found: 'Non trouvé',
       page_not_found: 'Page introuvable.',
       language_full: "Français",
-      link_users: 'Utilisateurs',
+      link_employees: 'Employés',
       link_roles: 'Rôles',
       on_error: 'Une erreur s\'est produite',
 
-      create_new_user: 'Créer un nouvel utilisateur',
-      edit_user: 'Modifier l\'utilisateur',
-      delete_user: (name) => `Supprimer l'utilisateur "${name}" ?`,
+      create_new_employee: 'Créer un nouvel employé',
+      edit_employee: 'Modifier l\'employé',
+      delete_employee: (name) => `Supprimer l'employé "${name}" ?`,
       name: 'Nom',
       role: 'Rôle',
       email_address: 'Adresse e-mail',
@@ -67,7 +67,6 @@ const localization = combineLocalization(
       delete_role: (name) => `Supprimer le rôle "${name}" ?`,
     }
   }
-
 ) as AdditionalLocalization;
 
 export default localization;

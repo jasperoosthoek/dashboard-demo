@@ -1,69 +1,43 @@
-export type User = {
-	id: number;
-	name: string;
-	email: string;
-	role_id: number;
-	order: number;
-}
 
 export type Role = {
-	id: number;
-	name: string;
-}
+  id: number;
+  name: string;
+};
 
 export type Employee = {
   id: number;
   name: string;
+  email: string;
+  role_id: number;
+  order: number;
   department: string;
+  active: boolean;
 };
 
 export type Customer = {
   id: number;
   name: string;
+  contact_person: string;
+  email: string;
 };
 
-export type Contact = {
+export type Project = {
   id: number;
   name: string;
-  email: string;
-  customer_id: number;
-};
-
-export type Quotation = {
-  id: number;
   amount: number;
   status: string;
-  customer_id: number; 
-  employee_id: number; 
+  customer_id: number;
+  employee_id: number;
+  start_date: string;
+  end_date: string;
 };
 
 export type Invoice = {
   id: number;
   due_date: string;
   amount: number;
-  quotation_id: number;
-};
-
-export type Payment = {
-  id: number;
-  amount: number;
-  method: string;
-  invoice_id: number;
-};
-
-export type LeaveRequest = {
-  id: number;
-  employee_id: number;
-  from_date: string;
-  to_date: string;
   status: string;
-};
-
-export type Note = {
-  id: number;
-  content: string;
-  author_id: number;
-  related_customer_id: number;
+  project_id: number;
 };
 
 export type Task = {
@@ -74,4 +48,13 @@ export type Task = {
   related_project_id: number;
   status: string;
   due_date: string;
+  priority: string;
+};
+
+export type Note = {
+  id: number;
+  content: string;
+  author_id: number;
+  related_customer_id: number;
+  created_at: string;
 };

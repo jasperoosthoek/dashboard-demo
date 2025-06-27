@@ -7,10 +7,27 @@ import { MenuButton } from '@jasperoosthoek/react-toolbox';
 import { useNavRoutes } from '../router';
 import NavLinks from './NavLinks';
 import LanguageDropdown from './LanguageDropdown';
+import { use } from '../stores/crudRegistry'
 
 const Dashboard = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navRoutes = useNavRoutes();
+
+  const roles = use.roles();
+  const employees = use.roles();
+  const customers = use.roles();
+  const invoices = use.roles();
+  const notes = use.roles();
+  const tasks = use.roles();
+
+  useEffect(() => {
+    roles.getList();
+    employees.getList();
+    customers.getList();
+    invoices.getList();
+    notes.getList();
+    tasks.getList();
+  }, []);
 
   return (
     <>

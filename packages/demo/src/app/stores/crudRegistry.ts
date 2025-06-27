@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { create } from 'zustand';
 import { useCrud, createStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
-import type { User, Role, Employee, Customer, Contact, Quotation, Invoice, Payment, LeaveRequest, Note, Task } from "./types";
+import type { Role, Employee, Customer, Project, Invoice, Task, Note } from "./types";
 import { toast } from 'react-toastify';
 export type UseStoreOptions = {
   listAsObject?: boolean;
@@ -32,15 +32,10 @@ export const toastOnError = (error: any) => {
 
 
 export const getOrCreateStore = createStoreRegistry<{
-  users: User;
   roles: Role;
   employees: Employee;
   customers: Customer;
-  contacts: Contact;
-  quotations: Quotation;
   invoices: Invoice;
-  payments: Payment;
-  leaveRequests: LeaveRequest;
   notes: Note;
   tasks: Task;
 }>();
@@ -59,21 +54,6 @@ const defaultConfig = {
 
 
 const s = {
-  users: getOrCreateStore(
-    'users',
-    {
-      ...defaultConfig,
-      route: '/users',
-    }
-  ),
-  roles: getOrCreateStore(
-    'roles',
-    {
-      ...defaultConfig,
-      route: '/roles',
-      includeRecord: true,
-    }
-  ),
   employees: getOrCreateStore(
   'employees',
   {
@@ -85,10 +65,18 @@ const s = {
     },
     customActions: {
         synchronize: {
-          route: '/users',
+          route: '/employees',
         },
       }
     },
+  ),
+  roles: getOrCreateStore(
+    'roles',
+    {
+      ...defaultConfig,
+      route: '/roles',
+      includeRecord: true,
+    }
   ),
   customers: getOrCreateStore(
   'customers',
@@ -101,39 +89,11 @@ const s = {
     }
   ),
 
-  contacts: getOrCreateStore(
-    'contacts',
-    {
-      ...defaultConfig,
-      route: '/contacts'
-    },
-  ),
-  quotations: getOrCreateStore(
-    'quotations',
-    {
-      ...defaultConfig,
-      route: '/quotations',
-    },
-  ),
   invoices: getOrCreateStore(
     'invoices',
     {
       ...defaultConfig,
       route: '/invoices'
-    },
-  ),
-  payments: getOrCreateStore(
-    'payments',
-    {
-      ...defaultConfig,
-      route: '/payments'
-    },
-  ),
-  leaveRequests: getOrCreateStore(
-    'leaveRequests',
-    {
-      ...defaultConfig,
-      route: '/leaveRequests',
     },
   ),
   notes: getOrCreateStore(
@@ -153,28 +113,22 @@ const s = {
 };
 
 export const use = {
-  roles: (options?: UseStoreOptions) => {
-    // @ts-ignore
-    const roles = useCrud(s.roles, options);
-    const users = useCrud(s.users);
-    roles.update.sideEffects = () => users.getList();
-    roles.create.sideEffects = () => users.getList();
+  roles: () => {
+    const roles = useCrud(s.roles);
+    const employees = useCrud(s.employees);
+    roles.update.sideEffects = () => employees.getList();
+    roles.create.sideEffects = () => employees.getList();
     return roles
   },
-  users: () => {
-    const users = useCrud(s.users);
+  employees: () => {
+    const employees = useCrud(s.employees);
     const roles = useCrud(s.roles);
-    users.update.sideEffects = () => roles.getList();
-    users.create.sideEffects = () => roles.getList();
-    return users
+    employees.update.sideEffects = () => roles.getList();
+    employees.create.sideEffects = () => roles.getList();
+    return employees
   },
-  employees: () => useCrud(s.employees),
   customers: () => useCrud(s.customers),
-  contacts: () => useCrud(s.contacts),
-  quotations: () => useCrud(s.quotations),
   invoices: () => useCrud(s.invoices),
-  payments: () => useCrud(s.payments),
-  leaveRequests: () => useCrud(s.leaveRequests),
   notes: () => useCrud(s.notes),
   tasks: () => useCrud(s.tasks),
 }
