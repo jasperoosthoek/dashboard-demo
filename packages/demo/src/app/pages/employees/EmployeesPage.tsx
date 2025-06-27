@@ -10,7 +10,7 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Role, Employee } from '../../stores/types';
+import { Employee } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 
 const EmployeesPage = () => {

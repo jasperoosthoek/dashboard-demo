@@ -32,14 +32,14 @@ export function seedDatabase<S extends Record<string, any>>(
 
         if (
           (relationType === 'ONE_OF' || relationType === 'MANY_OF') &&
-          record[key] !== undefined
+          record[`${key}_id`] !== undefined
         ) {
           const relatedEntity = (fieldDef as any)?.target?.modelName;
-          const foreignId = record[key];
+          const foreignId = record[`${key}_id`];
           const related = (db as any)[relatedEntity].findFirst({
             where: { id: { equals: foreignId } },
           });
-
+          
           if (related) {
             record[key] = related;
           }
