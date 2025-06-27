@@ -1,13 +1,11 @@
 import Axios from "axios";
 import { create } from 'zustand';
-import { createCrudStoreRegistry as createStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
-import { useDataResource as useStore } from "@jasperoosthoek/zustand-crud-registry";
+import { useCrud, createStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
 import type { User, Role, Employee, Customer, Contact, Quotation, Invoice, Payment, LeaveRequest, Note, Task } from "./types";
 import { toast } from 'react-toastify';
-
-
-
-
+export type UseStoreOptions = {
+  listAsObject?: boolean;
+}
 const axios = Axios.create({
   // Replace by 
   // baseURL: process.env.NX_BASE_URL,
@@ -33,7 +31,7 @@ export const toastOnError = (error: any) => {
 };
 
 
-export const { getOrCreateCrudStore: getOrCreateStore } = createStoreRegistry<{
+export const getOrCreateStore = createStoreRegistry<{
   users: User;
   roles: Role;
   employees: Employee;
@@ -73,6 +71,7 @@ const s = {
     {
       ...defaultConfig,
       route: '/roles',
+      includeRecord: true,
     }
   ),
   employees: getOrCreateStore(
@@ -154,27 +153,28 @@ const s = {
 };
 
 export const use = {
-  roles: () => {
-    const roles = useStore(s.roles);
-    const users = useStore(s.users);
+  roles: (options?: UseStoreOptions) => {
+    // @ts-ignore
+    const roles = useCrud(s.roles, options);
+    const users = useCrud(s.users);
     roles.update.sideEffects = () => users.getList();
     roles.create.sideEffects = () => users.getList();
     return roles
   },
   users: () => {
-    const users = useStore(s.users);
-    const roles = useStore(s.roles);
+    const users = useCrud(s.users);
+    const roles = useCrud(s.roles);
     users.update.sideEffects = () => roles.getList();
     users.create.sideEffects = () => roles.getList();
     return users
   },
-  employees: () => useStore(s.employees),
-  customers: () => useStore(s.customers),
-  contacts: () => useStore(s.contacts),
-  quotations: () => useStore(s.quotations),
-  invoices: () => useStore(s.invoices),
-  payments: () => useStore(s.payments),
-  leaveRequests: () => useStore(s.leaveRequests),
-  notes: () => useStore(s.notes),
-  tasks: () => useStore(s.tasks),
+  employees: () => useCrud(s.employees),
+  customers: () => useCrud(s.customers),
+  contacts: () => useCrud(s.contacts),
+  quotations: () => useCrud(s.quotations),
+  invoices: () => useCrud(s.invoices),
+  payments: () => useCrud(s.payments),
+  leaveRequests: () => useCrud(s.leaveRequests),
+  notes: () => useCrud(s.notes),
+  tasks: () => useCrud(s.tasks),
 }

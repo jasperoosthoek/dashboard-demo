@@ -41,7 +41,12 @@
 }
 
 .nav-sidebar {
-    min-height: calc(100vh - 58px);
+    min-height: calc(100vh - 70px);
+}
+
+.menu-button {
+	margin-right: 18px;
+	margin-bottom: 3px;
 }
 
 .full-width {
@@ -84,17 +89,25 @@
 }
 
 /* Ensure the outer .dropdown and inner button take full width */
-.dropdown{
+.dropdown {
   width: 100%;
 }
 
-.dropdown-toggle{
+.dropdown-toggle {
   width: 100%;
-  text-align: left; /* optional: left-align the selected text */
+  text-align: left;
 }
 
 .dropdown-menu.show {
   max-height: 200px;
   overflow-y: auto;
   width: 100%;
+}
+
+/*
+	This is a fix for the modal padding issue when the modal is open.
+ 	It prevents the body from moving to the left when a modal is open.
+ */
+body.modal-open {
+  padding-right: 0 !important;
 }

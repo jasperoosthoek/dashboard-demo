@@ -16,7 +16,7 @@ const NavLink = ({ to, children }: { to: string; children: ReactNode }) => (
 type NavLinksProps = {
   routes: RouteDef[];
   path?: string;
-  breadcrumb?: React.ReactNode;
+  breadcrumb?: React.ReactNode | false;
   onClick?: () => void;
 };
 
@@ -37,7 +37,7 @@ export const NavLinks = ({
           const newPath = `${pathRoot}/${path}`.replace(/\/+/g, "/");
           const isActive = pathname.startsWith(newPath);
 
-          const newBreadcrumb = (
+          const newBreadcrumb = breadcrumb === false ? false : (
             <>
               {breadcrumb}
               {breadcrumb && " / "}
@@ -62,7 +62,7 @@ export const NavLinks = ({
                 </div>
               )}
       
-              {pathname === newPath && (
+              {pathname === newPath && newBreadcrumb && (
                 <DashboardTitle>{newBreadcrumb}</DashboardTitle>
               )}
             </div>

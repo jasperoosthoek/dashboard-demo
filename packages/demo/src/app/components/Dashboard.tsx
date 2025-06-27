@@ -19,7 +19,8 @@ const Dashboard = () => {
           <Navbar.Brand>Dashboard</Navbar.Brand>
         </Link>
         <MenuButton
-          className='p-0 d-md-none ms-3'
+          className='p-0 d-md-none ms-3 menu-button'
+          size='lg'
           onClick={() => setShowMenu(!showMenu)}
         />
         <Nav className='mr-auto'>
@@ -46,7 +47,8 @@ const Dashboard = () => {
             <div className='divider' />
             <Nav className='d-block'>
               <NavLinks
-                routes={navRoutes} 
+                routes={navRoutes}
+                breadcrumb={false}
                 onClick={() => setShowMenu(!showMenu)}
               />
             </Nav>
