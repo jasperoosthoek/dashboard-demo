@@ -12,6 +12,7 @@ import {
 
 import { Employee } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
+import NotFound from '../../components/NotFound';
 
 const EmployeesPage = () => {
   const { text } = useLocalization();
@@ -95,7 +96,7 @@ const EmployeesPage = () => {
               {
                 name: text`role`,
                 selector: ({ role_id }: Employee) => (
-                  roles.record[role_id]?.name || <i>{text`not_found`}</i>
+                  roles.record[role_id]?.name || <NotFound />
                 ),
                 orderBy: 'role',
               },
@@ -103,6 +104,7 @@ const EmployeesPage = () => {
                 name: text`actions`,
                 selector: (employee) => (
                   <DeleteConfirmButton
+                    loading={employees.delete.isLoading && employees.delete.id === employee.id}                  
                     modalTitle={text`delete_employee${employee.name}`}
                     onDelete={() => {
                       employees.delete(employee);

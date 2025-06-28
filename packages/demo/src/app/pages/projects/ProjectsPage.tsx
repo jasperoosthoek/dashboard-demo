@@ -14,6 +14,7 @@ import {
 import { Employee, Project } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatCurrency } from '../../utils';
+import NotFound from '../../components/NotFound';
 
 const ProjectsPage = () => {
   const { text } = useLocalization();
@@ -72,6 +73,7 @@ const ProjectsPage = () => {
               },
               component: FormDropdown,
               label: text`status`,
+              required: true,
             },
             customer_id: {
               formProps: {
@@ -79,6 +81,7 @@ const ProjectsPage = () => {
               },
               component: FormDropdown,
               label: text`customer`,
+              required: true,
             },
             employee_id: {
               formProps: {
@@ -147,13 +150,13 @@ const ProjectsPage = () => {
                       ? <div title={`${customer?.name} (${customer?.contact_person})`}>
                           {customer?.name}
                         </div>
-                      : text`not_found`
+                      : <NotFound />
                   );
                 },
-                orderBy: 'customer_id',
+                orderBy: ({ customer_id }) => customers.record[customer_id]?.name || customer_id,
               },
               {
-                name: text`employeer`,
+                name: text`employee`,
                 selector: ({ employee_id }: Project) => {
                   const employee = employees.record[employee_id];
                   return (
@@ -161,10 +164,10 @@ const ProjectsPage = () => {
                       ? <div title={`${employee.name} (${roles.record[employee.role_id]?.name})`}>
                           {employee?.name}
                         </div>
-                      : text`not_found`
+                      : <NotFound />
                   );
                 },
-                orderBy: 'employee_id',
+                orderBy: ({ employee_id }) => employees.record[employee_id]?.name || employee_id,
               },
               {
                 name: text`start_date`,
@@ -184,6 +187,7 @@ const ProjectsPage = () => {
                 name: text`actions`,
                 selector: (project) => (
                   <DeleteConfirmButton
+                    loading={projects.delete.isLoading && projects.delete.id === project.id}
                     modalTitle={text`delete_project${project.name}`}
                     onDelete={() => {
                       projects.delete(project);

@@ -30,7 +30,7 @@ const localization = combineLocalization(
 
       amount: 'Amount',
       customer: 'Customer',
-      employeer: 'Employeer',
+      employee: 'Employee',
       start_date: 'Start date',
       end_date: 'End date',
 

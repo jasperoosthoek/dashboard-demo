@@ -67,6 +67,7 @@ const RolesPage = () => {
                 name: text`actions`,
                 selector: (role) => (
                   <DeleteConfirmButton
+                    loading={roles.delete.isLoading && roles.delete.id === role.id}
                     modalTitle={text`delete_role${role.name}`}
                     onDelete={() => {
                       roles.delete(role);
