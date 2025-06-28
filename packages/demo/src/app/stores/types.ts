@@ -25,7 +25,7 @@ export type Project = {
   id: number;
   name: string;
   amount: number;
-  status: string;
+  status: 'completed' | 'in_progress' | 'pending';
   customer_id: number;
   employee_id: number;
   start_date: string;

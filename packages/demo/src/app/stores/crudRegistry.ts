@@ -34,6 +34,7 @@ export const toastOnError = (error: any) => {
 export const getOrCreateStore = createStoreRegistry<{
   roles: Role;
   employees: Employee;
+  projects: Project;
   customers: Customer;
   invoices: Invoice;
   notes: Note;
@@ -63,6 +64,7 @@ const s = {
       isValid: true,
       counter: 0,
     },
+    includeRecord: true,
     customActions: {
         synchronize: {
           route: '/employees',
@@ -78,6 +80,13 @@ const s = {
       includeRecord: true,
     }
   ),
+  projects: getOrCreateStore(
+    'projects',
+    {
+      ...defaultConfig,
+      route: '/projects',
+    }
+  ),
   customers: getOrCreateStore(
   'customers',
   {
@@ -86,7 +95,8 @@ const s = {
       actions: {
         getList: true,
       },
-    }
+      includeRecord: true,
+    },
   ),
 
   invoices: getOrCreateStore(
@@ -113,13 +123,6 @@ const s = {
 };
 
 export const use = {
-  roles: () => {
-    const roles = useCrud(s.roles);
-    const employees = useCrud(s.employees);
-    roles.update.sideEffects = () => employees.getList();
-    roles.create.sideEffects = () => employees.getList();
-    return roles
-  },
   employees: () => {
     const employees = useCrud(s.employees);
     const roles = useCrud(s.roles);
@@ -127,6 +130,14 @@ export const use = {
     employees.create.sideEffects = () => roles.getList();
     return employees
   },
+  roles: () => {
+    const roles = useCrud(s.roles);
+    const employees = useCrud(s.employees);
+    roles.update.sideEffects = () => employees.getList();
+    roles.create.sideEffects = () => employees.getList();
+    return roles
+  }, 
+  projects: () => useCrud(s.projects),
   customers: () => useCrud(s.customers),
   invoices: () => useCrud(s.invoices),
   notes: () => useCrud(s.notes),

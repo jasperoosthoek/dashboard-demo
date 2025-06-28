@@ -22,19 +22,19 @@ export const handlers = [
   ...createRestHandlers(db, schema, 'role', '/api/roles'),
 
   ...createRestHandlers(db, schema, 'employee', '/api/employees', {
-    onDelete: (employee) => {
-      db.note.deleteMany({ where: { author: { id: { equals: employee.id } } } });
-      db.task.deleteMany({ where: { assigned_to: { id: { equals: employee.id } } } });
-    },
+    // onDelete: (employee) => {
+    //   db.note.deleteMany({ where: { author: { id: { equals: employee.id } } } });
+    //   db.task.deleteMany({ where: { assigned_to: { id: { equals: employee.id } } } });
+    // },
   }),
+
+  ...createRestHandlers(db, schema, 'project', '/api/projects'),
 
   ...createRestHandlers(db, schema, 'customer', '/api/customers', {
-    onDelete: (customer) => {
-      db.note.deleteMany({ where: { related_customer: { id: { equals: customer.id } } } });
-    },
+    // onDelete: (customer) => {
+    //   db.note.deleteMany({ where: { related_customer: { id: { equals: customer.id } } } });
+    // },
   }),
-
-
 
   ...createRestHandlers(db, schema, 'invoice', '/api/invoices'),
 

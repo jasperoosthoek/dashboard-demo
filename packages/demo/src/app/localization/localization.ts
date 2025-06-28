@@ -27,13 +27,20 @@ const localization = combineLocalization(
     en: {
       not_found: 'Not found',
       page_not_found: 'Page cannot be found.',
+
+      amount: 'Amount',
+      customer: 'Customer',
+      employeer: 'Employeer',
+      start_date: 'Start date',
+      end_date: 'End date',
+
       language_full: "English",
       link_employees: 'Employees',
       link_roles: 'Roles',
       on_error: 'Something went wrong',
 
       create_new_employee: 'Create new employee',
-      edit_employee: 'Edit employee',
+      edit_employee: 'Edit employee?',
       delete_employee: (name) => `Delete employee "${name}"?`,
       name: 'Name',
       role: 'Role',
@@ -44,6 +51,19 @@ const localization = combineLocalization(
       create_new_role: 'Create new role',
       edit_role: 'Edit role',
       delete_role: (name) => `Delete role "${name}"?`,
+
+      link_projects: 'Projects',
+      create_new_project: 'Create new project',
+      edit_project: 'Edit project?',
+      delete_project: (name) => `Delete project "${name}"?`,
+      status: 'Status',
+      project_status_pending: 'Pending',
+      project_status_in_progress: 'In Progress',
+      project_status_completed: 'Completed',
+
+      link_tasks: 'Tasks',
+      link_quotations: 'Quotations',
+      link_notes: 'Notes',
     },
     fr: {
       not_found: 'Non trouvé',

@@ -2,8 +2,9 @@ import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from "r
 
 import Dashboard from "./components/Dashboard";
 import DashboardPage from "./pages/dashboard/DashboardPage";
-import EmployesPage from "./pages/employees/EmployeesPage";
+import EmployeesPage from "./pages/employees/EmployeesPage";
 import RolesPage from "./pages/employees/RolesPage";
+import ProjectsPage from "./pages/projects/ProjectsPage";
 import NoMatchPage from "./pages/NoMatchPage";
 import { useLocalization } from '@jasperoosthoek/react-toolbox';
 
@@ -23,7 +24,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployesPage,
+          Component: EmployeesPage,
         },
         {
           path: "roles",
@@ -31,7 +32,51 @@ export const useNavRoutes = () => {
           title: text`link_roles`,
         },
       ],
-    }
+    },
+    {
+      path: "projects",
+      title: text`link_projects`,
+      Component: Outlet,
+      children: [
+        {
+          index: true,
+          Component: ProjectsPage,
+        },
+      ],
+    },
+    {
+      path: "tasks",
+      title: text`link_tasks`,
+      Component: Outlet,
+      children: [
+        {
+          index: true,
+          Component: EmployeesPage,
+        },
+      ],
+    },
+    {
+      path: "quotations",
+      title: text`link_quotations`,
+      Component: Outlet,
+      children: [
+        {
+          index: true,
+          Component: EmployeesPage,
+        },
+      ],
+    },
+    {
+      path: "notes",
+      title: text`link_notes`,
+      Component: Outlet,
+      children: [
+        {
+          index: true,
+          Component: EmployeesPage,
+        },
+      ],
+    },
   ] as RouteDef[];
 }
 
