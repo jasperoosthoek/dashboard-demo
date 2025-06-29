@@ -4,7 +4,8 @@ import Dashboard from "./components/Dashboard";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import EmployeesPage from "./pages/employees/EmployeesPage";
 import RolesPage from "./pages/employees/RolesPage";
-import ProjectsPage from "./pages/projects/ProjectsPage";
+import ProjectsListPage from "./pages/projects/ProjectsListPage";
+import ProjectPage from "./pages/projects/ProjectPage";
 import NoMatchPage from "./pages/NoMatchPage";
 import { useLocalization } from '@jasperoosthoek/react-toolbox';
 
@@ -40,7 +41,11 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: ProjectsPage,
+          Component: ProjectsListPage,
+        },
+        {
+          path: ":id",
+          Component: ProjectPage,
         },
       ],
     },

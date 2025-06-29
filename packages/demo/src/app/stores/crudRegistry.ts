@@ -85,7 +85,8 @@ const s = {
     {
       ...defaultConfig,
       route: '/projects',
-    }
+      includeRecord: true,
+    },
   ),
   customers: getOrCreateStore(
   'customers',

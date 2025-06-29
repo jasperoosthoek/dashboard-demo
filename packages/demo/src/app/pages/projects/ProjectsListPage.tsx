@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
-import moment from 'moment';
+import { Link } from 'react-router';
 import {
   DataTable,
   FormCreateModalButton,
@@ -13,10 +13,10 @@ import {
 
 import { Employee, Project } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
-import { formatCurrency } from '../../utils';
+import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 
-const ProjectsPage = () => {
+const ProjectsListPage = () => {
   const { text } = useLocalization();
   const projects = use.projects();
   const employees = use.employees();
@@ -87,7 +87,7 @@ const ProjectsPage = () => {
               formProps: {
                 list: (
                   employees.list?.sort((e1, e2) => e1.name > e2.name ? 1 : -1) || []
-                ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name})` })),
+                ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` })),
               },
               component: FormDropdown,
               label: text`employee`,
@@ -117,7 +117,11 @@ const ProjectsPage = () => {
             columns={[
               {
                 name: text`name`,
-                selector: 'name',
+                selector: (project) => (
+                  <Link to={`/projects/${project.id}`}>
+                    {project.name}
+                  </Link>
+                ),
                 orderBy: 'name',
               },
               {
@@ -172,14 +176,14 @@ const ProjectsPage = () => {
               {
                 name: text`start_date`,
                 selector: ({ start_date }: Project) => (
-                  moment(start_date).format('YYYY-MM-DD')
+                  formatDate(start_date)
                 ) ,
                 orderBy: 'start_date',
               },
               {
                 name: text`end_date`,
                 selector: ({ end_date }: Project) => (
-                  moment(end_date).format('YYYY-MM-DD')
+                  formatDate(end_date)
                 ) ,
                 orderBy: 'end_date',
               },
@@ -205,4 +209,4 @@ const ProjectsPage = () => {
   )
 }
 
-export default ProjectsPage;
+export default ProjectsListPage;

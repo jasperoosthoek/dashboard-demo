@@ -46,7 +46,7 @@ export type Task = {
   description: string;
   assigned_to_id: number;
   related_project_id: number;
-  status: string;
+  status: 'todo' | 'in_progress' | 'done';
   due_date: string;
   priority: string;
 };
