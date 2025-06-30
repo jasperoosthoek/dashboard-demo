@@ -1,4 +1,5 @@
 import { AdditionalLocalization, combineLocalization, useLocalization } from '@jasperoosthoek/react-toolbox';
+import { time } from 'console';
 import { format, Locale, parse } from 'date-fns';
 import { enGB, nl, fr } from 'date-fns/locale';
 
@@ -51,6 +52,7 @@ const localization = combineLocalization(
       company: 'Bedrijf',
       contact: 'Contactpersoon',
       email: 'E-mail',
+      invoice_status_open: 'Open',
       invoice_status_paid: 'Betaald',
 
       link_tasks: 'Taken',
@@ -108,6 +110,7 @@ const localization = combineLocalization(
       company: 'Company',
       contact: 'Contact',
       email: 'Email',
+      invoice_status_open: 'Open',
       invoice_status_paid: 'Paid',
 
       link_tasks: 'Tasks',
@@ -165,6 +168,7 @@ const localization = combineLocalization(
       company: 'Entreprise',
       contact: 'Contact',
       email: 'Email',
+      invoice_status_open: 'Ouverte',
       invoice_status_paid: 'Payée',
 
       link_tasks: 'Tâches',
@@ -188,32 +192,20 @@ export const locales = {
 
 export const formatDate = (date: string, formatString: string = 'PP') => {
   const { lang } = useLocalization();
-  const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
-  return  format(
-    parsedDate,
-    formatString,
-    { locale: (locales[lang] || enGB) as Locale }
-  )
+  
+  try {
+    const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
+    return  format(
+      parsedDate,
+      formatString,
+      { locale: (locales[lang] || enGB) as Locale }
+    )
+  } catch (error) {
+    console.error('Error formatting currency:', error);
+    return `Invalid timestamp: ${date}`;
+  }
 };
 
 export const formatCurrency = (number: number) => {
   return `€ ${number.toLocaleString()}`;
-  const sign = Math.sign(number);
-  // Convert the number to a string and remove sign
-  const numStr = (number * sign).toString();
-
-  // Check for the presence of a decimal part
-  const [integer, decimal] = numStr.split(".");
-
-  // Reverse the integer part to facilitate the insertion of dots
-  const reversed = integer.split("").reverse().join("");
-
-  // Insert a dot every three characters
-  const withDots = reversed.match(/.{1,3}/g)?.join(".");
-
-  // Reverse it back to normal
-  const formatted = withDots?.split("").reverse().join("");
-
-  // Add euro sign and reattach the decimal part if it exists and minus sign
-  return `€ ${sign === -1 ? '-' : ''}${formatted}${decimal ? `.${decimal}` : ''}`;
 }

@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from "r
 
 import Dashboard from "./components/Dashboard";
 import DashboardPage from "./pages/dashboard/DashboardPage";
-import EmployeesPage from "./pages/employees/EmployeesPage";
+import EmployeesListPage from "./pages/employees/EmployeesListPage";
 import RolesPage from "./pages/employees/RolesPage";
 import ProjectsListPage from "./pages/projects/ProjectsListPage";
 import ProjectPage from "./pages/projects/ProjectPage";
@@ -25,7 +25,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesPage,
+          Component: EmployeesListPage,
         },
         {
           path: "roles",
@@ -56,7 +56,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesPage,
+          Component: EmployeesListPage,
         },
       ],
     },
@@ -67,7 +67,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesPage,
+          Component: EmployeesListPage,
         },
       ],
     },
@@ -78,7 +78,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesPage,
+          Component: EmployeesListPage,
         },
       ],
     },

@@ -14,7 +14,7 @@ import { Employee } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 
-const EmployeesPage = () => {
+const EmployeesListPage = () => {
   const { text } = useLocalization();
   const employees = use.employees();
   const roles = use.roles();
@@ -142,4 +142,4 @@ const EmployeesPage = () => {
   )
 }
 
-export default EmployeesPage;
+export default EmployeesListPage;

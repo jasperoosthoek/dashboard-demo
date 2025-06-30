@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Nav } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, matchPath } from 'react-router';
 import { DashboardTitle } from './Dashboard';
 import type { RouteDef } from '../router';
 
@@ -32,10 +32,13 @@ export const NavLinks = ({
       {routes
         .filter((route) => !route.index && route.path) // skip index routes
         .map((route, key) => {
-          const { path, title, children } = route;
+          const { path, title: titleBase, children } = route;
 
           const newPath = `${pathRoot}/${path}`.replace(/\/+/g, "/");
           const isActive = pathname.startsWith(newPath);
+          
+          // Use the given title for in case of a match use the last part of the path to display the id 
+          const title = titleBase || matchPath(newPath, pathname) && `#${pathname.split('/').pop()}`;
 
           const newBreadcrumb = breadcrumb === false ? false : (
             <>
@@ -62,7 +65,7 @@ export const NavLinks = ({
                 </div>
               )}
       
-              {pathname === newPath && newBreadcrumb && (
+              {matchPath(newPath, pathname) && newBreadcrumb && (
                 <DashboardTitle>{newBreadcrumb}</DashboardTitle>
               )}
             </div>

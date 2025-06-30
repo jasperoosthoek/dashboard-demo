@@ -2,21 +2,17 @@ import { useState, useEffect } from 'react';
 import { Container, Card, Row, Col, Badge, Table } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import {
-  DataTable,
-  FormCreateModalButton,
   FormModalProvider,
   useLocalization,
-  DeleteConfirmButton,
   SmallSpinner,
-  FormDropdown,
+  FormEditModalButton,
 } from '@jasperoosthoek/react-toolbox';
 
 import { Task, Project, Invoice } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
-
-
+import { useProjectFormFields } from './ProjectsListPage';
 
 export const useProjectStatus = () => {
   const { text } = useLocalization(); 
@@ -69,6 +65,7 @@ const ProjectsListPage = () => {
   const projectStatus = useProjectStatus();
   const taskStatus = useTaskStatus();
   const invoiceStatus = useInvoiceStatus();
+  const projectFormFields = useProjectFormFields();
 
   useEffect(() => {
     projects.getList();
@@ -89,7 +86,24 @@ const ProjectsListPage = () => {
         ? <NotFound />
         : (
             <>
-              <h2>{project.name}</h2>
+            <FormModalProvider
+              initialState={project}
+              loading={projects.update.isLoading}
+              editModalTitle={text`edit_project`}
+              formFields={projectFormFields}
+              onUpdate={(project, closeModal: () => void) => {
+                projects.update(project, { callback: () => closeModal()});
+              }}
+            >
+              <h2>
+                {project.name}
+                <FormEditModalButton
+                  state={project}
+                  title={text`edit_project`}
+                />
+              </h2>
+
+            </FormModalProvider>
 
               <Card className="mb-4">
                 <Card.Header>{text`project_info`}</Card.Header>

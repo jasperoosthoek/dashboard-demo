@@ -9,7 +9,7 @@
   },
   "private": false,
   "dependencies": {
-    "@jasperoosthoek/react-toolbox": "^0.6.7",
+    "@jasperoosthoek/react-toolbox": "^0.6.8",
     "@jasperoosthoek/zustand-crud-registry": "^0.0.5",
     "@mswjs/data": "^0.16.2",
     "@nrwl/react": "^19.8.4",

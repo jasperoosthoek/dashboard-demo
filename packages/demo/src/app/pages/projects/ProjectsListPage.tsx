@@ -4,24 +4,102 @@ import { Link } from 'react-router';
 import {
   DataTable,
   FormCreateModalButton,
+  FormEditModalButton,
   FormModalProvider,
   useLocalization,
   DeleteConfirmButton,
   SmallSpinner,
   FormDropdown,
+  FormDate,
 } from '@jasperoosthoek/react-toolbox';
 
 import { Employee, Project } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
+import { useProjectStatus } from './ProjectPage';
 
+
+export const useProjectFormFields = () => {  
+  const employees = use.employees();
+  const roles = use.roles();
+  const customers = use.customers();
+  const { text } = useLocalization();
+  if (!employees.list || !roles.record || !customers.list) {
+    return null;
+  }
+  return (
+    {
+      name: {
+        label: text`name`,
+        required: true,
+      },
+      amount: {
+        label: text`amount`,
+        required: true,
+        formProps: {
+          type: 'number',
+        },
+      },
+      status: {
+        formProps: {
+          list: [
+            {
+              id: 'pending',
+              name: text`project_status_pending`,
+            },
+            {
+              id: 'in_progress',
+              name: text`project_status_in_progress`,
+            },
+            {
+              id: 'completed',
+              name: text`project_status_completed`,
+            },
+          ],
+        },
+        component: FormDropdown,
+        label: text`status`,
+        required: true,
+      },
+      customer_id: {
+        formProps: {
+          list: customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || [],
+        },
+        component: FormDropdown,
+        label: text`customer`,
+        required: true,
+      },
+      employee_id: {
+        formProps: {
+          list: (
+            employees.list?.sort((e1, e2) => e1.name > e2.name ? 1 : -1) || []
+          ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` })),
+        },
+        component: FormDropdown,
+        label: text`employee`,
+      },
+      start_date: {
+        component: FormDate,
+        label: text`start_date`,
+        required: true,
+      },
+      end_date: {
+        component: FormDate,
+        label: text`end_date`,
+        required: true,
+      },
+    }
+  )
+}
 const ProjectsListPage = () => {
   const { text } = useLocalization();
   const projects = use.projects();
   const employees = use.employees();
   const customers = use.customers();
   const roles = use.roles();
+  const projectStatus = useProjectStatus();
+  const projectFormFields = useProjectFormFields();
 
   useEffect(() => {
     projects.getList();
@@ -29,7 +107,6 @@ const ProjectsListPage = () => {
     customers.getList();
     roles.getList();
   }, []);
-  console.log('projects', projects.list);
 
   return (
     <Container className='container-list'>
@@ -39,60 +116,12 @@ const ProjectsListPage = () => {
           initialState={{
             name: '',
             status: 'pending',
+            start_date: new Date().toISOString().split('T')[0],
+            end_date: new Date().toISOString().split('T')[0],
           }}
           createModalTitle={text`create_new_project`}
           editModalTitle={text`edit_project`}
-          formFields={{
-            name: {
-              label: text`name`,
-              required: true,
-            },
-            amount: {
-              label: text`amount`,
-              required: true,
-              formProps: {
-                type: 'number',
-              },
-            },
-            status: {
-              formProps: {
-                list: [
-                  {
-                    id: 'pending',
-                    name: text`project_status_pending`,
-                  },
-                  {
-                    id: 'in_progress',
-                    name: text`project_status_in_progress`,
-                  },
-                  {
-                    id: 'completed',
-                    name: text`project_status_completed`,
-                  },
-                ],
-              },
-              component: FormDropdown,
-              label: text`status`,
-              required: true,
-            },
-            customer_id: {
-              formProps: {
-                list: customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || [],
-              },
-              component: FormDropdown,
-              label: text`customer`,
-              required: true,
-            },
-            employee_id: {
-              formProps: {
-                list: (
-                  employees.list?.sort((e1, e2) => e1.name > e2.name ? 1 : -1) || []
-                ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` })),
-              },
-              component: FormDropdown,
-              label: text`employee`,
-            },
-          }}
+          formFields={projectFormFields}
           onCreate={(project, closeModal: () => void) => {
             projects.create(project, { callback: () => closeModal()});
           }}
@@ -102,7 +131,6 @@ const ProjectsListPage = () => {
         >
           <DataTable
             orderByDefault='order'
-            showEditModalOnClickRow
             showHeader={{
               search: true,
               numberOfRows: true,
@@ -131,18 +159,7 @@ const ProjectsListPage = () => {
               },
               {
                 name: text`status`,
-                selector: ({ status }: Project) => {
-                  switch (status) {
-                    case 'pending':
-                      return text`project_status_pending`;
-                    case 'in_progress':
-                      return text`project_status_in_progress`;
-                    case 'completed':
-                      return text`project_status_completed`;
-                    default:
-                      return status;
-                  }
-                },
+                selector: (project) => projectStatus(project),
                 orderBy: 'status',
               },
               {
@@ -190,13 +207,19 @@ const ProjectsListPage = () => {
               {
                 name: text`actions`,
                 selector: (project) => (
-                  <DeleteConfirmButton
-                    loading={projects.delete.isLoading && projects.delete.id === project.id}
-                    modalTitle={text`delete_project${project.name}`}
-                    onDelete={() => {
-                      projects.delete(project);
-                    }}
-                  />
+                  <>
+                    <FormEditModalButton
+                      state={project}
+                      title={text`edit_project`}
+                    />
+                    <DeleteConfirmButton
+                      loading={projects.delete.isLoading && projects.delete.id === project.id}
+                      modalTitle={text`delete_project${project.name}`}
+                      onDelete={() => {
+                        projects.delete(project);
+                      }}
+                    />
+                  </>
                 )
               }
             ]}
