@@ -14,6 +14,11 @@ import localization from './localization/localization';
 import BrowserRouter from "./router";
 import { setToastMessage } from './stores/crudRegistry';
 
+function clearMockStorage(key = 'mock-db') {
+  localStorage.removeItem(key);
+  location.reload();
+}
+
 const SetToastMessageOnChangeLanguage = () => {
   const { lang, text } = useLocalization()
 

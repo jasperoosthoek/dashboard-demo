@@ -1,18 +1,27 @@
 import { factory } from '@mswjs/data';
 
-import { seedDatabase } from './db';
+import { seedDatabase, persistToLocalStorage, loadFromLocalStorage } from './db';
 import { createRestHandlers } from './createRestHandlers';
-import { schema, } from './schema'
-import mockData from './mockData';
+import { schema } from './schema'
+import mockData, { localStorageKey } from './mockData';
 
 export const db = factory(schema);
 
-seedDatabase(
-  db,
-  schema,
-  mockData,
-);
 
+
+
+const raw = localStorage.getItem(localStorageKey);
+if (!raw) {
+
+  seedDatabase(
+    db,
+    schema,
+    mockData,
+  );
+  persistToLocalStorage(db, localStorageKey); 
+} else {
+  loadFromLocalStorage(db, schema, mockData, localStorageKey);
+}
 type EntityMap<S extends Record<string, any>> = {
   [K in keyof S]: S[K];
 };

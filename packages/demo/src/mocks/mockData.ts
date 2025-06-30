@@ -707,3 +707,5 @@ const mockData: Record<keyof Schema, any[]> = {
 };
 
 export default mockData;
+
+export const localStorageKey = 'mock-db';

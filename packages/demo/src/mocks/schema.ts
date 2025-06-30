@@ -1,6 +1,10 @@
 import { primaryKey, oneOf } from '@mswjs/data';
 
 export const schema = {
+  role: {
+    id: primaryKey(Number),
+    name: String,
+  },
 
   employee: {
     id: primaryKey(Number),
@@ -10,11 +14,6 @@ export const schema = {
     order: Number,
     department: String,
     active: Boolean,
-  },
-
-  role: {
-    id: primaryKey(Number),
-    name: String,
   },
 
   customer: {
@@ -43,6 +42,14 @@ export const schema = {
     project: oneOf('project'),
   },
 
+  note: {
+    id: primaryKey(Number),
+    content: String,
+    author: oneOf('employee'),
+    related_customer: oneOf('customer'),
+    created_at: String,
+  },
+
   task: {
     id: primaryKey(Number),
     title: String,
@@ -52,14 +59,6 @@ export const schema = {
     status: String,
     due_date: String,
     priority: String,
-  },
-
-  note: {
-    id: primaryKey(Number),
-    content: String,
-    author: oneOf('employee'),
-    related_customer: oneOf('customer'),
-    created_at: String,
   },
 };
 

@@ -57,7 +57,7 @@ export const  useTaskFormFields = () => {
       required: true,
     },
     description: {
-      label: text`description',`,
+      label: text`description`,
       component: FormTextArea,
       required: true,
     },

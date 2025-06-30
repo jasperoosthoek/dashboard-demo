@@ -2,6 +2,8 @@ import { http, HttpResponse } from 'msw';
 import type { HttpHandler } from 'msw';
 import type { factory } from '@mswjs/data';
 
+import { persistToLocalStorage } from './db';
+import { localStorageKey } from './mockData';
 
 
 
@@ -77,6 +79,8 @@ export function createRestHandlers<
 
       record[key] = value;
     }
+    
+    persistToLocalStorage(db, localStorageKey); 
     return record;
   }
 
@@ -95,6 +99,8 @@ export function createRestHandlers<
 
       const record =  updateRecord({ id }, data);
       const created = db[entity].create(record);
+      persistToLocalStorage(db, localStorageKey); 
+
       return HttpResponse.json(serializeRelations(created), { status: 201 });
     }),
 
@@ -107,6 +113,8 @@ export function createRestHandlers<
         where: { id: { equals: id } } as any,
         data,
       });
+      persistToLocalStorage(db, localStorageKey); 
+
       return HttpResponse.json(serializeRelations(result));
     }),
 
@@ -119,6 +127,8 @@ export function createRestHandlers<
       if (deleted && onDelete) onDelete(deleted as any);
 
       db[entity].delete({ where: { id: { equals: id } } } as any);
+      persistToLocalStorage(db, localStorageKey); 
+
       return new HttpResponse(null, { status: 204 });
     }),
   ];
