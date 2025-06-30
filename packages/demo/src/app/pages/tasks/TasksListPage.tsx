@@ -20,6 +20,17 @@ import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesListPage';
 
+export const useTaskStatusText = () => {
+  const { text } = useLocalization(); 
+  const taskStatusTexts = (
+    {
+      todo: text`task_status_todo`,
+      in_progress: text`task_status_in_progress`,
+      done: text`task_status_done`,
+    }
+  )
+  return ({ status }: Task) => taskStatusTexts[status] || '';
+}
 
 export const useTaskStatus = () => {
   const { text } = useLocalization(); 
@@ -185,6 +196,7 @@ const TasksListPage = () => {
   const projects = use.projects();
   const taskFormFields = useTaskFormFields();
   const taskColumns = useTaskColumns({ includeProject: true });
+  const taskStatusText = useTaskStatusText();
 
   useEffect(() => {
     tasks.getList();
@@ -227,7 +239,13 @@ const TasksListPage = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={({ title }: Task) => `${title}`}
+            filterColumn={[
+              'title',
+              'status',
+              ({ assigned_to_id }: Task) => employees.record[assigned_to_id]?.name || '',
+              ({ related_project_id }: Task) => projects.record[related_project_id]?.name || '',
+              (task: Task) => taskStatusText(task) || '',
+            ] as (keyof Task | ((row: Task) => string))[]}
             columns={taskColumns}
             data={tasks.list}
           />
