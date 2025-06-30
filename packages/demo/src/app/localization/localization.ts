@@ -52,6 +52,7 @@ const localization = combineLocalization(
       company: 'Bedrijf',
       contact: 'Contactpersoon',
       email: 'E-mail',
+      description: 'Beschrijving',
       invoice_status_open: 'Open',
       invoice_status_paid: 'Betaald',
 
@@ -59,6 +60,10 @@ const localization = combineLocalization(
       task_status_todo: 'Te doen',
       task_status_in_progress: 'Bezig',
       task_status_done: 'Gedaan',
+      create_new_task: 'Nieuwe taak aanmaken',
+      edit_task: 'Taak bewerken',
+      delete_task: (title) => `Taak "${title}" verwijderen?`,
+      assigned_to_employee: 'Toegewezen aan medewerker',
 
       link_quotations: 'Offertes',
       link_notes: 'Notities',
@@ -110,6 +115,7 @@ const localization = combineLocalization(
       company: 'Company',
       contact: 'Contact',
       email: 'Email',
+      description: 'Description',
       invoice_status_open: 'Open',
       invoice_status_paid: 'Paid',
 
@@ -117,6 +123,10 @@ const localization = combineLocalization(
       task_status_todo: 'To do',
       task_status_in_progress: 'In progress',
       task_status_done: 'Done',
+      create_new_task: 'Create new task',
+      edit_task: 'Edit task',
+      delete_task: (title) => `Delete task "${title}"?`,
+      assigned_to_employee: 'Assigned to employee',
 
       link_quotations: 'Quotations',
       link_notes: 'Notes',
@@ -168,6 +178,7 @@ const localization = combineLocalization(
       company: 'Entreprise',
       contact: 'Contact',
       email: 'Email',
+      description: 'Description',
       invoice_status_open: 'Ouverte',
       invoice_status_paid: 'Payée',
 
@@ -175,6 +186,10 @@ const localization = combineLocalization(
       task_status_todo: 'À faire',
       task_status_in_progress: 'En cours',
       task_status_done: 'Terminé',
+      create_new_task: 'Créer une nouvelle tâche',
+      edit_task: 'Modifier la tâche',
+      delete_task: (title) => `Supprimer la tâche "${title}" ?`,
+      assigned_to_employee: 'Assigné à un employé',
 
       link_quotations: 'Devis',
       link_notes: 'Notes',

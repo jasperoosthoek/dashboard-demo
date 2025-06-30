@@ -14,6 +14,21 @@ import { Employee } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 
+// Returns a list of employees with their roles formatted for display in a form
+// This is used in the FormModalProvider to populate dropdowns or lists
+// It sorts employees by name and appends the role name to each employee's name
+export const useEmployeeFormList = () => {
+  const employees = use.employees();
+  const roles = use.roles();
+  if (!employees.list || !roles.record) {
+    return null;
+  }
+
+  return (
+      employees.list?.sort((e1, e2) => e1.name > e2.name ? 1 : -1) || []
+    ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` }))
+}
+
 const EmployeesListPage = () => {
   const { text } = useLocalization();
   const employees = use.employees();

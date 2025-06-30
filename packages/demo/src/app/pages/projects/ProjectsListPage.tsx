@@ -18,14 +18,16 @@ import { use } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectStatus } from './ProjectPage';
-
+import { useEmployeeFormList } from '../employees/EmployeesListPage';
 
 export const useProjectFormFields = () => {  
   const employees = use.employees();
   const roles = use.roles();
   const customers = use.customers();
   const { text } = useLocalization();
-  if (!employees.list || !roles.record || !customers.list) {
+  const employeeList = useEmployeeFormList();
+
+  if (!employees.list || !roles.record || !customers.list || !employeeList) {
     return null;
   }
   return (
@@ -72,9 +74,7 @@ export const useProjectFormFields = () => {
       },
       employee_id: {
         formProps: {
-          list: (
-            employees.list?.sort((e1, e2) => e1.name > e2.name ? 1 : -1) || []
-          ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` })),
+          list: employeeList,
         },
         component: FormDropdown,
         label: text`employee`,
