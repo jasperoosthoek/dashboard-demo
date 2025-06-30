@@ -6,6 +6,7 @@ import EmployeesListPage from "./pages/employees/EmployeesListPage";
 import RolesPage from "./pages/employees/RolesPage";
 import ProjectsListPage from "./pages/projects/ProjectsListPage";
 import ProjectPage from "./pages/projects/ProjectPage";
+import TasksListPage from "./pages/tasks/TasksListPage";
 import NoMatchPage from "./pages/NoMatchPage";
 import { useLocalization } from '@jasperoosthoek/react-toolbox';
 
@@ -56,7 +57,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesListPage,
+          Component: TasksListPage,
         },
       ],
     },
@@ -67,7 +68,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesListPage,
+          Component: () => <div>{text`link_quotations`}</div>,
         },
       ],
     },
@@ -78,7 +79,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesListPage,
+          Component: () => <div>{text`link_notes`}</div>,
         },
       ],
     },

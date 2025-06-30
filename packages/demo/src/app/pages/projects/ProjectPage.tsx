@@ -19,7 +19,7 @@ import { use } from '../../stores/crudRegistry'
 import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsListPage';
-import { useEmployeeFormList } from '../employees/EmployeesListPage';
+import {useTaskColumns, useTaskFormFields } from '../tasks/TasksListPage';
 
 export const useProjectStatus = () => {
   const { text } = useLocalization(); 
@@ -35,19 +35,6 @@ export const useProjectStatus = () => {
   );
 }
 
-export const useTaskStatus = () => {
-  const { text } = useLocalization(); 
-  return (
-    ({ status }: Task) => {
-      switch (status) {
-        case 'todo': return <Badge bg='secondary'>{text`task_status_todo`}</Badge>
-        case 'in_progress': return <Badge bg='warning'>{text`task_status_in_progress`}</Badge>
-        case 'done': return <Badge bg='success'>{text`task_status_done`}</Badge>
-        default: return status;
-      }
-    }
-  );
-}
 export const useInvoiceStatus = () => {
   const { text } = useLocalization(); 
   return (
@@ -61,79 +48,6 @@ export const useInvoiceStatus = () => {
   );
 }
 
-// priority
-// : 
-// ""
-// related_project_id
-// : 
-// 1
-// status
-// : 
-// "in_progress"
-// title
-// : 
-// "Implement feedback"
-
-export const  useTaskFormFields = () => {
-  const { text } = useLocalization();
-  
-  const projects = use.projects();
-  const employees = use.employees();
-  const customers = use.customers();
-  const tasks = use.tasks();
-  const invoices = use.invoices();
-  const projectStatus = useProjectStatus();
-  const taskStatus = useTaskStatus();
-  const invoiceStatus = useInvoiceStatus();
-  const employeeList = useEmployeeFormList();
-
-  return {
-    title: {
-      label: text`title`,
-      required: true,
-    },
-    description: {
-      label: text`description',`,
-      component: FormTextArea,
-      required: true,
-    },
-    status: {
-      formProps: {
-        list: [
-          {
-            id: 'todo',
-            name: text`task_status_todo`,
-          },
-          {
-            id: 'in_progress',
-            name: text`task_status_in_progress`,
-          },
-          {
-            id: 'done',
-            name: text`task_status_done`,
-          },
-        ],
-      },
-      component: FormDropdown,
-      label: text`status`,
-      required: true,
-    },
-    due_date: {
-      component: FormDate,
-      label: text`due_date`,
-      required: true,
-    },
-    assigned_to_id: {
-      formProps: {
-        list: employeeList,
-      },
-      component: FormDropdown,
-      label: text`assigned_to_employee`,
-      required: true,
-    },
-  };
-}
-
 const ProjectsListPage = () => {
   const { text } = useLocalization();
   const projects = use.projects();
@@ -142,10 +56,10 @@ const ProjectsListPage = () => {
   const tasks = use.tasks();
   const invoices = use.invoices();
   const projectStatus = useProjectStatus();
-  const taskStatus = useTaskStatus();
   const invoiceStatus = useInvoiceStatus();
   const projectFormFields = useProjectFormFields();
   const taskFormFields = useTaskFormFields();
+  const taskColumns = useTaskColumns();
 
   useEffect(() => {
     projects.getList();
@@ -229,45 +143,7 @@ const ProjectsListPage = () => {
                     <DataTable
                       showHeader={false}
                       orderByDefault='order'
-                      columns={[
-                        {
-                          name: text`title`,
-                          selector: ({ title, description }: Task) => (
-                            <div title={description}>
-                              {title}
-                            </div>
-                          ),
-                          orderBy: 'title',
-                        },
-                        {
-                          name: text`status`,
-                          selector: (task: Task) => taskStatus(task),
-                          orderBy: 'status',
-                        },
-                        {
-                          name: text`due_date`,
-                          selector: ({ due_date }: Task) => formatDate(due_date),
-                          orderBy: 'due_date',
-                        },
-                        {
-                          name: text`actions`,
-                          selector: (task) => (
-                            <>
-                              <FormEditModalButton
-                                state={task}
-                                title={text`edit_task`}
-                              />
-                              <DeleteConfirmButton
-                                loading={tasks.delete.isLoading && tasks.delete.id === task.id}
-                                modalTitle={text`delete_task${task.title}`}
-                                onDelete={() => {
-                                  tasks.delete(task);
-                                }}
-                              />
-                            </>
-                          )
-                        }
-                      ]}
+                      columns={taskColumns}
                       data={tasks.list.filter(({ related_project_id }) => related_project_id === project.id)}
                     />
                   </Card.Body>

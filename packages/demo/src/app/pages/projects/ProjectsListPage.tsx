@@ -13,7 +13,7 @@ import {
   FormDate,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Employee, Project } from '../../stores/types';
+import { Task, Project } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
@@ -92,6 +92,7 @@ export const useProjectFormFields = () => {
     }
   )
 }
+
 const ProjectsListPage = () => {
   const { text } = useLocalization();
   const projects = use.projects();

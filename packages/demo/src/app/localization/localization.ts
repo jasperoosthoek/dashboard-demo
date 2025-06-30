@@ -40,7 +40,8 @@ const localization = combineLocalization(
       project_status_pending: 'In afwachting',
       project_status_in_progress: 'Bezig',
       project_status_completed: 'Voltooid',
-
+      project: 'Project',
+      
       budget: 'Budget',
       project_info: 'Projectinformatie',
       linked_tasks: 'Gekoppelde taken',
@@ -103,6 +104,7 @@ const localization = combineLocalization(
       project_status_pending: 'Pending',
       project_status_in_progress: 'In progress',
       project_status_completed: 'Completed',
+      project: 'Project',
 
       budget: 'Budget',
       project_info: 'Project info',
@@ -166,6 +168,7 @@ const localization = combineLocalization(
       project_status_pending: 'En attente',
       project_status_in_progress: 'En cours',
       project_status_completed: 'Terminé',
+      project: 'Projet',
 
       budget: 'Budget',
       project_info: 'Infos projet',

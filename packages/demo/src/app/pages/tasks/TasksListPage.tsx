@@ -1,0 +1,241 @@
+import { useState, useEffect } from 'react';
+import { Container, Badge } from 'react-bootstrap';
+import { Link } from 'react-router';
+import {
+  DataTable,
+  FormCreateModalButton,
+  FormEditModalButton,
+  FormModalProvider,
+  useLocalization,
+  FormTextArea,
+  SmallSpinner,
+  FormDropdown,
+  FormDate,
+  DeleteConfirmButton,
+} from '@jasperoosthoek/react-toolbox';
+
+import { Employee, Task } from '../../stores/types';
+import { use } from '../../stores/crudRegistry'
+import { formatCurrency, formatDate } from '../../localization/localization';
+import NotFound from '../../components/NotFound';
+import { useEmployeeFormList } from '../employees/EmployeesListPage';
+
+
+export const useTaskStatus = () => {
+  const { text } = useLocalization(); 
+  return (
+    ({ status }: Task) => {
+      switch (status) {
+        case 'todo': return <Badge bg='secondary'>{text`task_status_todo`}</Badge>
+        case 'in_progress': return <Badge bg='warning'>{text`task_status_in_progress`}</Badge>
+        case 'done': return <Badge bg='success'>{text`task_status_done`}</Badge>
+        default: return status;
+      }
+    }
+  );
+}
+
+export const  useTaskFormFields = () => {
+  const { text } = useLocalization();
+  const employeeList = useEmployeeFormList();
+  const projects = use.projects()
+
+  return {
+    title: {
+      label: text`title`,
+      required: true,
+    },
+    description: {
+      label: text`description',`,
+      component: FormTextArea,
+      required: true,
+    },
+    status: {
+      formProps: {
+        list: [
+          {
+            id: 'todo',
+            name: text`task_status_todo`,
+          },
+          {
+            id: 'in_progress',
+            name: text`task_status_in_progress`,
+          },
+          {
+            id: 'done',
+            name: text`task_status_done`,
+          },
+        ],
+      },
+      component: FormDropdown,
+      label: text`status`,
+      required: true,
+    },
+    due_date: {
+      component: FormDate,
+      label: text`due_date`,
+      required: true,
+    },
+    related_project_id: {
+      formProps: {
+        list: projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || [],
+      },
+      component: FormDropdown,
+      label: text`project`,
+    },
+    assigned_to_id: {
+      formProps: {
+        list: employeeList,
+      },
+      component: FormDropdown,
+      label: text`assigned_to_employee`,
+      required: true,
+    },
+  };
+}
+
+export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } = {}) => {
+  const { text } = useLocalization();
+  const employees = use.employees();
+  const tasks = use.tasks();
+  const taskStatus = useTaskStatus();
+    const projects = use.projects();
+  
+  if (!tasks.list || !employees.record || !projects.record) {
+    return [];
+  }
+  return (
+    [
+      {
+        name: text`title`,
+        selector: ({ title, description }: Task) => (
+          <div title={description}>
+            {title}
+          </div>
+        ),
+        orderBy: 'title',
+      },
+      {
+        name: text`status`,
+        selector: (task: Task) => taskStatus(task),
+        orderBy: 'status',
+      },
+      {
+        name: text`assigned_to_employee`,
+        selector: ({ assigned_to_id }: Task) => {
+          const employee = employees.record[assigned_to_id];
+          return (
+            employee
+              ? <div title={`${employee?.name} (${employee?.email})`}>
+                  {employee?.name}
+                </div>
+              : <NotFound />
+          );
+        },
+        orderBy: 'assigned_to_id',
+      },
+      {
+        name: text`due_date`,
+        selector: ({ due_date }: Task) => formatDate(due_date),
+        orderBy: 'due_date',
+      },
+      ...includeProject ? [
+        {
+          name: text`project`,
+          selector: ({ related_project_id }: Task) => {
+            const project = projects.record[related_project_id];
+            return (
+              project
+                ? <Link to={`/projects/${project.id}`}>
+                    {project.name}
+                  </Link>
+                : <NotFound />
+            );
+          },
+          orderBy: 'related_project_id',
+        }
+      ] : [],
+      {
+        name: text`actions`,
+        selector: (task: Task) => (
+          <>
+            <FormEditModalButton
+              state={task}
+              title={text`edit_task`}
+            />
+            <DeleteConfirmButton
+              loading={tasks.delete.isLoading && tasks.delete.id === task.id}
+              modalTitle={text`delete_task${task.title}`}
+              onDelete={() => {
+                tasks.delete(task);
+              }}
+            />
+          </>
+        )
+      }
+    ]
+  )
+}
+const TasksListPage = () => {
+  const { text } = useLocalization();
+  const tasks = use.tasks();
+  const employees = use.employees();
+  const customers = use.customers();
+  const roles = use.roles();
+  const projects = use.projects();
+  const taskFormFields = useTaskFormFields();
+  const taskColumns = useTaskColumns({ includeProject: true });
+
+  useEffect(() => {
+    tasks.getList();
+    employees.getList();
+    customers.getList();
+    projects.getList();
+    roles.getList();
+  }, []);
+
+  return (
+    <Container className='container-list'>
+      {(!tasks.list || !customers.list || !employees.list || !roles.record)? <SmallSpinner /> : 
+        <FormModalProvider
+          loading={tasks.create.isLoading || tasks.update.isLoading}
+          initialState={{
+            name: '',
+            status: 'pending',
+            start_date: new Date().toISOString().split('T')[0],
+            end_date: new Date().toISOString().split('T')[0],
+          }}
+          createModalTitle={text`create_new_task`}
+          editModalTitle={text`edit_task`}
+          formFields={taskFormFields}
+          onCreate={(task, closeModal: () => void) => {
+            tasks.create(task, { callback: () => closeModal()});
+          }}
+          onUpdate={(task, closeModal: () => void) => {
+            tasks.update(task, { callback: () => closeModal()});
+          }}
+        >
+          <DataTable
+            orderByDefault='order'
+            showHeader={{
+              search: true,
+              numberOfRows: true,
+              pagination: true,
+              customHeader: (
+                <FormCreateModalButton>
+                  {text`create_new_task`}
+                </FormCreateModalButton> 
+              )
+            }}
+            filterColumn={({ title }: Task) => `${title}`}
+            columns={taskColumns}
+            data={tasks.list}
+          />
+        </FormModalProvider>
+      }
+
+    </Container>
+  )
+}
+
+export default TasksListPage;
