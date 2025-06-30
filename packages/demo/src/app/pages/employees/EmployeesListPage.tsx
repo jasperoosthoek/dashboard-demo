@@ -10,7 +10,7 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Employee } from '../../stores/types';
+import { Employee, Role } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 
@@ -95,7 +95,11 @@ const EmployeesListPage = () => {
               )
             }}
             showEditModalOnClickRow
-            filterColumn={({ name, email}: Employee) => `${name} ${email}`}
+            filterColumn={[
+              'name',
+              'email',
+              ({ role_id }: Employee) => roles.record[role_id]?.name || '',
+            ]}
             columns={[
               {
                 // Display column name

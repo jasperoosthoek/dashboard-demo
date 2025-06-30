@@ -245,7 +245,7 @@ const TasksListPage = () => {
               ({ assigned_to_id }: Task) => employees.record[assigned_to_id]?.name || '',
               ({ related_project_id }: Task) => projects.record[related_project_id]?.name || '',
               (task: Task) => taskStatusText(task) || '',
-            ] as (keyof Task | ((row: Task) => string))[]}
+            ]}
             columns={taskColumns}
             data={tasks.list}
           />

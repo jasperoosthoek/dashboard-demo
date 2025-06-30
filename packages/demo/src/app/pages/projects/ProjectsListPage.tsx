@@ -17,7 +17,7 @@ import { Task, Project } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
-import { useProjectStatus } from './ProjectPage';
+import { useProjectStatus, useProjectStatusText } from './ProjectPage';
 import { useEmployeeFormList } from '../employees/EmployeesListPage';
 
 export const useProjectFormFields = () => {  
@@ -101,6 +101,7 @@ const ProjectsListPage = () => {
   const roles = use.roles();
   const projectStatus = useProjectStatus();
   const projectFormFields = useProjectFormFields();
+  const projectStatusText = useProjectStatusText();
 
   useEffect(() => {
     projects.getList();
@@ -142,7 +143,13 @@ const ProjectsListPage = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={({ name }: Project) => `${name}`}
+            filterColumn={[
+              'name',
+              'amount',
+              (project: Project) => projectStatusText(project),
+              ({ customer_id }: Project) => customers.record[customer_id]?.name || '',
+              ({ employee_id }: Project) => employees.record[employee_id]?.name || '',
+            ]}
             columns={[
               {
                 name: text`name`,

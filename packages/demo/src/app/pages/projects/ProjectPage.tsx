@@ -21,6 +21,19 @@ import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsListPage';
 import {useTaskColumns, useTaskFormFields } from '../tasks/TasksListPage';
 
+
+export const useProjectStatusText = () => {
+  const { text } = useLocalization(); 
+  const projectStatusTexts = (
+    {
+      pending: text`project_status_pending`,
+      in_progress: text`project_status_in_progress`,
+      completed: text`project_status_completed`,
+    }
+  )
+  return ({ status }: Project) => projectStatusTexts[status] || '';
+}
+
 export const useProjectStatus = () => {
   const { text } = useLocalization(); 
   return (
