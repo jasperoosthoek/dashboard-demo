@@ -36,7 +36,7 @@ export type Invoice = {
   id: number;
   due_date: string;
   amount: number;
-  status: string;
+  status: 'open' | 'paid';
   project_id: number;
 };
 

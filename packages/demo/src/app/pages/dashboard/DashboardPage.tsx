@@ -16,7 +16,6 @@ const DashboardPage = () => {
   const customers = use.customers();
   useGetListOnMount(employees, customers)
   
-  const CreateUserButton = () => <FormCreateModalButton title='Create new user'/>
   return (
     <Container className='container-list'>
         Dashboard

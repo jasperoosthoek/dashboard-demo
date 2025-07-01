@@ -105,7 +105,10 @@ const s = {
     'invoices',
     {
       ...defaultConfig,
-      route: '/invoices'
+      route: '/invoices',
+      state: {
+        filterStatus: 'all' as 'all' | Invoice['status'],
+      },
     },
   ),
   notes: getOrCreateStore(

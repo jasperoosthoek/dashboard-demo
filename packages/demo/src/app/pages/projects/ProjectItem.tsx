@@ -20,7 +20,7 @@ import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsList';
 import {useTaskColumns, useTaskFormFields } from '../tasks/TasksList';
-
+import { useInvoiceStatus } from '../invoices/InvoicesList';
 
 export const useProjectStatusText = () => {
   const { text } = useLocalization(); 
@@ -48,19 +48,6 @@ export const useProjectStatus = () => {
   );
 }
 
-export const useInvoiceStatus = () => {
-  const { text } = useLocalization(); 
-  return (
-    ({ status }: Invoice) => {
-      switch (status) {
-        case 'open': return <Badge bg='danger'>{text`invoice_status_open`}</Badge>
-        case 'paid': return <Badge bg='success'>{text`invoice_status_paid`}</Badge>
-        default: return status;
-      }
-    }
-  );
-}
-
 const ProjectsList = () => {
   const { text } = useLocalization();
   const projects = use.projects();
@@ -68,12 +55,12 @@ const ProjectsList = () => {
   const customers = use.customers();
   const tasks = use.tasks();
   const invoices = use.invoices();
+  useGetListOnMount(projects, employees, customers, tasks, invoices)
   const projectStatus = useProjectStatus();
   const invoiceStatus = useInvoiceStatus();
   const projectFormFields = useProjectFormFields();
   const taskFormFields = useTaskFormFields();
   const taskColumns = useTaskColumns();
-  useGetListOnMount(projects, employees, customers, tasks, invoices)
 
 
   const { id } = useParams<{ id: string }>();

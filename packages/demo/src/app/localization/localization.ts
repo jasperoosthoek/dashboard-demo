@@ -67,6 +67,10 @@ const localization = combineLocalization(
       assigned_to_employee: 'Toegewezen aan medewerker',
 
       link_invoices: 'Facturen',
+      create_new_invoice: 'Nieuwe factuur aanmaken',
+      edit_invoice: 'Factuur bewerken',
+      delete_invoice: (id) => `Factuur #${id} verwijderen?`,
+      
       link_notes: 'Notities',
     },
     en: {
@@ -131,6 +135,10 @@ const localization = combineLocalization(
       assigned_to_employee: 'Assigned to employee',
 
       link_invoices: 'Invoices',
+      create_new_invoice: 'Create new invoice',
+      edit_invoice: 'Edit invoice',
+      delete_invoice: (id) => `Delete invoice #${id}?`,
+
       link_notes: 'Notes',
     },
     fr: {
@@ -195,6 +203,10 @@ const localization = combineLocalization(
       assigned_to_employee: 'Assigné à un employé',
 
       link_invoices: 'Factures',
+      create_new_invoice: 'Créer une nouvelle facture',
+      edit_invoice: 'Modifier la facture',
+      delete_invoice: (id) => `Supprimer la facture n°${id} ?`,
+
       link_notes: 'Notes',
     }
   }

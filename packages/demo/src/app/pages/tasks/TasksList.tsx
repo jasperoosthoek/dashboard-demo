@@ -12,11 +12,12 @@ import {
   FormDropdown,
   FormDate,
   DeleteConfirmButton,
+  FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Employee, Task } from '../../stores/types';
+import { Project, Task } from '../../stores/types';
 import { use, useGetListOnMount } from '../../stores/crudRegistry'
-import { formatCurrency, formatDate } from '../../localization/localization';
+import { formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
 
@@ -46,7 +47,7 @@ export const useTaskStatus = () => {
   );
 }
 
-export const  useTaskFormFields = () => {
+export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolean } = {}) => {
   const { text } = useLocalization();
   const employeeList = useEmployeeFormList();
   const projects = use.projects()
@@ -87,13 +88,20 @@ export const  useTaskFormFields = () => {
       label: text`due_date`,
       required: true,
     },
-    related_project_id: {
-      formProps: {
-        list: projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || [],
-      },
-      component: FormDropdown,
-      label: text`project`,
-    },
+    
+    ...includeProject
+      ? {
+          related_project_id: {
+            formProps: {
+              list: projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || [],
+              // Disable changing project when already saved i.e. project has an id
+              disabled: ({ state: project }) => !!project.id,
+            } as FormDropdownProps<Project>,
+            component: FormDropdown,
+            label: text`project`,
+          },
+        }
+      : {},
     assigned_to_id: {
       formProps: {
         list: employeeList,

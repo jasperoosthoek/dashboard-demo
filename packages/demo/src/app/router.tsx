@@ -1,13 +1,14 @@
-import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from "react-router";
+import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from 'react-router';
 
-import Dashboard from "./components/Dashboard";
-import DashboardPage from "./pages/dashboard/DashboardPage";
-import EmployeesList from "./pages/employees/EmployeesList";
-import RolesPage from "./pages/employees/RolesList";
-import ProjectsList from "./pages/projects/ProjectsList";
-import ProjectItem from "./pages/projects/ProjectItem";
-import TasksList from "./pages/tasks/TasksList";
-import NoMatchPage from "./pages/NoMatchPage";
+import Dashboard from './components/Dashboard';
+import DashboardPage from './pages/dashboard/DashboardPage';
+import EmployeesList from './pages/employees/EmployeesList';
+import RolesPage from './pages/employees/RolesList';
+import ProjectsList from './pages/projects/ProjectsList';
+import ProjectItem from './pages/projects/ProjectItem';
+import TasksList from './pages/tasks/TasksList';
+import InvoiceList from './pages/invoices/InvoicesList';
+import NoMatchPage from './pages/NoMatchPage';
 import { useLocalization } from '@jasperoosthoek/react-toolbox';
 
 export type RouteDef = RouteObject & {
@@ -20,7 +21,7 @@ export const useNavRoutes = () => {
 
   return [
     {
-      path: "employees",
+      path: 'employees',
       title: text`link_employees`,
       Component: Outlet,
       children: [
@@ -29,14 +30,14 @@ export const useNavRoutes = () => {
           Component: EmployeesList,
         },
         {
-          path: "roles",
+          path: 'roles',
           Component: RolesPage,
           title: text`link_roles`,
         },
       ],
     },
     {
-      path: "projects",
+      path: 'projects',
       title: text`link_projects`,
       Component: Outlet,
       children: [
@@ -45,13 +46,13 @@ export const useNavRoutes = () => {
           Component: ProjectsList,
         },
         {
-          path: ":id",
+          path: ':id',
           Component: ProjectItem,
         },
       ],
     },
     {
-      path: "tasks",
+      path: 'tasks',
       title: text`link_tasks`,
       Component: Outlet,
       children: [
@@ -62,18 +63,18 @@ export const useNavRoutes = () => {
       ],
     },
     {
-      path: "invoices",
+      path: 'invoices',
       title: text`link_invoices`,
       Component: Outlet,
       children: [
         {
           index: true,
-          Component: () => <div>{text`link_invoices`}</div>,
+          Component: InvoiceList,
         },
       ],
     },
     {
-      path: "notes",
+      path: 'notes',
       title: text`link_notes`,
       Component: Outlet,
       children: [
@@ -91,7 +92,7 @@ const BrowserRouter = () => {
     
   const router = createBrowserRouter([
     {
-      path: "/",
+      path: '/',
       Component: Dashboard, // layout route
       children: [
         {
@@ -102,7 +103,7 @@ const BrowserRouter = () => {
       ],
     },
     {
-      path: "*",
+      path: '*',
       Component: NoMatchPage,
     },
   ]);
