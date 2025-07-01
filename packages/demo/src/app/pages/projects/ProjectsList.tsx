@@ -21,13 +21,12 @@ import { useProjectStatus, useProjectStatusText } from './ProjectItem';
 import { useEmployeeFormList } from '../employees/EmployeesList';
 
 export const useProjectFormFields = () => {  
-  const employees = use.employees();
-  const roles = use.roles();
   const customers = use.customers();
   const { text } = useLocalization();
   const employeeList = useEmployeeFormList();
+  const projectStatusText = useProjectStatusText();
 
-  if (!employees.list || !roles.record || !customers.list || !employeeList) {
+  if (!customers.list || !employeeList) {
     return null;
   }
   return (
@@ -48,15 +47,15 @@ export const useProjectFormFields = () => {
           list: [
             {
               id: 'pending',
-              name: text`project_status_pending`,
+              name: projectStatusText('pending'),
             },
             {
               id: 'in_progress',
-              name: text`project_status_in_progress`,
+              name: projectStatusText('in_progress'),
             },
             {
               id: 'completed',
-              name: text`project_status_completed`,
+              name: projectStatusText('completed'),
             },
           ],
         },
@@ -142,7 +141,7 @@ const ProjectsList = () => {
             filterColumn={[
               'name',
               'amount',
-              (project: Project) => projectStatusText(project),
+              ({ status }: Project) => projectStatusText(status),
               ({ customer_id }: Project) => customers.record[customer_id]?.name || '',
               ({ employee_id }: Project) => employees.record[employee_id]?.name || '',
             ]}

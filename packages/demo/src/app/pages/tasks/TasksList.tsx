@@ -30,7 +30,7 @@ export const useTaskStatusText = () => {
       done: text`task_status_done`,
     }
   )
-  return ({ status }: Task) => taskStatusTexts[status] || '';
+  return (status: Task['status']) => taskStatusTexts[status] || '';
 }
 
 export const useTaskStatus = () => {
@@ -51,6 +51,7 @@ export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolea
   const { text } = useLocalization();
   const employeeList = useEmployeeFormList();
   const projects = use.projects()
+  const taskStatusText = useTaskStatusText();
 
   return {
     title: {
@@ -67,15 +68,15 @@ export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolea
         list: [
           {
             id: 'todo',
-            name: text`task_status_todo`,
+            name: taskStatusText('todo'),
           },
           {
             id: 'in_progress',
-            name: text`task_status_in_progress`,
+            name: taskStatusText('in_progress'),
           },
           {
             id: 'done',
-            name: text`task_status_done`,
+            name: taskStatusText('done'),
           },
         ],
       },
@@ -245,7 +246,7 @@ const TasksList = () => {
               'status',
               ({ assigned_to_id }: Task) => employees.record[assigned_to_id]?.name || '',
               ({ related_project_id }: Task) => projects.record[related_project_id]?.name || '',
-              (task: Task) => taskStatusText(task) || '',
+              ({ status }: Task) => taskStatusText(status) || '',
             ]}
             columns={taskColumns}
             data={tasks.list}

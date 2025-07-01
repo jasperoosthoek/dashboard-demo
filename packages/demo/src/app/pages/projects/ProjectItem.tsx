@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Card, Row, Col, Badge, Table } from 'react-bootstrap';
 import { useParams } from 'react-router';
+import { addDays, format } from 'date-fns';
 import {
   FormModalProvider,
   useLocalization,
@@ -20,7 +21,7 @@ import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsList';
 import {useTaskColumns, useTaskFormFields } from '../tasks/TasksList';
-import { useInvoiceStatus } from '../invoices/InvoicesList';
+import { useInvoiceStatus, useInvoiceColumns, useInvoiceFormFields } from '../invoices/InvoicesList';
 
 export const useProjectStatusText = () => {
   const { text } = useLocalization(); 
@@ -31,7 +32,7 @@ export const useProjectStatusText = () => {
       completed: text`project_status_completed`,
     }
   )
-  return ({ status }: Project) => projectStatusTexts[status] || '';
+  return (status: Project['status']) => projectStatusTexts[status] || '';
 }
 
 export const useProjectStatus = () => {
@@ -55,27 +56,28 @@ const ProjectsList = () => {
   const customers = use.customers();
   const tasks = use.tasks();
   const invoices = use.invoices();
-  useGetListOnMount(projects, employees, customers, tasks, invoices)
+  const roles = use.roles(); // Required by projectFormFields
+  useGetListOnMount(projects, employees, customers, tasks, invoices, roles)
   const projectStatus = useProjectStatus();
-  const invoiceStatus = useInvoiceStatus();
   const projectFormFields = useProjectFormFields();
   const taskFormFields = useTaskFormFields();
   const taskColumns = useTaskColumns();
-
+  const invoiceFormFields = useInvoiceFormFields();
+  const invoiceColumns = useInvoiceColumns();
 
   const { id } = useParams<{ id: string }>();
   const project = projects.record && projects?.record[id || ''] as Project | undefined;
   const customer = customers.record && customers?.record[project?.customer_id || ''];
   return (
     <Container className='container-list mt-4'>
-      {(!projects.list || !customers.list || !employees.list || !tasks.list || !invoices.list || !projects.record)
+      {(!projects.list || !customers.list || !employees.list || !tasks.list || !invoices.list || !projectFormFields)
         ? <SmallSpinner />
         : !project 
         ? <NotFound />
         : (
             <>
               <FormModalProvider
-                initialState={project}
+                initialState={project || {}}
                 loading={projects.update.isLoading}
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
@@ -143,33 +145,42 @@ const ProjectsList = () => {
                   </Card.Body>
                 </Card>
               </FormModalProvider>
-              <Card className="mb-4">
-                <Card.Header>{text`linked_invoices`}</Card.Header>
-                <Card.Body>
-                  <Table responsive>
-                    <thead>
-                      <tr>
-                        <th>{text`invoice_id`}</th>
-                        <th>{text`amount`}</th>
-                        <th>{text`status`}</th>
-                        <th>{text`due_date`}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {invoices.list
-                        .filter(({ project_id }) => project_id === project.id)
-                        .map(invoice => (
-                          <tr key={invoice.id}>
-                            <td>#{invoice.id}</td>
-                            <td>{formatCurrency(invoice.amount)}</td>
-                            <td>{invoiceStatus(invoice)}</td>
-                            <td>{formatDate(invoice.due_date)}</td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Card>
+              
+              
+              <FormModalProvider
+                initialState={{
+                  due_date: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
+                  project_id: project.id,
+                  status: 'open',
+                }}
+                loading={invoices.create.isLoading || invoices.update.isLoading}
+                editModalTitle={text`edit_invoice`}
+                formFields={invoiceFormFields}
+                onCreate={(invoice, closeModal: () => void) => {
+                  invoices.create(invoice, { callback: () => closeModal()});
+                }}
+                onUpdate={(invoice, closeModal: () => void) => {
+                  invoices.update(invoice, { callback: () => closeModal()});
+                }}
+              >
+                <Card className="mb-4">
+                  <Card.Header>
+                    {text`linked_invoices`}
+                    
+                    <FormCreateModalButton>
+                      {/* {text`create_new_invoice`} */}
+                    </FormCreateModalButton>
+                  </Card.Header>
+                  <Card.Body>
+                    <DataTable
+                      showHeader={false}
+                      orderByDefault='order'
+                      columns={invoiceColumns}
+                      data={invoices.list.filter(({ project_id }) => project_id === project.id)}
+                    />
+                  </Card.Body>
+                </Card>
+              </FormModalProvider>
 
               <Card>
                 <Card.Header>{text`customer_info`}</Card.Header>

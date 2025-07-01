@@ -29,9 +29,9 @@ export function App() {
   return (
     <DndProvider backend={HTML5Backend}>
       <LocalizationProvider localization={localization} lang={lang}>
-        <ErrorBoundary>
+        {/* <ErrorBoundary> */}
           <BrowserRouter />
-        </ErrorBoundary>
+        {/* </ErrorBoundary> */}
         <SetToastMessageOnChangeLanguage />
         <ToastContainer hideProgressBar={true} newestOnTop={true} />
       </LocalizationProvider>

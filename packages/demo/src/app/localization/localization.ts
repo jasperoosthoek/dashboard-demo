@@ -70,7 +70,7 @@ const localization = combineLocalization(
       create_new_invoice: 'Nieuwe factuur aanmaken',
       edit_invoice: 'Factuur bewerken',
       delete_invoice: (id) => `Factuur #${id} verwijderen?`,
-      
+
       link_notes: 'Notities',
     },
     en: {
@@ -236,6 +236,6 @@ export const formatDate = (date: string, formatString: string = 'PP') => {
   }
 };
 
-export const formatCurrency = (number: number) => {
-  return `€ ${number.toLocaleString()}`;
+export const formatCurrency = (number: number | string) => {
+  return `€ ${Number(number).toLocaleString()}`;
 }

@@ -31,7 +31,7 @@ export const useInvoiceStatusText = () => {
       paid: text`invoice_status_paid`,
     }
   )
-  return ({ status }: Invoice) => invoiceStatusTexts[status] || '';
+  return (status: Invoice['status']) => invoiceStatusTexts[status] || '';
 }
 
 export const useInvoiceStatus = () => {
@@ -51,7 +51,8 @@ export const useInvoiceStatus = () => {
 export const  useInvoiceFormFields = ({ includeProject }: { includeProject?: boolean } = {}) => {
   const { text } = useLocalization();
   const projects = use.projects()
-
+  const invoiceStatusText = useInvoiceStatusText();
+  
   return {
     amount: {
       label: text`amount`,
@@ -65,11 +66,11 @@ export const  useInvoiceFormFields = ({ includeProject }: { includeProject?: boo
         list: [
           {
             id: 'open',
-            name: text`invoice_status_open`,
+            name: invoiceStatusText('open'),
           },
           {
             id: 'paid',
-            name: text`invoice_status_paid`,
+            name: invoiceStatusText('paid'),
           },
         ],
       },
@@ -227,9 +228,8 @@ const InvoiceList = () => {
             filterColumn={[
               'id',
               'amount',
-              'due_date',
               ({ project_id }: Invoice) => projects.record[project_id]?.name || '',
-              (invoice: Invoice) => invoiceStatusText(invoice) || '',
+              ({ status }: Invoice) => invoiceStatusText(status) || '',
             ]}
             columns={invoiceColumns}
             data={invoices.list.filter(inv => filterStatus === 'all' || inv.status === filterStatus)}
