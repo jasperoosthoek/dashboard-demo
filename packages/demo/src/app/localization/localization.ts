@@ -66,7 +66,7 @@ const localization = combineLocalization(
       delete_task: (title) => `Taak "${title}" verwijderen?`,
       assigned_to_employee: 'Toegewezen aan medewerker',
 
-      link_quotations: 'Offertes',
+      link_invoices: 'Facturen',
       link_notes: 'Notities',
     },
     en: {
@@ -130,7 +130,7 @@ const localization = combineLocalization(
       delete_task: (title) => `Delete task "${title}"?`,
       assigned_to_employee: 'Assigned to employee',
 
-      link_quotations: 'Quotations',
+      link_invoices: 'Invoices',
       link_notes: 'Notes',
     },
     fr: {
@@ -194,7 +194,7 @@ const localization = combineLocalization(
       delete_task: (title) => `Supprimer la tâche "${title}" ?`,
       assigned_to_employee: 'Assigné à un employé',
 
-      link_quotations: 'Devis',
+      link_invoices: 'Factures',
       link_notes: 'Notes',
     }
   }

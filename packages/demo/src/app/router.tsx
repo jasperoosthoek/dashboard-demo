@@ -2,11 +2,11 @@ import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from "r
 
 import Dashboard from "./components/Dashboard";
 import DashboardPage from "./pages/dashboard/DashboardPage";
-import EmployeesListPage from "./pages/employees/EmployeesListPage";
-import RolesPage from "./pages/employees/RolesPage";
-import ProjectsListPage from "./pages/projects/ProjectsListPage";
-import ProjectPage from "./pages/projects/ProjectPage";
-import TasksListPage from "./pages/tasks/TasksListPage";
+import EmployeesList from "./pages/employees/EmployeesList";
+import RolesPage from "./pages/employees/RolesList";
+import ProjectsList from "./pages/projects/ProjectsList";
+import ProjectItem from "./pages/projects/ProjectItem";
+import TasksList from "./pages/tasks/TasksList";
 import NoMatchPage from "./pages/NoMatchPage";
 import { useLocalization } from '@jasperoosthoek/react-toolbox';
 
@@ -26,7 +26,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: EmployeesListPage,
+          Component: EmployeesList,
         },
         {
           path: "roles",
@@ -42,11 +42,11 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: ProjectsListPage,
+          Component: ProjectsList,
         },
         {
           path: ":id",
-          Component: ProjectPage,
+          Component: ProjectItem,
         },
       ],
     },
@@ -57,18 +57,18 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: TasksListPage,
+          Component: TasksList,
         },
       ],
     },
     {
-      path: "quotations",
-      title: text`link_quotations`,
+      path: "invoices",
+      title: text`link_invoices`,
       Component: Outlet,
       children: [
         {
           index: true,
-          Component: () => <div>{text`link_quotations`}</div>,
+          Component: () => <div>{text`link_invoices`}</div>,
         },
       ],
     },

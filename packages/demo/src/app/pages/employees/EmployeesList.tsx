@@ -29,7 +29,7 @@ export const useEmployeeFormList = () => {
     ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` }))
 }
 
-const EmployeesListPage = () => {
+const EmployeesList = () => {
   const { text } = useLocalization();
   const employees = use.employees();
   const roles = use.roles();
@@ -161,4 +161,4 @@ const EmployeesListPage = () => {
   )
 }
 
-export default EmployeesListPage;
+export default EmployeesList;

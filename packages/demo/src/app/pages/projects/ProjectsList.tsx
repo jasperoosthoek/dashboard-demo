@@ -17,8 +17,8 @@ import { Task, Project } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
-import { useProjectStatus, useProjectStatusText } from './ProjectPage';
-import { useEmployeeFormList } from '../employees/EmployeesListPage';
+import { useProjectStatus, useProjectStatusText } from './ProjectItem';
+import { useEmployeeFormList } from '../employees/EmployeesList';
 
 export const useProjectFormFields = () => {  
   const employees = use.employees();
@@ -93,7 +93,7 @@ export const useProjectFormFields = () => {
   )
 }
 
-const ProjectsListPage = () => {
+const ProjectsList = () => {
   const { text } = useLocalization();
   const projects = use.projects();
   const employees = use.employees();
@@ -240,4 +240,4 @@ const ProjectsListPage = () => {
   )
 }
 
-export default ProjectsListPage;
+export default ProjectsList;

@@ -18,8 +18,8 @@ import { Task, Project, Invoice } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
-import { useProjectFormFields } from './ProjectsListPage';
-import {useTaskColumns, useTaskFormFields } from '../tasks/TasksListPage';
+import { useProjectFormFields } from './ProjectsList';
+import {useTaskColumns, useTaskFormFields } from '../tasks/TasksList';
 
 
 export const useProjectStatusText = () => {
@@ -61,7 +61,7 @@ export const useInvoiceStatus = () => {
   );
 }
 
-const ProjectsListPage = () => {
+const ProjectsList = () => {
   const { text } = useLocalization();
   const projects = use.projects();
   const employees = use.employees();
@@ -215,4 +215,4 @@ const ProjectsListPage = () => {
   )
 }
 
-export default ProjectsListPage;
+export default ProjectsList;

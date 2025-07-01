@@ -18,7 +18,7 @@ import { Employee, Task } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
-import { useEmployeeFormList } from '../employees/EmployeesListPage';
+import { useEmployeeFormList } from '../employees/EmployeesList';
 
 export const useTaskStatusText = () => {
   const { text } = useLocalization(); 
@@ -187,7 +187,7 @@ export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } 
     ]
   )
 }
-const TasksListPage = () => {
+const TasksList = () => {
   const { text } = useLocalization();
   const tasks = use.tasks();
   const employees = use.employees();
@@ -256,4 +256,4 @@ const TasksListPage = () => {
   )
 }
 
-export default TasksListPage;
+export default TasksList;

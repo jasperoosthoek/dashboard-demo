@@ -24,11 +24,11 @@ const Dashboard = () => {
   }, [error]);
 
   const roles = use.roles();
-  const employees = use.roles();
-  const customers = use.roles();
-  const invoices = use.roles();
-  const notes = use.roles();
-  const tasks = use.roles();
+  const employees = use.employees();
+  const customers = use.customers();
+  const invoices = use.invoices();
+  const notes = use.notes();
+  const tasks = use.tasks();
 
   useEffect(() => {
     roles.getList();
