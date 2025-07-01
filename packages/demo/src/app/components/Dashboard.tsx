@@ -3,15 +3,25 @@ import { createPortal } from "react-dom";
 import { Navbar, Nav, Row, Col } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router';
 
-import { MenuButton } from '@jasperoosthoek/react-toolbox';
+import { MenuButton, useError } from '@jasperoosthoek/react-toolbox';
 import { useNavRoutes } from '../router';
 import NavLinks from './NavLinks';
 import LanguageDropdown from './LanguageDropdown';
 import { use } from '../stores/crudRegistry'
 
+
 const Dashboard = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navRoutes = useNavRoutes();
+  const error = useError();
+  useEffect(() => {
+    if (error) {
+      // Get error from ErrorBoundary in app.tsx. Clear the localStorage when this happens so
+      // the mock database starts fresh. The mock database is for demonstration use only, normally 
+      // a real backend such as a Django app is used.
+      localStorage.removeItem('mock-db');
+    }
+  }, [error]);
 
   const roles = use.roles();
   const employees = use.roles();

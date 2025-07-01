@@ -50,10 +50,11 @@ export const NavLinks = ({
 
           return (
             <div onClick={onClick} key={key}>
-              <NavLink to={newPath}>
-                {title}
-              </NavLink>
-
+              {title && (
+                <NavLink to={newPath}>
+                  {title}
+                </NavLink>
+              )}
               {children && isActive && (
                 <div style={{ marginLeft: "20px" }}>
                   <NavLinks

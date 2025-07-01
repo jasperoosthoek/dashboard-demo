@@ -12,7 +12,7 @@ import {
 import { Role } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 
-const RolesPage = () => {
+const RolesListPage = () => {
   const { text } = useLocalization();
   const roles = use.roles();
 
@@ -85,4 +85,4 @@ const RolesPage = () => {
   )
 }
 
-export default RolesPage;
+export default RolesListPage;

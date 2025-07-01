@@ -1,5 +1,5 @@
 import { Dropdown } from 'react-bootstrap';
-import { useLocalization, useLocalStorage} from '@jasperoosthoek/react-toolbox';
+import { useLocalization, useLocalStorage } from '@jasperoosthoek/react-toolbox';
 import { locales } from '../localization/localization';
 
 const LanguageDropdown = () => {
