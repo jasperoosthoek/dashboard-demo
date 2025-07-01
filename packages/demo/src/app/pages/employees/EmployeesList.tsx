@@ -11,7 +11,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Employee, Role } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { use, useGetListOnMount } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 
 // Returns a list of employees with their roles formatted for display in a form
@@ -33,11 +33,7 @@ const EmployeesList = () => {
   const { text } = useLocalization();
   const employees = use.employees();
   const roles = use.roles();
-
-  useEffect(() => {
-    employees.getList();
-    roles.getList();
-  }, []);
+  useGetListOnMount(employees, roles)
 
   return (
     <Container className='container-list'>

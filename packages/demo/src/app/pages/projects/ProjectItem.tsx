@@ -15,7 +15,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Task, Project, Invoice } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { use, useGetListOnMount } from '../../stores/crudRegistry'
 import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsList';
@@ -73,14 +73,8 @@ const ProjectsList = () => {
   const projectFormFields = useProjectFormFields();
   const taskFormFields = useTaskFormFields();
   const taskColumns = useTaskColumns();
+  useGetListOnMount(projects, employees, customers, tasks, invoices)
 
-  useEffect(() => {
-    projects.getList();
-    employees.getList();
-    customers.getList();
-    tasks.getList();
-    invoices.getList();
-  }, []);
 
   const { id } = useParams<{ id: string }>();
   const project = projects.record && projects?.record[id || ''] as Project | undefined;

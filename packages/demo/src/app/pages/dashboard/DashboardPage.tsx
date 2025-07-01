@@ -9,15 +9,12 @@ import {
   ConfirmButton,
   ResetButton,
 } from '@jasperoosthoek/react-toolbox';
-import { use } from '../../stores/crudRegistry'
+import { use, useGetListOnMount } from '../../stores/crudRegistry'
 
 const DashboardPage = () => {
   const employees = use.employees();
   const customers = use.customers();
-  useEffect(() => {
-    employees.getList();
-    customers.getList();
-  }, []);
+  useGetListOnMount(employees, customers)
   
   const CreateUserButton = () => <FormCreateModalButton title='Create new user'/>
   return (

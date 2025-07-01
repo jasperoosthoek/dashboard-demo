@@ -7,8 +7,6 @@ import { MenuButton, useError } from '@jasperoosthoek/react-toolbox';
 import { useNavRoutes } from '../router';
 import NavLinks from './NavLinks';
 import LanguageDropdown from './LanguageDropdown';
-import { use } from '../stores/crudRegistry'
-
 
 const Dashboard = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -22,22 +20,6 @@ const Dashboard = () => {
       localStorage.removeItem('mock-db');
     }
   }, [error]);
-
-  const roles = use.roles();
-  const employees = use.employees();
-  const customers = use.customers();
-  const invoices = use.invoices();
-  const notes = use.notes();
-  const tasks = use.tasks();
-
-  useEffect(() => {
-    roles.getList();
-    employees.getList();
-    customers.getList();
-    invoices.getList();
-    notes.getList();
-    tasks.getList();
-  }, []);
 
   return (
     <>

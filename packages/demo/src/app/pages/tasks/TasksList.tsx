@@ -15,7 +15,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Employee, Task } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { use, useGetListOnMount } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
@@ -194,17 +194,10 @@ const TasksList = () => {
   const customers = use.customers();
   const roles = use.roles();
   const projects = use.projects();
+  useGetListOnMount(tasks, employees, customers, projects, roles)
   const taskFormFields = useTaskFormFields();
   const taskColumns = useTaskColumns({ includeProject: true });
   const taskStatusText = useTaskStatusText();
-
-  useEffect(() => {
-    tasks.getList();
-    employees.getList();
-    customers.getList();
-    projects.getList();
-    roles.getList();
-  }, []);
 
   return (
     <Container className='container-list'>

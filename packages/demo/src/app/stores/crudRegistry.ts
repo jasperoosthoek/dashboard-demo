@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { useEffect } from 'react';
 import { create } from 'zustand';
 import { useCrud, createStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
 import type { Role, Employee, Customer, Project, Invoice, Task, Note } from "./types";
@@ -143,4 +144,18 @@ export const use = {
   invoices: () => useCrud(s.invoices),
   notes: () => useCrud(s.notes),
   tasks: () => useCrud(s.tasks),
+}
+
+
+
+type WithGetList = { getList: () => void };
+
+export function useGetListOnMount(...stores: WithGetList[]) {
+  useEffect(() => {
+    stores.forEach((store) => {
+      if (typeof store.getList === 'function') {
+        store.getList();
+      }
+    });
+  }, []);
 }

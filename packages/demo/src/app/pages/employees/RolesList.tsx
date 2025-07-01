@@ -10,15 +10,12 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Role } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { use, useGetListOnMount } from '../../stores/crudRegistry'
 
 const RolesList = () => {
   const { text } = useLocalization();
   const roles = use.roles();
-
-  useEffect(() => {
-    roles.getList();
-  }, []);
+  useGetListOnMount(roles)
 
   return (
     <Container className='container-list'>
