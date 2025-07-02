@@ -85,10 +85,10 @@ const EmployeesList = () => {
             }
           }}
           onCreate={(employee, closeModal: () => void) => {
-            employees.create(employee, { callback: () => closeModal()});
+            employees.create(employee, { callback: closeModal});
           }}
           onUpdate={(employee, closeModal: () => void) => {
-            employees.update(employee, { callback: () => closeModal()});
+            employees.update(employee, { callback: closeModal});
           }}
         >
           <DataTable

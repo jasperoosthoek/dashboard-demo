@@ -19,7 +19,7 @@ import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectStatus, useProjectStatusText } from './ProjectItem';
 import { useEmployeeFormList } from '../employees/EmployeesList';
-
+import EmployeeLink from '../employees/EmployeeLink';
 export const useProjectFormFields = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {  
   const customers = use.customers();
   const { text } = useLocalization();
@@ -143,9 +143,7 @@ export const useProjectColumns = ({ excludeEmployee }: { excludeEmployee?: boole
             const employee = employees.record[employee_id];
             return (
               employee
-                ? <div title={`${employee.name} (${roles.record[employee.role_id]?.name})`}>
-                    {employee?.name}
-                  </div>
+                ? <EmployeeLink employee={employee} />
                 : <NotFound />
             );
           },

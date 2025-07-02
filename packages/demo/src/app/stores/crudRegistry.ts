@@ -127,31 +127,8 @@ const s = {
   ),
 };
 
-export const use = {
-  employees: () => {
-    const employees = useCrud(s.employees);
-    const roles = useCrud(s.roles);
-    employees.update.sideEffects = () => roles.getList();
-    employees.create.sideEffects = () => roles.getList();
-    return employees
-  },
-  roles: () => {
-    const roles = useCrud(s.roles);
-    const employees = useCrud(s.employees);
-    roles.update.sideEffects = () => employees.getList();
-    roles.create.sideEffects = () => employees.getList();
-    return roles
-  }, 
-  projects: () => useCrud(s.projects),
-  customers: () => useCrud(s.customers),
-  invoices: () => useCrud(s.invoices),
-  notes: () => useCrud(s.notes),
-  tasks: () => useCrud(s.tasks),
-}
 
-
-
-type WithGetList = { getList: () => void };
+type WithGetList = { getList: () => void, list: any[] | null };
 
 export function useGetListOnMount(...stores: WithGetList[]) {
   useEffect(() => {
@@ -162,3 +139,59 @@ export function useGetListOnMount(...stores: WithGetList[]) {
     });
   }, []);
 }
+
+export function useGetListWhenEmpty(store: WithGetList) {
+  useEffect(() => {
+    if (!store.list && typeof store.getList === 'function') {
+      store.getList();
+    }
+  }, [!!store.list]);
+}
+
+export const use = {
+  employees: () => {
+    const employees = useCrud(s.employees);
+    const roles = useCrud(s.roles);
+    useGetListWhenEmpty(employees)
+    useGetListWhenEmpty(roles)
+    employees.update.sideEffects = () => roles.getList();
+    employees.create.sideEffects = () => roles.getList();
+    return employees
+  },
+  roles: () => {
+    const roles = useCrud(s.roles);
+    const employees = useCrud(s.employees);
+    useGetListWhenEmpty(employees)
+    useGetListWhenEmpty(roles)
+    roles.update.sideEffects = () => employees.getList();
+    roles.create.sideEffects = () => employees.getList();
+    return roles
+  }, 
+  projects: () => {
+    const projects = useCrud(s.projects)
+    useGetListOnMount(projects);
+    return projects;
+  },
+  customers: () => {
+    const customers = useCrud(s.customers)
+    useGetListOnMount(customers);
+    return customers;
+  },
+  invoices: () => {
+    const invoices = useCrud(s.invoices)
+    useGetListOnMount(invoices);
+    return invoices;
+  },
+  notes: () => {
+    const notes = useCrud(s.notes)
+    useGetListOnMount(notes);
+    return notes;
+  },
+  tasks: () => {
+    const tasks = useCrud(s.tasks)
+    useGetListOnMount(tasks);
+    return tasks;
+  },
+}
+
+
