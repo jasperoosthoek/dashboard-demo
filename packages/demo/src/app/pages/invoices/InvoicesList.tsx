@@ -17,7 +17,7 @@ import {
   useLocalStorage,
   DisabledProps,
 } from '@jasperoosthoek/react-toolbox';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { type Invoice, type Project } from '../../stores/types';
 import { formatCurrency, formatDate } from '../../localization/localization';
@@ -235,6 +235,7 @@ const InvoiceList = () => {
             ]}
             columns={invoiceColumns}
             data={invoices.list.filter(inv => filterStatus === 'all' || inv.status === filterStatus)}
+            onMove={onMove(invoices)}
           />
         </FormModalProvider>
       }

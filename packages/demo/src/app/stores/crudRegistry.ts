@@ -1,9 +1,11 @@
-import Axios from "axios";
+import Axios, { Method } from "axios";
 import { useEffect } from 'react';
-import { create } from 'zustand';
-import { useCrud, createStoreRegistry } from "@jasperoosthoek/zustand-crud-registry";
-import type { Role, Employee, Customer, Project, Invoice, Task, Note } from "./types";
+import { create } from 'zustand'
+import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
+import { useCrud, createStoreRegistry, type CustomActionFunction } from "@jasperoosthoek/zustand-crud-registry";
+import type { Role, Employee, Customer, Project, Invoice, Task, Note, Instance } from "./types";
 import { toast } from 'react-toastify';
+
 export type UseStoreOptions = {
   listAsObject?: boolean;
 }
@@ -31,7 +33,6 @@ export const toastOnError = (error: any) => {
   console.error(error)
 };
 
-
 export const getOrCreateStore = createStoreRegistry<{
   roles: Role;
   employees: Employee;
@@ -55,22 +56,30 @@ const defaultConfig = {
 };
 
 
+const moveConfig = (key: string) => (
+  {
+    route: ({ item }: any) => `/${key}/${item?.id}/move`,
+    method: 'put' as Method,
+    prepare: ({ target, position }: any) => ({ target, position }),
+  }
+)
 const s = {
   employees: getOrCreateStore(
-  'employees',
-  {
-    ...defaultConfig,
-    route: '/employees',
-    state: {
-      isValid: true,
-      counter: 0,
-    },
-    includeRecord: true,
-    customActions: {
+    'employees',
+    {
+      ...defaultConfig,
+      route: '/employees',
+      state: {
+        isValid: true,
+        counter: 0,
+      },
+      includeRecord: true,
+      customActions: {
         synchronize: {
           route: '/employees',
         },
-      }
+        move: moveConfig('employees'),
+      },
     },
   ),
   roles: getOrCreateStore(
@@ -79,6 +88,9 @@ const s = {
       ...defaultConfig,
       route: '/roles',
       includeRecord: true,
+      customActions: {
+        move: moveConfig('roles'),
+      },
     }
   ),
   projects: getOrCreateStore(
@@ -87,6 +99,9 @@ const s = {
       ...defaultConfig,
       route: '/projects',
       includeRecord: true,
+      customActions: {
+        move: moveConfig('projects'),
+      },
     },
   ),
   customers: getOrCreateStore(
@@ -98,6 +113,9 @@ const s = {
         getList: true,
       },
       includeRecord: true,
+      customActions: {
+        move: moveConfig('customers'),
+      },
     },
   ),
 
@@ -109,6 +127,9 @@ const s = {
       state: {
         filterStatus: 'all' as 'all' | Invoice['status'],
       },
+      customActions: {
+        move: moveConfig('invoices'),
+      },
     },
   ),
   notes: getOrCreateStore(
@@ -116,6 +137,9 @@ const s = {
     {
       ...defaultConfig,
       route: '/notes',
+      customActions: {
+        move: moveConfig('notes'),
+      },
     }
   ),
   tasks: getOrCreateStore(
@@ -123,6 +147,9 @@ const s = {
     {
       ...defaultConfig,
       route: '/tasks',
+      customActions: {
+        move: moveConfig('tasks'),
+      },
     }
   ),
 };
@@ -154,8 +181,11 @@ export const use = {
     const roles = useCrud(s.roles);
     useGetListWhenEmpty(employees)
     useGetListWhenEmpty(roles)
-    employees.update.sideEffects = () => roles.getList();
-    employees.create.sideEffects = () => roles.getList();
+    employees.update.onResponse = () => roles.getList();
+    employees.create.onResponse = () => roles.getList();
+
+    const patchList = s.employees((s) => s.patchList);
+    employees.move.onResponse = (list: Partial<Employee>[]) => patchList(list)
     return employees
   },
   roles: () => {
@@ -163,35 +193,65 @@ export const use = {
     const employees = useCrud(s.employees);
     useGetListWhenEmpty(employees)
     useGetListWhenEmpty(roles)
-    roles.update.sideEffects = () => employees.getList();
-    roles.create.sideEffects = () => employees.getList();
+    roles.update.onResponse = () => employees.getList();
+    roles.create.onResponse = () => employees.getList();
+
+    const patchList = s.roles((s) => s.patchList);
+    roles.move.onResponse = (list: Partial<Role>[]) => patchList(list)
     return roles
   }, 
   projects: () => {
     const projects = useCrud(s.projects)
     useGetListOnMount(projects);
+    const patchList = s.projects((s) => s.patchList);
+    projects.move.onResponse = (list: Partial<Project>[]) => patchList(list)
     return projects;
   },
   customers: () => {
     const customers = useCrud(s.customers)
     useGetListOnMount(customers);
+    const patchList = s.customers((s) => s.patchList);
+    customers.move.onResponse = (list: Partial<Customer>[]) => patchList(list)
     return customers;
   },
   invoices: () => {
     const invoices = useCrud(s.invoices)
     useGetListOnMount(invoices);
+    const patchList = s.invoices((s) => s.patchList);
+    invoices.move.onResponse = (list: Partial<Invoice>[]) => patchList(list)
     return invoices;
   },
   notes: () => {
     const notes = useCrud(s.notes)
     useGetListOnMount(notes);
+    const patchList = s.notes((s) => s.patchList);
+    notes.move.onResponse = (list: Partial<Note>[]) => patchList(list)
     return notes;
   },
   tasks: () => {
     const tasks = useCrud(s.tasks)
     useGetListOnMount(tasks);
+    const patchList = s.tasks((s) => s.patchList);
+    tasks.move.onResponse = (list: Partial<Task>[]) => patchList(list)
     return tasks;
   },
 }
 
+type WithMove<T> = {
+  move: CustomActionFunction<T>
+};
 
+export const onMove = <T extends Instance>(store: WithMove<T>) => ({ item, target, reset }: OnMoveProps<T>) => {
+  store.move(
+    {
+      item,
+      target,
+      // Use same convention as django-ordered-model
+      position: item.order > target.order ? 'above' : 'below',
+    },
+    {
+        callback: reset,
+        onError: reset,
+    }
+  )
+}

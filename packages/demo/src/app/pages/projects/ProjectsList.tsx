@@ -14,7 +14,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Task, Project } from '../../stores/types';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatCurrency, formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectStatus, useProjectStatusText } from './ProjectItem';
@@ -251,6 +251,7 @@ const ProjectsList = () => {
             ]}
             columns={projectColumns}
             data={projects.list}
+            onMove={onMove(projects)}
           />
         </FormModalProvider>
       }

@@ -16,7 +16,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Task, Project, Invoice } from '../../stores/types';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsList';
@@ -142,6 +142,7 @@ const ProjectsList = () => {
                       orderByDefault='order'
                       columns={taskColumns}
                       data={tasks.list.filter(({ project_id }) => project_id === project.id)}
+                      onMove={onMove(tasks)}
                     />
                   </Card.Body>
                 </Card>
@@ -179,6 +180,7 @@ const ProjectsList = () => {
                       orderByDefault='order'
                       columns={invoiceColumns}
                       data={invoices.list.filter(({ project_id }) => project_id === project.id)}
+                      onMove={onMove(invoices)}
                     />
                   </Card.Body>
                 </Card>

@@ -7,7 +7,7 @@ import { localStorageKey } from './mockData';
 
 
 
-type WithId<T> = T & { id: number };
+type WithId<T> = T & { id: number, order: number };
 
 export function createRestHandlers<
   S extends Record<string, any>,
@@ -130,6 +130,50 @@ export function createRestHandlers<
       persistToLocalStorage(db, localStorageKey); 
 
       return new HttpResponse(null, { status: 204 });
+    }),
+
+    
+    http.put(`${basePath}/:id/move`, async ({ params, request }) => {
+      const id = Number(params.id);
+      const { target, position } = await request.json() as { target: WithId<T>, position: 'below' | 'above'};
+      const related = db[entity].findFirst({
+        where: { id: { equals: id } } as any,
+      });
+
+      const items = (db[entity] as any).getAll().sort((a: any, b: any) => a.order - b.order);
+
+      const movingIndex = items.findIndex((i: any) => i.id === id);
+      if (movingIndex === -1) {
+        return new HttpResponse(`Item not found`, { status: 404 });
+      }
+
+      const movingItem = items[movingIndex];
+      items.splice(movingIndex, 1); // Remove from old position
+
+      // Determine new order index based on target
+      let insertIndex = items.findIndex((i: any) => i.id === target.id);
+      if (insertIndex === -1) {
+        return new HttpResponse(`Target item not found`, { status: 404 });
+      }
+
+      if (position === 'below') {
+        insertIndex += 1;
+      }
+
+      // Insert moving item at new index
+      items.splice(insertIndex, 0, movingItem);
+
+      const response = [] as { id: number, order: number }[]
+
+      // Reassign all order values to reflect the new order
+      items.forEach((item: any, index: number) => {
+        response.push({ id: item.id, order: index + 1 });
+        (db[entity] as any).update({
+          where: { id: { equals: item.id } },
+          data: { order: index + 1 },
+        });
+      });
+      return HttpResponse.json(response);
     }),
   ];
 }

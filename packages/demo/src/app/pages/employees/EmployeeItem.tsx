@@ -16,7 +16,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Task, Employee, Invoice } from '../../stores/types';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/NotesList';
@@ -119,6 +119,7 @@ const EmployeesList = () => {
                       orderByDefault='order'
                       columns={projectColumns}
                       data={projects.list.filter(({ employee_id }) => employee_id === employee.id)}
+                      onMove={onMove(projects)}
                     />
                   </Card.Body>
                 </Card>
@@ -155,6 +156,7 @@ const EmployeesList = () => {
                       orderByDefault='order'
                       columns={taskColumns}
                       data={tasks.list.filter(({ employee_id }) => employee_id === employee.id)}
+                      onMove={onMove(tasks)}
                     />
                   </Card.Body>
                 </Card>
@@ -190,6 +192,7 @@ const EmployeesList = () => {
                       orderByDefault='order'
                       columns={noteColumns}
                       data={notes.list.filter(({ employee_id }) => employee_id === employee.id)}
+                      onMove={onMove(notes)}
                     />
                   </Card.Body>
                 </Card>

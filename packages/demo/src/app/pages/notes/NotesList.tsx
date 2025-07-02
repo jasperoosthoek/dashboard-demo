@@ -20,7 +20,7 @@ import {
 
 import { formatCurrency, formatDate } from '../../localization/localization';
 import { Note, Customer, Employee, Role } from '../../stores/types';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
 
@@ -187,6 +187,7 @@ const NotesList = () => {
             ]}
             columns={noteColumns}
             data={notes.list} //.filter(inv => filterStatus === 'all' || inv.status === filterStatus)}
+            onMove={onMove(notes)}
           />
         </FormModalProvider>
       }

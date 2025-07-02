@@ -79,7 +79,7 @@ if (process.env.DEVELOP_ZUSTAND_CRUD_REPOSITORY === 'true') {
       symlinks: false,
       alias: {
         ...config.resolve.alias || {},
-        // '@jasperoosthoek/zustand-crud-registry': zustandCrudRegistryPath,
+        '@jasperoosthoek/zustand-crud-registry': zustandCrudRegistryPath,
         'zustand': resolve(__dirname, '../../node_modules/zustand'),
         'react': resolve(__dirname, '../../node_modules/react'),
         'react-dom': resolve(__dirname, '../../node_modules/react-dom'),

@@ -13,7 +13,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Employee, Role } from '../../stores/types';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 
 // Returns a list of employees with their roles formatted for display in a form
@@ -150,27 +150,7 @@ const EmployeesList = () => {
               }
             ]}
             data={employees.list}
-            onMove={({ item, target }) => {
-              // // Use onMove to store new position for instance by modifying the 'order' field
-              // // with django-ordered-model in a Django backend
-
-              // // Find index of the item to move
-              // const fromIndex = employees.findIndex(employee => employee.id === item.id);
-              // if (fromIndex === -1) return; // If not found, return original array
-
-              // // Find index of the target position (employee with `orderId` as their order)
-              // const targetIndex = employees.findIndex(employee => employee.id === target.id);
-              // if (targetIndex === -1) return; // If target not found, return original array
-
-              // // Remove the item from its current position
-              // const [movedEmployee] = employees.splice(fromIndex, 1);
-
-              // // Insert the item at the target position
-              // employees.splice(targetIndex, 0, movedEmployee);
-
-              // employees.map(u => console.log(u.id))
-              // setEmployees(employees.map((u, order) => ({...u, order })));
-            }}
+            onMove={onMove(employees)}
           />
         </FormModalProvider>
     }

@@ -1,5 +1,5 @@
 
-type Instance = {
+export type Instance = {
   id: number;
   order: number;
 }

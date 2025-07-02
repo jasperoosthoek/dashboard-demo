@@ -10,7 +10,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Role } from '../../stores/types';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 
 const RolesList = () => {
   const { text } = useLocalization();
@@ -74,6 +74,7 @@ const RolesList = () => {
               }
             ]}
             data={roles.list}
+            onMove={onMove(roles)}
           />
         </FormModalProvider>
       }

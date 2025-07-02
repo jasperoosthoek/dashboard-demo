@@ -16,10 +16,11 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { Project, Task } from '../../stores/types';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
+import EmployeeLink from '../employees/EmployeeLink';
 
 export const useTaskStatusText = () => {
   const { text } = useLocalization(); 
@@ -161,9 +162,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee }: { excludePro
             const employee = employees.record[employee_id];
             return (
               employee
-                ? <div title={`${employee?.name} (${employee?.email})`}>
-                    {employee?.name}
-                  </div>
+                ? <EmployeeLink employee={employee} />
                 : <NotFound />
             );
           },
@@ -259,6 +258,7 @@ const TasksList = () => {
             ]}
             columns={taskColumns}
             data={tasks.list}
+            onMove={onMove(tasks)}
           />
         </FormModalProvider>
       }
