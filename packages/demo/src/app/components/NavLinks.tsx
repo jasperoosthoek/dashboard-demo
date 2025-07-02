@@ -37,8 +37,9 @@ export const NavLinks = ({
           const newPath = `${pathRoot}/${path}`.replace(/\/+/g, "/");
           const isActive = pathname.startsWith(newPath);
           
+          const finalPart = pathname.split('/').pop()
           // Use the given title for in case of a match use the last part of the path to display the id 
-          const title = titleBase || matchPath(newPath, pathname) && `#${pathname.split('/').pop()}`;
+          const title = titleBase || (matchPath(newPath, pathname) && !!Number(finalPart) && `#${finalPart}`);
 
           // Use actual path then no title is given but a match exists which means there is number in the path
           const showPath = !titleBase && matchPath(newPath, pathname) ? pathname : newPath;

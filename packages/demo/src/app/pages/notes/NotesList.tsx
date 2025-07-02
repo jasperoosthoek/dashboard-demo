@@ -40,7 +40,7 @@ export const  useNoteFormFields = ({ excludeEmployee }: { excludeEmployee?: bool
         rows: 5,
       } as FormInputProps,
     },
-    ...excludeEmployee ? (
+    ...!excludeEmployee ? (
       {
         employee_id: {
           formProps: {
@@ -78,7 +78,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
         selector: ({ content }: Note) => content,
         orderBy: 'content',
       },
-      ...excludeEmployee ? [
+      ...!excludeEmployee ? [
         {
           name: text`employee`,
           selector: ({ employee_id }: Note) => {
@@ -100,9 +100,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
           const customer = customers.record[customer_id];
           return (
             customer
-              ? <Link to={`/customers/${customer.id}`}>
-                  {customer.name}
-                </Link>
+              ? customer.name
               : <NotFound />
           );
         },
