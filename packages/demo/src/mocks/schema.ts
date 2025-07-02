@@ -46,7 +46,7 @@ export const schema = {
     id: primaryKey(Number),
     content: String,
     author: oneOf('employee'),
-    related_customer: oneOf('customer'),
+    customer: oneOf('customer'),
     created_at: String,
   },
 

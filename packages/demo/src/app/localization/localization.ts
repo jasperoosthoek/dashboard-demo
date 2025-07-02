@@ -56,6 +56,7 @@ const localization = combineLocalization(
       description: 'Beschrijving',
       invoice_status_open: 'Open',
       invoice_status_paid: 'Betaald',
+      all: 'Alles',
 
       link_tasks: 'Taken',
       task_status_todo: 'Te doen',
@@ -124,6 +125,7 @@ const localization = combineLocalization(
       description: 'Description',
       invoice_status_open: 'Open',
       invoice_status_paid: 'Paid',
+      all: 'All',
 
       link_tasks: 'Tasks',
       task_status_todo: 'To do',
@@ -192,6 +194,7 @@ const localization = combineLocalization(
       description: 'Description',
       invoice_status_open: 'Ouverte',
       invoice_status_paid: 'Payée',
+      all: 'Tous',
 
       link_tasks: 'Tâches',
       task_status_todo: 'À faire',

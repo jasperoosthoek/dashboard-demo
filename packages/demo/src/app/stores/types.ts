@@ -55,6 +55,6 @@ export type Note = {
   id: number;
   content: string;
   author_id: number;
-  related_customer_id: number;
+  customer_id: number;
   created_at: string;
 };

@@ -104,6 +104,7 @@ export const useInvoiceColumns = ({ includeProject }: { includeProject?: boolean
   const { text } = useLocalization();
   const invoices = use.invoices();
   const invoiceStatus = useInvoiceStatus();
+  const invoiceStatusText = useInvoiceStatusText();
   const projects = use.projects();
 
   if (!invoices.list || !projects.record) {
@@ -145,17 +146,18 @@ export const useInvoiceColumns = ({ includeProject }: { includeProject?: boolean
       {
         name: (
           <Form.Select
+            size="sm"
             onClick={e => {
               e.preventDefault();
               e.stopPropagation()
             }}
-            className="w-auto select-compact"
+            className="w-auto"
             value={invoices.state.filterStatus}
             onChange={(e) => invoices.setState({ filterStatus: e.target.value as FilterStatus })}
           >
-            <option value="all">All</option>
-            <option value="open">Open</option>
-            <option value="paid">Paid</option>
+            <option value="all">{text`all`}</option>
+            <option value="open">{invoiceStatusText('open')}</option>
+            <option value="paid">{invoiceStatusText('paid')}</option>
           </Form.Select>
         ),
         selector: (invoice: Invoice) => invoiceStatus(invoice),

@@ -41,7 +41,7 @@ export const handlers = [
 
   ...createRestHandlers(db, schema, 'customer', '/api/customers', {
     // onDelete: (customer) => {
-    //   db.note.deleteMany({ where: { related_customer: { id: { equals: customer.id } } } });
+    //   db.note.deleteMany({ where: { customer: { id: { equals: customer.id } } } });
     // },
   }),
 
