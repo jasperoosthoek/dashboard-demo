@@ -127,7 +127,7 @@ export function createRestHandlers<
       if (deleted && onDelete) onDelete(deleted as any);
 
       db[entity].delete({ where: { id: { equals: id } } } as any);
-      persistToLocalStorage(db, localStorageKey); 
+      persistToLocalStorage(db, localStorageKey);
 
       return new HttpResponse(null, { status: 204 });
     }),
@@ -135,6 +135,7 @@ export function createRestHandlers<
     
     http.put(`${basePath}/:id/move`, async ({ params, request }) => {
       const id = Number(params.id);
+      // Use same convention as django-ordered-models
       const { target, position } = await request.json() as { target: WithId<T>, position: 'below' | 'above'};
       const related = db[entity].findFirst({
         where: { id: { equals: id } } as any,
@@ -173,6 +174,8 @@ export function createRestHandlers<
           data: { order: index + 1 },
         });
       });
+      persistToLocalStorage(db, localStorageKey);
+      
       return HttpResponse.json(response);
     }),
   ];

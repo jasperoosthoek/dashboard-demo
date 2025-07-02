@@ -11,12 +11,14 @@ import LanguageDropdown from './LanguageDropdown';
 const Dashboard = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navRoutes = useNavRoutes();
-  const error = useError();
+  const { error, clearError } = useError();
   useEffect(() => {
     if (error) {
       // Get error from ErrorBoundary in app.tsx. Clear the localStorage when this happens so
       // the mock database starts fresh. The mock database is for demonstration use only, normally 
       // a real backend such as a Django app is used.
+      console.log('An unhandled error occured, delete localStorage', error)
+      clearError();
       localStorage.removeItem('mock-db');
     }
   }, [error]);

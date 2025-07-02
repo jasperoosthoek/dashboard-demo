@@ -7,12 +7,10 @@ import mockData, { localStorageKey } from './mockData';
 
 export const db = factory(schema);
 
-
-
-
 const raw = localStorage.getItem(localStorageKey);
-if (!raw) {
 
+if (!raw) {
+  console.log('Seeding mock database with new data.')
   seedDatabase(
     db,
     schema,
@@ -20,6 +18,7 @@ if (!raw) {
   );
   persistToLocalStorage(db, localStorageKey); 
 } else {
+  console.log('Loading mock database with data from localStorage.')
   loadFromLocalStorage(db, schema, mockData, localStorageKey);
 }
 type EntityMap<S extends Record<string, any>> = {
