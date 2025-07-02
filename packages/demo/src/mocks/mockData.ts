@@ -1,3 +1,4 @@
+import { addDays, differenceInDays, parseISO, format } from 'date-fns';
 import { Schema } from './schema'
 
 const mockData: Record<keyof Schema, any[]> = {
@@ -706,6 +707,35 @@ const mockData: Record<keyof Schema, any[]> = {
   ],
 };
 
-export default mockData;
+const dateFields = ['created_at', 'due_date', 'start_date', 'end_date'] as const;
+
+// Updater for mockData so it the data still relevant in the future
+function updateMockDates<T extends Record<string, any[]>>(
+  mockData: T,
+  originalStartDate: Date,
+  today: Date = new Date()
+): T {
+  const daysDiff = differenceInDays(today, originalStartDate);
+
+  function updateItemDates(item: Record<string, any>) {
+    for (const field of dateFields) {
+      if (item[field]) {
+        const parsedDate = parseISO(item[field]);
+        const updatedDate = addDays(parsedDate, daysDiff);
+        item[field] = format(updatedDate, 'yyyy-MM-dd');
+      }
+    }
+    return item;
+  }
+
+  const updated: T = {} as T;
+  for (const key in mockData) {
+    updated[key] = mockData[key].map(updateItemDates) as T[Extract<keyof T, string>];
+  }
+  return updated;
+}
+
+// mockData was created on 2025-06-15, add the number of days to all dates that have passed since then
+export default updateMockDates(mockData, new Date('2025-06-15'));
 
 export const localStorageKey = 'mock-db';
