@@ -82,7 +82,7 @@ const ProjectsList = () => {
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
                 onUpdate={(project, closeModal: () => void) => {
-                  projects.update(project, { callback: () => closeModal()});
+                  projects.update(project, { callback: closeModal});
                 }}
               >
                 <h2>
@@ -121,10 +121,10 @@ const ProjectsList = () => {
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
                 onCreate={(task, closeModal: () => void) => {
-                  tasks.create(task, { callback: () => closeModal()});
+                  tasks.create(task, { callback: closeModal});
                 }}
                 onUpdate={(task, closeModal: () => void) => {
-                  tasks.update(task, { callback: () => closeModal()});
+                  tasks.update(task, { callback: closeModal});
                 }}
               >
                 <Card className="mb-4">
@@ -158,10 +158,10 @@ const ProjectsList = () => {
                 editModalTitle={text`edit_invoice`}
                 formFields={invoiceFormFields}
                 onCreate={(invoice, closeModal: () => void) => {
-                  invoices.create(invoice, { callback: () => closeModal()});
+                  invoices.create(invoice, { callback: closeModal});
                 }}
                 onUpdate={(invoice, closeModal: () => void) => {
-                  invoices.update(invoice, { callback: () => closeModal()});
+                  invoices.update(invoice, { callback: closeModal});
                 }}
               >
                 <Card className="mb-4">

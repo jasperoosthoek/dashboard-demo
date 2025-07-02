@@ -209,10 +209,10 @@ const InvoiceList = () => {
           editModalTitle={text`edit_invoice`}
           formFields={invoiceFormFields}
           onCreate={(invoice, closeModal: () => void) => {
-            invoices.create(invoice, { callback: () => closeModal()});
+            invoices.create(invoice, { callback: closeModal});
           }}
           onUpdate={(invoice, closeModal: () => void) => {
-            invoices.update(invoice, { callback: () => closeModal()});
+            invoices.update(invoice, { callback: closeModal});
           }}
         >
           <DataTable

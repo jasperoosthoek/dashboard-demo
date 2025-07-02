@@ -232,10 +232,10 @@ const TasksList = () => {
           editModalTitle={text`edit_task`}
           formFields={taskFormFields}
           onCreate={(task, closeModal: () => void) => {
-            tasks.create(task, { callback: () => closeModal()});
+            tasks.create(task, { callback: closeModal});
           }}
           onUpdate={(task, closeModal: () => void) => {
-            tasks.update(task, { callback: () => closeModal()});
+            tasks.update(task, { callback: closeModal});
           }}
         >
           <DataTable

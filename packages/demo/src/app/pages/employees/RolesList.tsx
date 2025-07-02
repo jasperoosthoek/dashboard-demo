@@ -34,10 +34,10 @@ const RolesList = () => {
             },
           }}
           onCreate={(role, closeModal: () => void) => {
-            roles.create(role, { callback: () => closeModal()});
+            roles.create(role, { callback: closeModal});
           }}
           onUpdate={(role, closeModal: () => void) => {
-            roles.update(role, { callback: () => closeModal()});
+            roles.update(role, { callback: closeModal});
           }}
         >
           <DataTable

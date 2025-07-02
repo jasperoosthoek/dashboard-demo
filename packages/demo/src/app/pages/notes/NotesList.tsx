@@ -164,10 +164,10 @@ const NotesList = () => {
           editModalTitle={text`edit_note`}
           formFields={noteFormFields}
           onCreate={(note, closeModal: () => void) => {
-            notes.create(note, { callback: () => closeModal()});
+            notes.create(note, { callback: closeModal});
           }}
           onUpdate={(note, closeModal: () => void) => {
-            notes.update(note, { callback: () => closeModal()});
+            notes.update(note, { callback: closeModal});
           }}
         >
           <DataTable

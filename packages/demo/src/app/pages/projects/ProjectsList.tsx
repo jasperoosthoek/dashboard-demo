@@ -225,10 +225,10 @@ const ProjectsList = () => {
           editModalTitle={text`edit_project`}
           formFields={projectFormFields}
           onCreate={(project, closeModal: () => void) => {
-            projects.create(project, { callback: () => closeModal()});
+            projects.create(project, { callback: closeModal});
           }}
           onUpdate={(project, closeModal: () => void) => {
-            projects.update(project, { callback: () => closeModal()});
+            projects.update(project, { callback: closeModal});
           }}
         >
           <DataTable

@@ -59,7 +59,7 @@ const EmployeesList = () => {
                 editModalTitle={text`edit_employee`}
                 formFields={employeeFormFields}
                 onUpdate={(employee, closeModal: () => void) => {
-                  employees.update(employee, { callback: () => closeModal()});
+                  employees.update(employee, { callback: closeModal});
                 }}
               >
                 <h2>
@@ -98,10 +98,10 @@ const EmployeesList = () => {
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
                 onCreate={(project, closeModal: () => void) => {
-                  projects.create(project, { callback: () => closeModal()});
+                  projects.create(project, { callback: closeModal});
                 }}
                 onUpdate={(project, closeModal: () => void) => {
-                  projects.update(project, { callback: () => closeModal()});
+                  projects.update(project, { callback: closeModal});
                 }}
               >
                 <Card className="mb-4">
@@ -134,10 +134,10 @@ const EmployeesList = () => {
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
                 onCreate={(task, closeModal: () => void) => {
-                  tasks.create(task, { callback: () => closeModal()});
+                  tasks.create(task, { callback: closeModal});
                 }}
                 onUpdate={(task, closeModal: () => void) => {
-                  tasks.update(task, { callback: () => closeModal()});
+                  tasks.update(task, { callback: closeModal});
                 }}
               >
                 <Card className="mb-4">
@@ -169,10 +169,10 @@ const EmployeesList = () => {
                 editModalTitle={text`edit_note`}
                 formFields={noteFormFields}
                 onCreate={(note, closeModal: () => void) => {
-                  notes.create(note, { callback: () => closeModal()});
+                  notes.create(note, { callback: closeModal});
                 }}
                 onUpdate={(note, closeModal: () => void) => {
-                  notes.update(note, { callback: () => closeModal()});
+                  notes.update(note, { callback: closeModal});
                 }}
               >
                 <Card className="mb-4">
