@@ -7,7 +7,8 @@ import RolesPage from './pages/employees/RolesList';
 import ProjectsList from './pages/projects/ProjectsList';
 import ProjectItem from './pages/projects/ProjectItem';
 import TasksList from './pages/tasks/TasksList';
-import InvoiceList from './pages/invoices/InvoicesList';
+import InvoicesList from './pages/invoices/InvoicesList';
+import NotesList from './pages/notes/NotesList';
 import NoMatchPage from './pages/NoMatchPage';
 import { useLocalization } from '@jasperoosthoek/react-toolbox';
 
@@ -69,7 +70,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: InvoiceList,
+          Component: InvoicesList,
         },
       ],
     },
@@ -80,7 +81,7 @@ export const useNavRoutes = () => {
       children: [
         {
           index: true,
-          Component: () => <div>{text`link_notes`}</div>,
+          Component: NotesList,
         },
       ],
     },

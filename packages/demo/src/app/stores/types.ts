@@ -54,7 +54,7 @@ export type Task = {
 export type Note = {
   id: number;
   content: string;
-  author_id: number;
+  employee_id: number;
   customer_id: number;
   created_at: string;
 };

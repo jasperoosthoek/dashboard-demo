@@ -57,6 +57,7 @@ const localization = combineLocalization(
       invoice_status_open: 'Open',
       invoice_status_paid: 'Betaald',
       all: 'Alles',
+      all_customers: 'Alle klanten',
 
       link_tasks: 'Taken',
       task_status_todo: 'Te doen',
@@ -65,7 +66,8 @@ const localization = combineLocalization(
       create_new_task: 'Nieuwe taak aanmaken',
       edit_task: 'Taak bewerken',
       delete_task: (title) => `Taak "${title}" verwijderen?`,
-      assigned_to_employee: 'Toegewezen aan medewerker',
+      created_at: 'Created at',
+      assigned_to_employee: 'Aangemaakt op',
 
       link_invoices: 'Facturen',
       create_new_invoice: 'Nieuwe factuur aanmaken',
@@ -73,6 +75,10 @@ const localization = combineLocalization(
       delete_invoice: (id) => `Factuur #${id} verwijderen?`,
 
       link_notes: 'Notities',
+      content: 'Inhoud',
+      create_new_note: 'Nieuwe notitie aanmaken',
+      edit_note: 'Notitie bewerken',
+      delete_note: 'Notitie verwijderen?',
     },
     en: {
       not_found: 'Not found',
@@ -126,6 +132,7 @@ const localization = combineLocalization(
       invoice_status_open: 'Open',
       invoice_status_paid: 'Paid',
       all: 'All',
+      all_customers: 'All customers',
 
       link_tasks: 'Tasks',
       task_status_todo: 'To do',
@@ -135,6 +142,7 @@ const localization = combineLocalization(
       edit_task: 'Edit task',
       delete_task: (title) => `Delete task "${title}"?`,
       assigned_to_employee: 'Assigned to employee',
+      created_at: 'Created at',
 
       link_invoices: 'Invoices',
       create_new_invoice: 'Create new invoice',
@@ -142,6 +150,10 @@ const localization = combineLocalization(
       delete_invoice: (id) => `Delete invoice #${id}?`,
 
       link_notes: 'Notes',
+      content: 'Content',
+      create_new_note: 'Create new note',
+      edit_note: 'Edit note',
+      delete_note: 'Delete note?',
     },
     fr: {
       not_found: 'Non trouvé',
@@ -195,6 +207,7 @@ const localization = combineLocalization(
       invoice_status_open: 'Ouverte',
       invoice_status_paid: 'Payée',
       all: 'Tous',
+      all_customers: 'Tous les clients',
 
       link_tasks: 'Tâches',
       task_status_todo: 'À faire',
@@ -204,6 +217,7 @@ const localization = combineLocalization(
       edit_task: 'Modifier la tâche',
       delete_task: (title) => `Supprimer la tâche "${title}" ?`,
       assigned_to_employee: 'Assigné à un employé',
+      created_at: 'Créé à',
 
       link_invoices: 'Factures',
       create_new_invoice: 'Créer une nouvelle facture',
@@ -211,6 +225,10 @@ const localization = combineLocalization(
       delete_invoice: (id) => `Supprimer la facture n°${id} ?`,
 
       link_notes: 'Notes',
+      content: 'Contenu',
+      create_new_note: 'Créer une nouvelle note',
+      edit_note: 'Modifier la note',
+      delete_note: 'Supprimer la note ?',
     }
   }
 ) as AdditionalLocalization;

@@ -45,7 +45,7 @@ export const schema = {
   note: {
     id: primaryKey(Number),
     content: String,
-    author: oneOf('employee'),
+    employee: oneOf('employee'),
     customer: oneOf('customer'),
     created_at: String,
   },
