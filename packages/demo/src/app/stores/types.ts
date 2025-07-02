@@ -1,11 +1,14 @@
 
-export type Role = {
+type Instance = {
   id: number;
+  order: number;
+}
+
+export interface Role extends Instance {
   name: string;
 };
 
-export type Employee = {
-  id: number;
+export interface Employee extends Instance {
   name: string;
   email: string;
   role_id: number;
@@ -14,15 +17,13 @@ export type Employee = {
   active: boolean;
 };
 
-export type Customer = {
-  id: number;
+export interface Customer extends Instance {
   name: string;
   contact_person: string;
   email: string;
 };
 
-export type Project = {
-  id: number;
+export interface Project extends Instance {
   name: string;
   amount: number;
   status: 'completed' | 'in_progress' | 'pending';
@@ -32,16 +33,14 @@ export type Project = {
   end_date: string;
 };
 
-export type Invoice = {
-  id: number;
+export interface Invoice extends Instance {
   due_date: string;
   amount: number;
   status: 'open' | 'paid';
   project_id: number;
 };
 
-export type Task = {
-  id: number;
+export interface Task extends Instance {
   title: string;
   description: string;
   employee_id: number;
@@ -51,8 +50,7 @@ export type Task = {
   priority: string;
 };
 
-export type Note = {
-  id: number;
+export interface Note extends Instance {
   content: string;
   employee_id: number;
   customer_id: number;
