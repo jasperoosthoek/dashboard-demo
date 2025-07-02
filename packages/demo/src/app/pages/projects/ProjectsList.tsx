@@ -161,11 +161,6 @@ const ProjectsList = () => {
                 orderBy: 'amount',
               },
               {
-                name: text`status`,
-                selector: (project) => projectStatus(project),
-                orderBy: 'status',
-              },
-              {
                 name: text`customer`,
                 selector: ({ customer_id }: Project) => {
                   const customer = customers.record[customer_id];
@@ -206,6 +201,11 @@ const ProjectsList = () => {
                   formatDate(end_date)
                 ) ,
                 orderBy: 'end_date',
+              },
+              {
+                name: text`status`,
+                selector: (project) => projectStatus(project),
+                orderBy: 'status',
               },
               {
                 name: text`actions`,

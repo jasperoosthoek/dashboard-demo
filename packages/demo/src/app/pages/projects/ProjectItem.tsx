@@ -21,7 +21,7 @@ import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsList';
 import {useTaskColumns, useTaskFormFields } from '../tasks/TasksList';
-import { useInvoiceStatus, useInvoiceColumns, useInvoiceFormFields } from '../invoices/InvoicesList';
+import { useInvoiceColumns, useInvoiceFormFields } from '../invoices/InvoicesList';
 
 export const useProjectStatusText = () => {
   const { text } = useLocalization(); 
@@ -114,7 +114,7 @@ const ProjectsList = () => {
               <FormModalProvider
                 initialState={{
                   due_date: new Date().toISOString().split('T')[0],
-                  related_project_id: project.id,
+                  project_id: project.id,
                   status: 'todo',
                 }}
                 loading={tasks.create.isLoading || tasks.update.isLoading}
@@ -140,7 +140,7 @@ const ProjectsList = () => {
                       showHeader={false}
                       orderByDefault='order'
                       columns={taskColumns}
-                      data={tasks.list.filter(({ related_project_id }) => related_project_id === project.id)}
+                      data={tasks.list.filter(({ project_id }) => project_id === project.id)}
                     />
                   </Card.Body>
                 </Card>

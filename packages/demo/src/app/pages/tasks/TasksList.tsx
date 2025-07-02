@@ -61,7 +61,6 @@ export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolea
     description: {
       label: text`description`,
       component: FormTextArea,
-      required: true,
     },
     status: {
       formProps: {
@@ -92,7 +91,7 @@ export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolea
     
     ...includeProject
       ? {
-          related_project_id: {
+          project_id: {
             formProps: {
               list: projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || [],
               // Disable changing project when already saved i.e. project has an id
@@ -119,7 +118,7 @@ export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } 
   const employees = use.employees();
   const tasks = use.tasks();
   const taskStatus = useTaskStatus();
-    const projects = use.projects();
+  const projects = use.projects();
   
   if (!tasks.list || !employees.record || !projects.record) {
     return [];
@@ -135,11 +134,22 @@ export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } 
         ),
         orderBy: 'title',
       },
-      {
-        name: text`status`,
-        selector: (task: Task) => taskStatus(task),
-        orderBy: 'status',
-      },
+      ...includeProject ? [
+        {
+          name: text`project`,
+          selector: ({ project_id }: Task) => {
+            const project = projects.record[project_id];
+            return (
+              project
+                ? <Link to={`/projects/${project.id}`}>
+                    {project.name}
+                  </Link>
+                : <NotFound />
+            );
+          },
+          orderBy: 'project_id',
+        }
+      ] : [],
       {
         name: text`assigned_to_employee`,
         selector: ({ assigned_to_id }: Task) => {
@@ -159,22 +169,11 @@ export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } 
         selector: ({ due_date }: Task) => formatDate(due_date),
         orderBy: 'due_date',
       },
-      ...includeProject ? [
-        {
-          name: text`project`,
-          selector: ({ related_project_id }: Task) => {
-            const project = projects.record[related_project_id];
-            return (
-              project
-                ? <Link to={`/projects/${project.id}`}>
-                    {project.name}
-                  </Link>
-                : <NotFound />
-            );
-          },
-          orderBy: 'related_project_id',
-        }
-      ] : [],
+      {
+        name: text`status`,
+        selector: (task: Task) => taskStatus(task),
+        orderBy: 'status',
+      },
       {
         name: text`actions`,
         selector: (task: Task) => (
@@ -245,7 +244,7 @@ const TasksList = () => {
               'title',
               'status',
               ({ assigned_to_id }: Task) => employees.record[assigned_to_id]?.name || '',
-              ({ related_project_id }: Task) => projects.record[related_project_id]?.name || '',
+              ({ project_id }: Task) => projects.record[project_id]?.name || '',
               ({ status }: Task) => taskStatusText(status) || '',
             ]}
             columns={taskColumns}

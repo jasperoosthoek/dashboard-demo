@@ -40,18 +40,21 @@ export const NavLinks = ({
           // Use the given title for in case of a match use the last part of the path to display the id 
           const title = titleBase || matchPath(newPath, pathname) && `#${pathname.split('/').pop()}`;
 
+          // Use actual path then no title is given but a match exists which means there is number in the path
+          const showPath = !titleBase && matchPath(newPath, pathname) ? pathname : newPath;
+
           const newBreadcrumb = breadcrumb === false ? false : (
             <>
               {breadcrumb}
               {breadcrumb && " / "}
-              <Link to={newPath}>{title}</Link>
+              <Link to={showPath}>{title}</Link>
             </>
           );
 
           return (
             <div onClick={onClick} key={key}>
               {title && (
-                <NavLink to={newPath}>
+                <NavLink to={showPath}>
                   {title}
                 </NavLink>
               )}
@@ -59,7 +62,7 @@ export const NavLinks = ({
                 <div style={{ marginLeft: "20px" }}>
                   <NavLinks
                     routes={children}
-                    path={newPath}
+                    path={showPath}
                     breadcrumb={newBreadcrumb}
                     onClick={onClick} 
                   />
