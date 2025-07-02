@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from "react-dom";
 import { Navbar, Nav, Row, Col } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router';
+import { toast } from 'react-toastify';
+import { MenuButton, useError, useLocalization } from '@jasperoosthoek/react-toolbox';
 
-import { MenuButton, useError } from '@jasperoosthoek/react-toolbox';
 import { useNavRoutes } from '../router';
 import NavLinks from './NavLinks';
 import LanguageDropdown from './LanguageDropdown';
 
 const Dashboard = () => {
+  const { text } = useLocalization();
   const [showMenu, setShowMenu] = useState(false);
   const navRoutes = useNavRoutes();
   const { error, clearError } = useError();
@@ -18,6 +20,7 @@ const Dashboard = () => {
       // the mock database starts fresh. The mock database is for demonstration use only, normally 
       // a real backend such as a Django app is used.
       console.log('An unhandled error occured, delete localStorage', error)
+      toast.error(text`unhandled_error`);
       clearError();
       localStorage.removeItem('mock-db');
     }

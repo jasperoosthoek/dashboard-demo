@@ -12,6 +12,7 @@ const localization = combineLocalization(
       link_employees: 'Medewerkers',
       link_roles: 'Rollen',
       on_error: 'Er is iets fout gegaan',
+      unhandled_error: 'Er heeft zich een onverwacht probleem voorgedaan en de gegevens zijn gereset.',
 
       create_new_employee: 'Nieuwe medewerker aanmaken',
       edit_employee: 'Medewerker bewerken',
@@ -88,6 +89,7 @@ const localization = combineLocalization(
       link_employees: 'Employees',
       link_roles: 'Roles',
       on_error: 'Something went wrong',
+      unhandled_error: 'An unexpected problem occurred and the data was reset.',
 
       create_new_employee: 'Create new employee',
       edit_employee: 'Edit employee',
@@ -164,6 +166,7 @@ const localization = combineLocalization(
       link_employees: 'Employés',
       link_roles: 'Rôles',
       on_error: 'Une erreur s\'est produite',
+      unhandled_error: "Un problème inattendu s'est produit, les données sont réinitialisées.",
 
       create_new_employee: 'Créer un nouvel employé',
       edit_employee: 'Modifier l\'employé',
