@@ -48,7 +48,7 @@ export const useInvoiceStatus = () => {
 }
 
 
-export const  useInvoiceFormFields = ({ includeProject }: { includeProject?: boolean } = {}) => {
+export const  useInvoiceFormFields = ({ excludeProject }: { excludeProject?: boolean } = {}) => {
   const { text } = useLocalization();
   const projects = use.projects()
   const invoiceStatusText = useInvoiceStatusText();
@@ -83,7 +83,7 @@ export const  useInvoiceFormFields = ({ includeProject }: { includeProject?: boo
       label: text`due_date`,
       required: true,
     },
-    ...includeProject
+    ...!excludeProject
       ? {
           project_id: {
             formProps: {
@@ -100,7 +100,7 @@ export const  useInvoiceFormFields = ({ includeProject }: { includeProject?: boo
   };
 }
 
-export const useInvoiceColumns = ({ includeProject }: { includeProject?: boolean } = {}) => {
+export const useInvoiceColumns = ({ excludeProject }: { excludeProject?: boolean } = {}) => {
   const { text } = useLocalization();
   const invoices = use.invoices();
   const invoiceStatus = useInvoiceStatus();
@@ -117,7 +117,7 @@ export const useInvoiceColumns = ({ includeProject }: { includeProject?: boolean
         selector: ({ id }: Invoice) => `#${id}`,
         orderBy: 'id',
       },
-      ...includeProject ? [
+      ...!excludeProject ? [
         {
           name: text`project`,
           selector: ({ project_id }: Invoice) => {
@@ -190,8 +190,8 @@ const InvoiceList = () => {
   const customers = use.customers();
   const invoices = use.invoices();
   useGetListOnMount(projects, customers, invoices)
-  const invoiceFormFields = useInvoiceFormFields({ includeProject: true });
-  const invoiceColumns = useInvoiceColumns({ includeProject: true });
+  const invoiceFormFields = useInvoiceFormFields();
+  const invoiceColumns = useInvoiceColumns();
   const invoiceStatusText = useInvoiceStatusText()
   const { filterStatus } = invoices.state;
 

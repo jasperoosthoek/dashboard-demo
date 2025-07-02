@@ -25,12 +25,12 @@ import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
 
 
-export const  useNoteFormFields = ({ includeEmployee }: { includeEmployee?: boolean } = {}) => {
+export const  useNoteFormFields = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {
   const { text } = useLocalization();
   const customers = use.customers()
   const employeeList = useEmployeeFormList();
   
-  if (!customers.list || (includeEmployee && !employeeList)) return [];
+  if (!customers.list || (excludeEmployee && !employeeList)) return [];
 
   return {
     content: {
@@ -40,7 +40,7 @@ export const  useNoteFormFields = ({ includeEmployee }: { includeEmployee?: bool
         rows: 5,
       } as FormInputProps,
     },
-    ...includeEmployee ? (
+    ...excludeEmployee ? (
       {
         employee_id: {
           formProps: {
@@ -62,7 +62,7 @@ export const  useNoteFormFields = ({ includeEmployee }: { includeEmployee?: bool
   };
 }
 
-export const useNoteColumns = ({ includeEmployee }: { includeEmployee?: boolean } = {}) => {
+export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {
   const { text } = useLocalization();
   const notes = use.notes();
   const employees = use.employees();
@@ -78,7 +78,7 @@ export const useNoteColumns = ({ includeEmployee }: { includeEmployee?: boolean 
         selector: ({ content }: Note) => content,
         orderBy: 'content',
       },
-      ...includeEmployee ? [
+      ...excludeEmployee ? [
         {
           name: text`employee`,
           selector: ({ employee_id }: Note) => {
@@ -135,6 +135,14 @@ export const useNoteColumns = ({ includeEmployee }: { includeEmployee?: boolean 
   )
 }
 
+export const noteInitialState = (
+  {
+    name: '',
+    status: 'open',
+    due_date: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
+  }
+) as Partial<Note>
+
 const NotesList = () => {
   const { text } = useLocalization();
   const notes = use.notes();
@@ -142,8 +150,8 @@ const NotesList = () => {
   const customers = use.customers();
   const roles = use.roles();
   useGetListOnMount(notes,employees, customers, roles)
-  const noteFormFields = useNoteFormFields({ includeEmployee: true });
-  const noteColumns = useNoteColumns({ includeEmployee: true });
+  const noteFormFields = useNoteFormFields();
+  const noteColumns = useNoteColumns();
   const [selectedCustomer, setSelectedCustomer] = useState<number | 'all'>('all');
 
   return (
@@ -151,11 +159,7 @@ const NotesList = () => {
       {(!notes.list || !employees.list || !customers.list) ? <SmallSpinner /> :
         <FormModalProvider
           loading={notes.create.isLoading || notes.update.isLoading}
-          initialState={{
-            name: '',
-            status: 'open',
-            due_date: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
-          }}
+          initialState={noteInitialState}
           createModalTitle={text`create_new_note`}
           editModalTitle={text`edit_note`}
           formFields={noteFormFields}

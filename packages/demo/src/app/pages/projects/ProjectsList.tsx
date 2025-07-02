@@ -20,14 +20,14 @@ import NotFound from '../../components/NotFound';
 import { useProjectStatus, useProjectStatusText } from './ProjectItem';
 import { useEmployeeFormList } from '../employees/EmployeesList';
 
-export const useProjectFormFields = () => {  
+export const useProjectFormFields = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {  
   const customers = use.customers();
   const { text } = useLocalization();
   const employeeList = useEmployeeFormList();
   const projectStatusText = useProjectStatusText();
 
   if (!customers.list || !employeeList) {
-    return null;
+    return [];
   }
   return (
     {
@@ -71,13 +71,17 @@ export const useProjectFormFields = () => {
         label: text`customer`,
         required: true,
       },
-      employee_id: {
-        formProps: {
-          list: employeeList,
-        },
-        component: FormDropdown,
-        label: text`employee`,
-      },
+      ...!excludeEmployee
+        ? {
+            employee_id: {
+              formProps: {
+                list: employeeList,
+              },
+              component: FormDropdown,
+              label: text`employee`,
+            },
+          }
+        : {},
       start_date: {
         component: FormDate,
         label: text`start_date`,
@@ -92,7 +96,7 @@ export const useProjectFormFields = () => {
   )
 }
 
-export const useProjectColumns = () => {
+export const useProjectColumns = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {  
 
   const { text } = useLocalization();
   const projects = use.projects();
@@ -132,20 +136,22 @@ export const useProjectColumns = () => {
         },
         orderBy: ({ customer_id }: Project) => customers.record[customer_id]?.name || customer_id,
       },
-      {
-        name: text`employee`,
-        selector: ({ employee_id }: Project) => {
-          const employee = employees.record[employee_id];
-          return (
-            employee
-              ? <div title={`${employee.name} (${roles.record[employee.role_id]?.name})`}>
-                  {employee?.name}
-                </div>
-              : <NotFound />
-          );
+      ...!excludeEmployee ? [
+        {
+          name: text`employee`,
+          selector: ({ employee_id }: Project) => {
+            const employee = employees.record[employee_id];
+            return (
+              employee
+                ? <div title={`${employee.name} (${roles.record[employee.role_id]?.name})`}>
+                    {employee?.name}
+                  </div>
+                : <NotFound />
+            );
+          },
+          orderBy: ({ employee_id }: Project) => employees.record[employee_id]?.name || employee_id,
         },
-        orderBy: ({ employee_id }: Project) => employees.record[employee_id]?.name || employee_id,
-      },
+      ] : [],
       {
         name: text`start_date`,
         selector: ({ start_date }: Project) => (
@@ -187,6 +193,15 @@ export const useProjectColumns = () => {
   )
 }
 
+export const projectInitialState = (
+  {
+    name: '',
+    status: 'pending',
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: new Date().toISOString().split('T')[0],
+  }
+) as Partial<Project>
+
 const ProjectsList = () => {
   const { text } = useLocalization();
   const projects = use.projects();
@@ -205,12 +220,7 @@ const ProjectsList = () => {
       {(!projects.list || !customers.list || !employees.list || !roles.record)? <SmallSpinner /> : 
         <FormModalProvider
           loading={projects.create.isLoading || projects.update.isLoading}
-          initialState={{
-            name: '',
-            status: 'pending',
-            start_date: new Date().toISOString().split('T')[0],
-            end_date: new Date().toISOString().split('T')[0],
-          }}
+          initialState={projectInitialState}
           createModalTitle={text`create_new_project`}
           editModalTitle={text`edit_project`}
           formFields={projectFormFields}

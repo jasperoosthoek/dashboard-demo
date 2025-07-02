@@ -9,6 +9,7 @@ import {
   DeleteConfirmButton,
   FormDropdown,
   SmallSpinner,
+  FormEditModalButton,
 } from '@jasperoosthoek/react-toolbox';
 
 import { Employee, Role } from '../../stores/types';
@@ -102,7 +103,6 @@ const EmployeesList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            showEditModalOnClickRow
             filterColumn={[
               'name',
               'email',
@@ -133,14 +133,20 @@ const EmployeesList = () => {
               {
                 name: text`actions`,
                 selector: (employee) => (
-                  <DeleteConfirmButton
-                    loading={employees.delete.isLoading && employees.delete.id === employee.id}                  
-                    modalTitle={text`delete_employee${employee.name}`}
-                    onDelete={() => {
-                      employees.delete(employee);
-                    }}
-                  />
-                )
+                  <>
+                    <FormEditModalButton
+                      state={employee}
+                      title={text`edit_employee`}
+                    />
+                    <DeleteConfirmButton
+                      loading={employees.delete.isLoading && employees.delete.id === employee.id}                  
+                      modalTitle={text`delete_employee${employee.name}`}
+                      onDelete={() => {
+                        employees.delete(employee);
+                      }}
+                    />
+                  </>
+                  )
               }
             ]}
             data={employees.list}

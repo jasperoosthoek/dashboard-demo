@@ -61,9 +61,9 @@ const ProjectsList = () => {
   const projectStatus = useProjectStatus();
   const projectFormFields = useProjectFormFields();
   const taskFormFields = useTaskFormFields();
-  const taskColumns = useTaskColumns();
-  const invoiceFormFields = useInvoiceFormFields();
-  const invoiceColumns = useInvoiceColumns();
+  const taskColumns = useTaskColumns({ excludeProject: true });
+  const invoiceFormFields = useInvoiceFormFields({ excludeProject: true });
+  const invoiceColumns = useInvoiceColumns({ excludeProject: true });
 
   const { id } = useParams<{ id: string }>();
   const project = projects.record && projects?.record[id || ''] as Project | undefined;
@@ -138,6 +138,7 @@ const ProjectsList = () => {
                   <Card.Body>
                     <DataTable
                       showHeader={false}
+                      rowsPerPage={null}
                       orderByDefault='order'
                       columns={taskColumns}
                       data={tasks.list.filter(({ project_id }) => project_id === project.id)}
@@ -174,6 +175,7 @@ const ProjectsList = () => {
                   <Card.Body>
                     <DataTable
                       showHeader={false}
+                      rowsPerPage={null}
                       orderByDefault='order'
                       columns={invoiceColumns}
                       data={invoices.list.filter(({ project_id }) => project_id === project.id)}

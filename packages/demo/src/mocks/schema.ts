@@ -54,7 +54,7 @@ export const schema = {
     id: primaryKey(Number),
     title: String,
     description: String,
-    assigned_to: oneOf('employee'),
+    employee: oneOf('employee'),
     project: oneOf('project'),
     status: String,
     due_date: String,

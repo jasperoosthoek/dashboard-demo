@@ -47,7 +47,7 @@ export const useTaskStatus = () => {
   );
 }
 
-export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolean } = {}) => {
+export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { excludeProject?: boolean, excludeEmployee?: boolean } = {}) => {
   const { text } = useLocalization();
   const employeeList = useEmployeeFormList();
   const projects = use.projects()
@@ -89,7 +89,7 @@ export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolea
       required: true,
     },
     
-    ...includeProject
+    ...!excludeProject
       ? {
           project_id: {
             formProps: {
@@ -102,18 +102,22 @@ export const  useTaskFormFields = ({ includeProject }: { includeProject?: boolea
           },
         }
       : {},
-    assigned_to_id: {
-      formProps: {
-        list: employeeList,
-      },
-      component: FormDropdown,
-      label: text`assigned_to_employee`,
-      required: true,
-    },
+    ...!excludeEmployee
+      ? {
+          employee_id: {
+            formProps: {
+              list: employeeList,
+            },
+            component: FormDropdown,
+            label: text`assigned_to_employee`,
+            required: true,
+          },
+        }
+      : {},
   };
 }
 
-export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } = {}) => {
+export const useTaskColumns = ({ excludeProject, excludeEmployee }: { excludeProject?: boolean, excludeEmployee?: boolean } = {}) => {
   const { text } = useLocalization();
   const employees = use.employees();
   const tasks = use.tasks();
@@ -134,7 +138,7 @@ export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } 
         ),
         orderBy: 'title',
       },
-      ...includeProject ? [
+      ...!excludeProject ? [
         {
           name: text`project`,
           selector: ({ project_id }: Task) => {
@@ -150,20 +154,22 @@ export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } 
           orderBy: 'project_id',
         }
       ] : [],
-      {
-        name: text`assigned_to_employee`,
-        selector: ({ assigned_to_id }: Task) => {
-          const employee = employees.record[assigned_to_id];
-          return (
-            employee
-              ? <div title={`${employee?.name} (${employee?.email})`}>
-                  {employee?.name}
-                </div>
-              : <NotFound />
-          );
-        },
-        orderBy: 'assigned_to_id',
-      },
+      ...!excludeEmployee ? [
+        {
+          name: text`assigned_to_employee`,
+          selector: ({ employee_id }: Task) => {
+            const employee = employees.record[employee_id];
+            return (
+              employee
+                ? <div title={`${employee?.name} (${employee?.email})`}>
+                    {employee?.name}
+                  </div>
+                : <NotFound />
+            );
+          },
+          orderBy: 'employee_id',
+        }
+      ] : [],
       {
         name: text`due_date`,
         selector: ({ due_date }: Task) => formatDate(due_date),
@@ -195,6 +201,15 @@ export const useTaskColumns = ({ includeProject }: { includeProject?: boolean } 
     ]
   )
 }
+
+export const taskInitialState = (
+  {
+    name: '',
+    status: 'todo',
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: new Date().toISOString().split('T')[0],
+  } as Partial<Task>
+)
 const TasksList = () => {
   const { text } = useLocalization();
   const tasks = use.tasks();
@@ -204,7 +219,7 @@ const TasksList = () => {
   const projects = use.projects();
   useGetListOnMount(tasks, employees, customers, projects, roles)
   const taskFormFields = useTaskFormFields();
-  const taskColumns = useTaskColumns({ includeProject: true });
+  const taskColumns = useTaskColumns();
   const taskStatusText = useTaskStatusText();
 
   return (
@@ -212,12 +227,7 @@ const TasksList = () => {
       {(!tasks.list || !customers.list || !employees.list || !roles.record)? <SmallSpinner /> : 
         <FormModalProvider
           loading={tasks.create.isLoading || tasks.update.isLoading}
-          initialState={{
-            name: '',
-            status: 'pending',
-            start_date: new Date().toISOString().split('T')[0],
-            end_date: new Date().toISOString().split('T')[0],
-          }}
+          initialState={taskInitialState}
           createModalTitle={text`create_new_task`}
           editModalTitle={text`edit_task`}
           formFields={taskFormFields}
@@ -243,7 +253,7 @@ const TasksList = () => {
             filterColumn={[
               'title',
               'status',
-              ({ assigned_to_id }: Task) => employees.record[assigned_to_id]?.name || '',
+              ({ employee_id }: Task) => employees.record[employee_id]?.name || '',
               ({ project_id }: Task) => projects.record[project_id]?.name || '',
               ({ status }: Task) => taskStatusText(status) || '',
             ]}

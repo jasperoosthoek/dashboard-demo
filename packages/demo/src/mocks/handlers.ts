@@ -33,7 +33,7 @@ export const handlers = [
   ...createRestHandlers(db, schema, 'employee', '/api/employees', {
     // onDelete: (employee) => {
     //   db.note.deleteMany({ where: { employee: { id: { equals: employee.id } } } });
-    //   db.task.deleteMany({ where: { assigned_to: { id: { equals: employee.id } } } });
+    //   db.task.deleteMany({ where: { employee: { id: { equals: employee.id } } } });
     // },
   }),
 
