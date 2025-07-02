@@ -32,7 +32,6 @@ export const  useNoteFormFields = ({ includeEmployee }: { includeEmployee?: bool
   
   if (!customers.list || (includeEmployee && !employeeList)) return [];
 
-  console.log({ includeEmployee})
   return {
     content: {
       label: text`content`,

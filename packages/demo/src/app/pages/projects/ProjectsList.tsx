@@ -92,7 +92,8 @@ export const useProjectFormFields = () => {
   )
 }
 
-const ProjectsList = () => {
+export const useProjectColumns = () => {
+
   const { text } = useLocalization();
   const projects = use.projects();
   const employees = use.employees();
@@ -101,6 +102,100 @@ const ProjectsList = () => {
   useGetListOnMount(projects, employees, customers, roles)
   
   const projectStatus = useProjectStatus();
+  return (
+    [
+      {
+        name: text`name`,
+        selector: (project: Project) => (
+          <Link to={`/projects/${project.id}`}>
+            {project.name}
+          </Link>
+        ),
+        orderBy: 'name',
+      },
+      {
+        name: text`amount`,
+        selector: ({ amount }: Project) => formatCurrency(amount),
+        orderBy: 'amount',
+      },
+      {
+        name: text`customer`,
+        selector: ({ customer_id }: Project) => {
+          const customer = customers.record[customer_id];
+          return (
+            customer
+              ? <div title={`${customer?.name} (${customer?.contact_person})`}>
+                  {customer?.name}
+                </div>
+              : <NotFound />
+          );
+        },
+        orderBy: ({ customer_id }: Project) => customers.record[customer_id]?.name || customer_id,
+      },
+      {
+        name: text`employee`,
+        selector: ({ employee_id }: Project) => {
+          const employee = employees.record[employee_id];
+          return (
+            employee
+              ? <div title={`${employee.name} (${roles.record[employee.role_id]?.name})`}>
+                  {employee?.name}
+                </div>
+              : <NotFound />
+          );
+        },
+        orderBy: ({ employee_id }: Project) => employees.record[employee_id]?.name || employee_id,
+      },
+      {
+        name: text`start_date`,
+        selector: ({ start_date }: Project) => (
+          formatDate(start_date)
+        ) ,
+        orderBy: 'start_date',
+      },
+      {
+        name: text`end_date`,
+        selector: ({ end_date }: Project) => (
+          formatDate(end_date)
+        ) ,
+        orderBy: 'end_date',
+      },
+      {
+        name: text`status`,
+        selector: (project: Project) => projectStatus(project),
+        orderBy: 'status',
+      },
+      {
+        name: text`actions`,
+        selector: (project: Project) => (
+          <>
+            <FormEditModalButton
+              state={project}
+              title={text`edit_project`}
+            />
+            <DeleteConfirmButton
+              loading={projects.delete.isLoading && projects.delete.id === project.id}
+              modalTitle={text`delete_project${project.name}`}
+              onDelete={() => {
+                projects.delete(project);
+              }}
+            />
+          </>
+        )
+      }
+    ]
+  )
+}
+
+const ProjectsList = () => {
+  const { text } = useLocalization();
+  const projects = use.projects();
+  const employees = use.employees();
+  const customers = use.customers();
+  const roles = use.roles();
+  useGetListOnMount(projects, employees, customers, roles)
+  
+  const projectColumns = useProjectColumns();
   const projectFormFields = useProjectFormFields();
   const projectStatusText = useProjectStatusText();
 
@@ -145,87 +240,7 @@ const ProjectsList = () => {
               ({ customer_id }: Project) => customers.record[customer_id]?.name || '',
               ({ employee_id }: Project) => employees.record[employee_id]?.name || '',
             ]}
-            columns={[
-              {
-                name: text`name`,
-                selector: (project) => (
-                  <Link to={`/projects/${project.id}`}>
-                    {project.name}
-                  </Link>
-                ),
-                orderBy: 'name',
-              },
-              {
-                name: text`amount`,
-                selector: ({ amount }: Project) => formatCurrency(amount),
-                orderBy: 'amount',
-              },
-              {
-                name: text`customer`,
-                selector: ({ customer_id }: Project) => {
-                  const customer = customers.record[customer_id];
-                  return (
-                    customer
-                      ? <div title={`${customer?.name} (${customer?.contact_person})`}>
-                          {customer?.name}
-                        </div>
-                      : <NotFound />
-                  );
-                },
-                orderBy: ({ customer_id }) => customers.record[customer_id]?.name || customer_id,
-              },
-              {
-                name: text`employee`,
-                selector: ({ employee_id }: Project) => {
-                  const employee = employees.record[employee_id];
-                  return (
-                    employee
-                      ? <div title={`${employee.name} (${roles.record[employee.role_id]?.name})`}>
-                          {employee?.name}
-                        </div>
-                      : <NotFound />
-                  );
-                },
-                orderBy: ({ employee_id }) => employees.record[employee_id]?.name || employee_id,
-              },
-              {
-                name: text`start_date`,
-                selector: ({ start_date }: Project) => (
-                  formatDate(start_date)
-                ) ,
-                orderBy: 'start_date',
-              },
-              {
-                name: text`end_date`,
-                selector: ({ end_date }: Project) => (
-                  formatDate(end_date)
-                ) ,
-                orderBy: 'end_date',
-              },
-              {
-                name: text`status`,
-                selector: (project) => projectStatus(project),
-                orderBy: 'status',
-              },
-              {
-                name: text`actions`,
-                selector: (project) => (
-                  <>
-                    <FormEditModalButton
-                      state={project}
-                      title={text`edit_project`}
-                    />
-                    <DeleteConfirmButton
-                      loading={projects.delete.isLoading && projects.delete.id === project.id}
-                      modalTitle={text`delete_project${project.name}`}
-                      onDelete={() => {
-                        projects.delete(project);
-                      }}
-                    />
-                  </>
-                )
-              }
-            ]}
+            columns={projectColumns}
             data={projects.list}
           />
         </FormModalProvider>

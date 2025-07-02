@@ -3,6 +3,7 @@ import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from 'r
 import Dashboard from './components/Dashboard';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import EmployeesList from './pages/employees/EmployeesList';
+import EmployeeItem from './pages/employees/EmployeeItem';
 import RolesPage from './pages/employees/RolesList';
 import ProjectsList from './pages/projects/ProjectsList';
 import ProjectItem from './pages/projects/ProjectItem';
@@ -31,6 +32,10 @@ export const useNavRoutes = () => {
           Component: EmployeesList,
         },
         {
+          path: ':id',
+          Component: EmployeeItem,
+        },
+        {
           path: 'roles',
           Component: RolesPage,
           title: text`link_roles`,
@@ -39,7 +44,7 @@ export const useNavRoutes = () => {
     },
     {
       path: 'projects',
-      title: text`link_projects`,
+      title: text`projects`,
       Component: Outlet,
       children: [
         {
@@ -54,7 +59,7 @@ export const useNavRoutes = () => {
     },
     {
       path: 'tasks',
-      title: text`link_tasks`,
+      title: text`tasks`,
       Component: Outlet,
       children: [
         {
@@ -65,7 +70,7 @@ export const useNavRoutes = () => {
     },
     {
       path: 'invoices',
-      title: text`link_invoices`,
+      title: text`invoices`,
       Component: Outlet,
       children: [
         {
@@ -76,7 +81,7 @@ export const useNavRoutes = () => {
     },
     {
       path: 'notes',
-      title: text`link_notes`,
+      title: text`notes`,
       Component: Outlet,
       children: [
         {

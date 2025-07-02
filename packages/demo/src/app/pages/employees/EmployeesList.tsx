@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
+import { Link } from 'react-router';
 import {
   DataTable,
   FormCreateModalButton,
@@ -30,11 +31,35 @@ export const useEmployeeFormList = () => {
     ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` }))
 }
 
+export const useEmployeeFormFields = () => {
+  const { text } = useLocalization();
+  const roles = use.roles();
+  if (!roles.list) return [];
+  return (
+    {
+      name: {
+        label: text`name`,
+        required: true,
+      },
+      email: {
+        label: text`email_address`,
+        required: true,
+      },
+      role_id: {
+        formProps: { list: roles.list?.sort((r1, r2) => r1.name > r2.name ? 1 : -1) || [] },
+        component: FormDropdown,
+        label: text`role`,
+      }
+    }
+  );
+}
+
 const EmployeesList = () => {
   const { text } = useLocalization();
   const employees = use.employees();
   const roles = use.roles();
   useGetListOnMount(employees, roles)
+  const employeeFormFields = useEmployeeFormFields();
 
   return (
     <Container className='container-list'>
@@ -48,21 +73,7 @@ const EmployeesList = () => {
           }}
           createModalTitle={text`create_new_employee`}
           editModalTitle={text`edit_employee`}
-          formFields={{
-            name: {
-              label: text`name`,
-              required: true,
-            },
-            email: {
-              label: text`email_address`,
-              required: true,
-            },
-            role_id: {
-              formProps: { list: roles.list?.sort((r1, r2) => r1.name > r2.name ? 1 : -1) || [] },
-              component: FormDropdown,
-              label: text`role`,
-            }
-          }}
+          formFields={employeeFormFields}
           validate={({ email }) => {
             // You can add more sophisticated validation here
             const es = email.split('@')
@@ -102,8 +113,11 @@ const EmployeesList = () => {
                 // Display column name
                 name: text`name`,
                 // Select by key
-                selector: 'name',
-                orderBy: 'name',
+                selector: (employee) => (
+                  <Link to={`/employees/${employee.id}`}>
+                    {employee.name}
+                  </Link>
+                ),
               },
               {
                 name: text`email_address`,

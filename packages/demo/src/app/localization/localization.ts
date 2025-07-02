@@ -21,6 +21,7 @@ const localization = combineLocalization(
       email_address: 'E-mailadres',
       actions: 'Acties',
       error_email_requires_at: 'E-mailadres moet minstens één @ bevatten',
+      employee_info: 'Medewerkerinformatie',
 
       create_new_role: 'Nieuwe rol aanmaken',
       edit_role: 'Rol bewerken',
@@ -32,7 +33,7 @@ const localization = combineLocalization(
       start_date: 'Startdatum',
       end_date: 'Einddatum',
 
-      link_projects: 'Projecten',
+      projects: 'Projecten',
       create_new_project: 'Nieuw project aanmaken',
       edit_project: 'Project bewerken?',
       delete_project: (name) => `Project "${name}" verwijderen?`,
@@ -59,7 +60,7 @@ const localization = combineLocalization(
       all: 'Alles',
       all_customers: 'Alle klanten',
 
-      link_tasks: 'Taken',
+      tasks: 'Taken',
       task_status_todo: 'Te doen',
       task_status_in_progress: 'Bezig',
       task_status_done: 'Gedaan',
@@ -67,14 +68,14 @@ const localization = combineLocalization(
       edit_task: 'Taak bewerken',
       delete_task: (title) => `Taak "${title}" verwijderen?`,
       created_at: 'Created at',
-      assigned_to_employee: 'Aangemaakt op',
+      assigned_to_employee: 'Toegewezen aan',
 
-      link_invoices: 'Facturen',
+      invoices: 'Facturen',
       create_new_invoice: 'Nieuwe factuur aanmaken',
       edit_invoice: 'Factuur bewerken',
       delete_invoice: (id) => `Factuur #${id} verwijderen?`,
 
-      link_notes: 'Notities',
+      notes: 'Notities',
       content: 'Inhoud',
       create_new_note: 'Nieuwe notitie aanmaken',
       edit_note: 'Notitie bewerken',
@@ -96,6 +97,7 @@ const localization = combineLocalization(
       email_address: 'Email address',
       actions: 'Actions',
       error_email_requires_at: 'Email address should contain at least one @',
+      employee_info: 'Employee info',
 
       create_new_role: 'Create new role',
       edit_role: 'Edit role',
@@ -107,7 +109,7 @@ const localization = combineLocalization(
       start_date: 'Start date',
       end_date: 'End date',
 
-      link_projects: 'Projects',
+      projects: 'Projects',
       create_new_project: 'Create new project',
       edit_project: 'Edit project?',
       delete_project: (name) => `Delete project "${name}"?`,
@@ -134,7 +136,7 @@ const localization = combineLocalization(
       all: 'All',
       all_customers: 'All customers',
 
-      link_tasks: 'Tasks',
+      tasks: 'Tasks',
       task_status_todo: 'To do',
       task_status_in_progress: 'In progress',
       task_status_done: 'Done',
@@ -144,12 +146,12 @@ const localization = combineLocalization(
       assigned_to_employee: 'Assigned to employee',
       created_at: 'Created at',
 
-      link_invoices: 'Invoices',
+      invoices: 'Invoices',
       create_new_invoice: 'Create new invoice',
       edit_invoice: 'Edit invoice',
       delete_invoice: (id) => `Delete invoice #${id}?`,
 
-      link_notes: 'Notes',
+      notes: 'Notes',
       content: 'Content',
       create_new_note: 'Create new note',
       edit_note: 'Edit note',
@@ -171,6 +173,7 @@ const localization = combineLocalization(
       email_address: 'Adresse e-mail',
       actions: 'Actions',
       error_email_requires_at: 'L\'adresse e-mail doit contenir au moins un @',
+      employee_info: 'Informations sur l’employé',
 
       create_new_role: 'Créer un nouveau rôle',
       edit_role: 'Modifier le rôle',
@@ -182,7 +185,7 @@ const localization = combineLocalization(
       start_date: 'Date de début',
       end_date: 'Date de fin',
 
-      link_projects: 'Projets',
+      projects: 'Projets',
       create_new_project: 'Créer un nouveau projet',
       edit_project: 'Modifier le projet?',
       delete_project: (name) => `Supprimer le projet "${name}" ?`,
@@ -209,7 +212,7 @@ const localization = combineLocalization(
       all: 'Tous',
       all_customers: 'Tous les clients',
 
-      link_tasks: 'Tâches',
+      tasks: 'Tâches',
       task_status_todo: 'À faire',
       task_status_in_progress: 'En cours',
       task_status_done: 'Terminé',
@@ -219,12 +222,12 @@ const localization = combineLocalization(
       assigned_to_employee: 'Assigné à un employé',
       created_at: 'Créé à',
 
-      link_invoices: 'Factures',
+      invoices: 'Factures',
       create_new_invoice: 'Créer une nouvelle facture',
       edit_invoice: 'Modifier la facture',
       delete_invoice: (id) => `Supprimer la facture n°${id} ?`,
 
-      link_notes: 'Notes',
+      notes: 'Notes',
       content: 'Contenu',
       create_new_note: 'Créer une nouvelle note',
       edit_note: 'Modifier la note',
