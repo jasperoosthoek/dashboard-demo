@@ -13,7 +13,7 @@ import {
   FormDate,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Task, Project } from '../../stores/types';
+import { Task, Project, ProjectFilterStatus } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
@@ -97,8 +97,9 @@ export const useProjectFormFields = ({ excludeEmployee }: { excludeEmployee?: bo
   )
 }
 
-export const useProjectColumns = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {  
+export type UseProjectColumnsProps = { excludeEmployee?: boolean; filterStatus?: boolean }
 
+export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectColumnsProps = {}) => {  
   const { text } = useLocalization();
   const projects = use.projects();
   const employees = use.employees();
@@ -108,6 +109,7 @@ export const useProjectColumns = ({ excludeEmployee }: { excludeEmployee?: boole
   const formatDate = useFormatDate();
   
   const projectStatus = useProjectStatus();
+  const projectStatusText = useProjectStatusText();
   return (
     [
       {
@@ -170,6 +172,19 @@ export const useProjectColumns = ({ excludeEmployee }: { excludeEmployee?: boole
         name: text`status`,
         selector: (project: Project) => projectStatus(project),
         orderBy: 'status',
+        ...filterStatus ? (
+          {
+            optionsDropdown: {
+              selected: projects.state.filterStatus,
+              onSelect: (status: string | null) => projects.setState({ filterStatus: status as ProjectFilterStatus }),
+              options: {
+                pending: projectStatusText('pending'),
+                in_progress: projectStatusText('in_progress'),
+                completed: projectStatusText('completed'),
+              }
+            },
+          }
+        ) : {},
       },
       {
         name: text`actions`,
@@ -210,10 +225,11 @@ const ProjectsList = () => {
   const roles = use.roles();
   useGetListOnMount(projects, employees, customers, roles)
   
-  const projectColumns = useProjectColumns();
+  const projectColumns = useProjectColumns({ filterStatus: true });
   const projectFormFields = useProjectFormFields();
   const projectStatusText = useProjectStatusText();
-
+  const { filterStatus } = projects.state;
+  useEffect(() => projects.setState({ filterStatus: null }), [])
 
   return (
     <Container className='container-list'>
@@ -251,7 +267,7 @@ const ProjectsList = () => {
               ({ employee_id }: Project) => employees.record[employee_id]?.name || '',
             ]}
             columns={projectColumns}
-            data={projects.list}
+            data={projects.list.filter(project => filterStatus === null || project.status === filterStatus)}
             onMove={onMove(projects)}
           />
         </FormModalProvider>

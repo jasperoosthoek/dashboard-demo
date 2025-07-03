@@ -151,7 +151,6 @@ const NotesList = () => {
   useGetListOnMount(notes,employees, customers, roles)
   const noteFormFields = useNoteFormFields();
   const noteColumns = useNoteColumns();
-  const [selectedCustomer, setSelectedCustomer] = useState<number | 'all'>('all');
 
   return (
     <Container className='container-list'>
@@ -187,7 +186,7 @@ const NotesList = () => {
               ({ customer_id }: Note) => customers.record[customer_id]?.name || '',
             ]}
             columns={noteColumns}
-            data={notes.list} //.filter(inv => filterStatus === 'all' || inv.status === filterStatus)}
+            data={notes.list} //.filter(inv => filterStatus === null || inv.status === filterStatus)}
             onMove={onMove(notes)}
           />
         </FormModalProvider>

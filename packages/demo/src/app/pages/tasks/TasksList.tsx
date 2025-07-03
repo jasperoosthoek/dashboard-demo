@@ -15,7 +15,7 @@ import {
   FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Project, Task } from '../../stores/types';
+import { Project, Task, TaskFilterStatus } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
@@ -118,13 +118,15 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
   };
 }
 
-export const useTaskColumns = ({ excludeProject, excludeEmployee }: { excludeProject?: boolean, excludeEmployee?: boolean } = {}) => {
+export type UseTaskColumnsProps = { excludeProject?: boolean, excludeEmployee?: boolean; filterStatus?: boolean }
+export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }: UseTaskColumnsProps = {}) => {
   const { text } = useLocalization();
   const employees = use.employees();
   const tasks = use.tasks();
   const taskStatus = useTaskStatus();
   const projects = use.projects();
   const formatDate = useFormatDate();
+  const taskStatusText = useTaskStatusText();
   
   if (!tasks.list || !employees.record || !projects.record) {
     return [];
@@ -179,6 +181,19 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee }: { excludePro
         name: text`status`,
         selector: (task: Task) => taskStatus(task),
         orderBy: 'status',
+        ...filterStatus ? (
+          {
+            optionsDropdown: {
+              selected: tasks.state.filterStatus,
+              onSelect: (status: string | null) => tasks.setState({ filterStatus: status as TaskFilterStatus }),
+              options: {
+                todo: taskStatusText('todo'),
+                in_progress: taskStatusText('in_progress'),
+                done: taskStatusText('done'),
+              }
+            },
+          }
+        ) : {},
       },
       {
         name: text`actions`,
@@ -219,8 +234,10 @@ const TasksList = () => {
   const projects = use.projects();
   useGetListOnMount(tasks, employees, customers, projects, roles)
   const taskFormFields = useTaskFormFields();
-  const taskColumns = useTaskColumns();
+  const taskColumns = useTaskColumns({ filterStatus: true });
   const taskStatusText = useTaskStatusText();
+  const { filterStatus } = tasks.state;
+  useEffect(() => tasks.setState({ filterStatus: null }), [])
 
   return (
     <Container className='container-list'>
@@ -258,7 +275,7 @@ const TasksList = () => {
               ({ status }: Task) => taskStatusText(status) || '',
             ]}
             columns={taskColumns}
-            data={tasks.list}
+            data={tasks.list.filter(task => filterStatus === null || task.status === filterStatus)}
             onMove={onMove(tasks)}
           />
         </FormModalProvider>

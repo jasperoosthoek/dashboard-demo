@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { create } from 'zustand'
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
 import { useCrud, createStoreRegistry, type CustomActionFunction } from "@jasperoosthoek/zustand-crud-registry";
-import type { Role, Employee, Customer, Project, Invoice, Task, Note, Instance } from "./types";
+import type { Role, Employee, Customer, Project, Invoice, Task, Note, Instance, ProjectFilterStatus, InvoiceFilterStatus, TaskFilterStatus } from "./types";
 import { toast } from 'react-toastify';
 
 export type UseStoreOptions = {
@@ -101,6 +101,9 @@ const s = {
       ...defaultConfig,
       route: '/projects',
       includeRecord: true,
+      state: {
+        filterStatus: null as ProjectFilterStatus,
+      },
       customActions: {
         move: moveConfig('projects'),
       },
@@ -127,7 +130,7 @@ const s = {
       ...defaultConfig,
       route: '/invoices',
       state: {
-        filterStatus: 'all' as 'all' | Invoice['status'],
+        filterStatus: null as InvoiceFilterStatus,
       },
       customActions: {
         move: moveConfig('invoices'),
@@ -149,6 +152,9 @@ const s = {
     {
       ...defaultConfig,
       route: '/tasks',
+      state: {
+        filterStatus: null as TaskFilterStatus,
+      },
       customActions: {
         move: moveConfig('tasks'),
       },

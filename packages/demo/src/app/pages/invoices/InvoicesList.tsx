@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router';
 import { addDays, format } from 'date-fns';
 import { Table, Container, Badge, Button, Form, Row, Col } from 'react-bootstrap';
@@ -17,10 +17,9 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
-import { type Invoice, type Project } from '../../stores/types';
+import { type Invoice, type Project, type InvoiceFilterStatus } from '../../stores/types';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 
-type FilterStatus = 'all' | Invoice['status']
 export const useInvoiceStatusText = () => {
   const { text } = useLocalization(); 
   const invoiceStatusTexts = (
@@ -98,7 +97,9 @@ export const  useInvoiceFormFields = ({ excludeProject }: { excludeProject?: boo
   };
 }
 
-export const useInvoiceColumns = ({ excludeProject }: { excludeProject?: boolean } = {}) => {
+export type UseTaskColumnsProps = { excludeProject?: boolean; filterStatus?: boolean };
+
+export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseTaskColumnsProps = {}) => {
   const { text } = useLocalization();
   const invoices = use.invoices();
   const invoiceStatus = useInvoiceStatus();
@@ -143,23 +144,21 @@ export const useInvoiceColumns = ({ excludeProject }: { excludeProject?: boolean
         orderBy: 'due_date',
       },
       {
-        name: (
-          <Form.Select
-            size="sm"
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation()
-            }}
-            className="w-auto"
-            value={invoices.state.filterStatus}
-            onChange={(e) => invoices.setState({ filterStatus: e.target.value as FilterStatus })}
-          >
-            <option value="all">{text`all`}</option>
-            <option value="open">{invoiceStatusText('open')}</option>
-            <option value="paid">{invoiceStatusText('paid')}</option>
-          </Form.Select>
-        ),
+        name: 'status',
         selector: (invoice: Invoice) => invoiceStatus(invoice),
+        orderBy: 'status',
+        ...filterStatus ? (
+          {
+            optionsDropdown: {
+              selected: invoices.state.filterStatus,
+              onSelect: (status: string | null) => invoices.setState({ filterStatus: status as InvoiceFilterStatus }),
+              options: {
+                open: invoiceStatusText('open'),
+                paid: invoiceStatusText('paid'),
+              }
+            },
+          }
+        ) : {},
       },
       {
         name: text`actions`,
@@ -190,9 +189,10 @@ const InvoiceList = () => {
   const invoices = use.invoices();
   useGetListOnMount(projects, customers, invoices)
   const invoiceFormFields = useInvoiceFormFields();
-  const invoiceColumns = useInvoiceColumns();
+  const invoiceColumns = useInvoiceColumns({ filterStatus: true });
   const invoiceStatusText = useInvoiceStatusText()
   const { filterStatus } = invoices.state;
+  useEffect(() => invoices.setState({ filterStatus: null }), [])
 
   return (
     <Container className='container-list'>
@@ -233,7 +233,7 @@ const InvoiceList = () => {
               ({ status }: Invoice) => invoiceStatusText(status) || '',
             ]}
             columns={invoiceColumns}
-            data={invoices.list.filter(inv => filterStatus === 'all' || inv.status === filterStatus)}
+            data={invoices.list.filter(inv => filterStatus === null || inv.status === filterStatus)}
             onMove={onMove(invoices)}
           />
         </FormModalProvider>

@@ -32,6 +32,7 @@ export interface Project extends Instance {
   start_date: string;
   end_date: string;
 };
+export type ProjectFilterStatus = null | Project['status']
 
 export interface Invoice extends Instance {
   due_date: string;
@@ -39,6 +40,7 @@ export interface Invoice extends Instance {
   status: 'open' | 'paid';
   project_id: number;
 };
+export type InvoiceFilterStatus = null | Invoice['status']
 
 export interface Task extends Instance {
   title: string;
@@ -49,6 +51,7 @@ export interface Task extends Instance {
   due_date: string;
   priority: string;
 };
+export type TaskFilterStatus = null | Task['status']
 
 export interface Note extends Instance {
   content: string;
