@@ -15,7 +15,7 @@ import {
 
 import { Task, Project } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
-import { formatCurrency, formatDate } from '../../localization/localization';
+import { formatCurrency, useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectStatus, useProjectStatusText } from './ProjectItem';
 import { useEmployeeFormList } from '../employees/EmployeesList';
@@ -104,7 +104,8 @@ export const useProjectColumns = ({ excludeEmployee }: { excludeEmployee?: boole
   const employees = use.employees();
   const customers = use.customers();
   const roles = use.roles();
-  useGetListOnMount(projects, employees, customers, roles)
+  useGetListOnMount(projects, employees, customers, roles);
+  const formatDate = useFormatDate();
   
   const projectStatus = useProjectStatus();
   return (

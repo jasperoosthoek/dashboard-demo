@@ -30,7 +30,7 @@ const Dashboard = () => {
     <>
       <Navbar bg='light'>
         <Link to='../'>
-          <Navbar.Brand>Dashboard</Navbar.Brand>
+          <Navbar.Brand>{text`dashboard`}</Navbar.Brand>
         </Link>
         <MenuButton
           className='p-0 d-md-none ms-3 menu-button'

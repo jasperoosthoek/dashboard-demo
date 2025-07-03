@@ -18,7 +18,7 @@ import {
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { type Invoice, type Project } from '../../stores/types';
-import { formatCurrency, formatDate } from '../../localization/localization';
+import { formatCurrency, useFormatDate } from '../../localization/localization';
 
 type FilterStatus = 'all' | Invoice['status']
 export const useInvoiceStatusText = () => {
@@ -104,6 +104,7 @@ export const useInvoiceColumns = ({ excludeProject }: { excludeProject?: boolean
   const invoiceStatus = useInvoiceStatus();
   const invoiceStatusText = useInvoiceStatusText();
   const projects = use.projects();
+  const formatDate = useFormatDate();
 
   if (!invoices.list || !projects.record) {
     return [];

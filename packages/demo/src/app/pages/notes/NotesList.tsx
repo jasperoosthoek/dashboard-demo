@@ -18,7 +18,7 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
-import { formatCurrency, formatDate } from '../../localization/localization';
+import { formatCurrency, useFormatDate } from '../../localization/localization';
 import { Note, Customer, Employee, Role } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
@@ -67,6 +67,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
   const notes = use.notes();
   const employees = use.employees();
   const customers = use.customers();
+  const formatDate = useFormatDate();
 
   if (!customers.record || !notes.list || !employees.record) {
     return [];

@@ -10,9 +10,11 @@ export type UseStoreOptions = {
   listAsObject?: boolean;
 }
 const axios = Axios.create({
-  // Replace by 
+  // In real like, replace by 
   // baseURL: process.env.NX_BASE_URL,
-  baseURL: 'http://localhost:4200/api',
+
+  // Use mock database which is handled by src/mockServiceWorker.js
+  baseURL: '/api',
 });
 
 interface ToastMessageStore {

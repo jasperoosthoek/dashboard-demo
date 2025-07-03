@@ -9,7 +9,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 import { use, useGetListOnMount } from '../../stores/crudRegistry'
 import { useProjectStatusText } from '../projects/ProjectItem';
-import { formatCurrency, formatDate } from '../../localization/localization';
+import { formatCurrency, useFormatDate } from '../../localization/localization';
 
 const DashboardPage = () => {
   const { text, lang } = useLocalization();
@@ -20,6 +20,7 @@ const DashboardPage = () => {
   const notes = use.notes();
   const roles = use.roles();
   const projectStatusText = useProjectStatusText();
+  const formatDate = useFormatDate();
 
   const activeEmployees = employees.list?.filter(e => e.active);
   const openInvoices = invoices.list?.filter(inv => inv.status === 'open');

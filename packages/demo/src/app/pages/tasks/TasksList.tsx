@@ -17,7 +17,7 @@ import {
 
 import { Project, Task } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
-import { formatDate } from '../../localization/localization';
+import { useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
 import EmployeeLink from '../employees/EmployeeLink';
@@ -124,6 +124,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee }: { excludePro
   const tasks = use.tasks();
   const taskStatus = useTaskStatus();
   const projects = use.projects();
+  const formatDate = useFormatDate();
   
   if (!tasks.list || !employees.record || !projects.record) {
     return [];

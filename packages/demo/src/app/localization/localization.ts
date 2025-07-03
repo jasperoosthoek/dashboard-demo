@@ -280,21 +280,25 @@ export const locales = {
   fr: fr,
 } as Record<string, Locale>;
 
-export const formatDate = (date: string, formatString: string = 'PP') => {
+export const useFormatDate = () => {
   const { lang } = useLocalization();
+  return (
+    (date: string, formatString: string = 'PP') => {
   
-  try {
-    const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
-    return  format(
-      parsedDate,
-      formatString,
-      { locale: (locales[lang] || enGB) as Locale }
-    )
-  } catch (error) {
-    console.error('Error formatting currency:', error);
-    return `Invalid timestamp: ${date}`;
-  }
-};
+      try {
+        const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
+        return  format(
+          parsedDate,
+          formatString,
+          { locale: (locales[lang] || enGB) as Locale }
+        )
+      } catch (error) {
+        console.error('Error formatting currency:', error);
+        return `Invalid timestamp: ${date}`;
+      }
+    }
+  );
+}
 
 export const formatCurrency = (number: number | string) => {
   return `€ ${Number(number).toLocaleString()}`;

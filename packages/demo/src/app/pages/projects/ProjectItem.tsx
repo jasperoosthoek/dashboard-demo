@@ -17,7 +17,7 @@ import {
 
 import { Task, Project, Invoice } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
-import { formatDate, formatCurrency } from '../../localization/localization';
+import { formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsList';
 import {useTaskColumns, useTaskFormFields } from '../tasks/TasksList';

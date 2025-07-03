@@ -17,7 +17,6 @@ import {
 
 import { Task, Employee, Invoice } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
-import { formatDate, formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/NotesList';
 import { useEmployeeFormFields } from './EmployeesList';
