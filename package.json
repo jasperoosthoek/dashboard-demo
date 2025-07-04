@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@jasperoosthoek/react-toolbox": "^0.7.2",
-    "@jasperoosthoek/zustand-crud-registry": "^0.0.7",
+    "@jasperoosthoek/zustand-crud-registry": "^0.0.8",
     "@mswjs/data": "^0.16.2",
     "axios": "^1.10.0",
     "bootstrap": "^5.3.7",

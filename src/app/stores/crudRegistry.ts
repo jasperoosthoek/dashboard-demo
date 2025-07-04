@@ -1,7 +1,7 @@
 import Axios, { type Method } from "axios";
 import { useEffect } from 'react';
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
-import { useCrud, createStoreRegistry, type CustomActionFunction } from "@jasperoosthoek/zustand-crud-registry";
+import { useCrud, createStoreRegistry, useStore, type CustomActionFunction } from "@jasperoosthoek/zustand-crud-registry";
 import type {
   Role,
   Employee,
@@ -211,7 +211,7 @@ export const use = {
     employees.create.onResponse = () => roles.getList();
 
     // Get the patchList function from the store which modifies existing instances.
-    const patchList = s.employees((s) => s.patchList);
+    const { patchList } = useStore(s.employees)
     // Note that that the api only returns objects of the type { id: number, order: number }
     employees.move.onResponse = (list: Partial<Employee>[]) => patchList(list)
     return employees
@@ -220,14 +220,14 @@ export const use = {
     const roles = useCrud(s.roles);
     useGetListWhenEmpty(roles)
 
-    const patchList = s.roles((s) => s.patchList);
+    const { patchList } = useStore(s.roles);
     roles.move.onResponse = (list: Partial<Role>[]) => patchList(list)
     return roles
   }, 
   projects: () => {
     const projects = useCrud(s.projects)
     useGetListOnMount(projects);
-    const patchList = s.projects((s) => s.patchList);
+    const { patchList } = useStore(s.projects);
     projects.move.onResponse = (list: Partial<Project>[]) => patchList(list)
     return projects;
   },
@@ -239,21 +239,21 @@ export const use = {
   invoices: () => {
     const invoices = useCrud(s.invoices)
     useGetListOnMount(invoices);
-    const patchList = s.invoices((s) => s.patchList);
+    const { patchList } = useStore(s.invoices);
     invoices.move.onResponse = (list: Partial<Invoice>[]) => patchList(list)
     return invoices;
   },
   notes: () => {
     const notes = useCrud(s.notes)
     useGetListOnMount(notes);
-    const patchList = s.notes((s) => s.patchList);
+    const { patchList } = useStore(s.notes);
     notes.move.onResponse = (list: Partial<Note>[]) => patchList(list)
     return notes;
   },
   tasks: () => {
     const tasks = useCrud(s.tasks)
     useGetListOnMount(tasks);
-    const patchList = s.tasks((s) => s.patchList);
+    const { patchList } = useStore(s.tasks);
     tasks.move.onResponse = (list: Partial<Task>[]) => patchList(list)
     return tasks;
   },
