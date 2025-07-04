@@ -20,14 +20,9 @@ import { toastOnError } from './toastMessageStore';
 export type UseStoreOptions = {
   listAsObject?: boolean;
 }
-const axios = Axios.create({
-  // In real like, replace by 
-  // baseURL: process.env.NX_BASE_URL,
 
-  // Use mock database which is handled by /src/mockServiceWorker.js and gets its data from /mocks
-  baseURL: '/api',
-});
-
+const baseURL = import.meta.env.VITE_BASE_URL || '/api';
+const axios = Axios.create({ baseURL });
 
 export const getOrCreateStore = createStoreRegistry<{
   roles: Role;

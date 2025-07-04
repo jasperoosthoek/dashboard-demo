@@ -56,10 +56,6 @@ export function createRestHandlers<
       if (key.endsWith('_id')) {
         const relationKey = key.slice(0, -3);
         const def = entitySchema[relationKey];
-        if (data[relationKey] !== undefined) {
-          console.log(data, relationKey)
-        }
-
 
         if ((def as any)?.kind === 'ONE_OF') {
           const relatedEntity = (def as any).target.modelName;
@@ -108,7 +104,6 @@ export function createRestHandlers<
       const id = Number(params.id);
       const updated = await request.json();
       const data = updateRecord({}, updated)
-      console.log('Updating record',data);
       const result = db[entity].update({
         where: { id: { equals: id } } as any,
         data,

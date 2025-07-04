@@ -16,13 +16,9 @@ const Dashboard = () => {
   const { error, clearError } = useError();
   useEffect(() => {
     if (error) {
-      // Get error from ErrorBoundary in app.tsx. Clear the localStorage when this happens so
-      // the mock database starts fresh. The mock database is for demonstration use only, normally 
-      // a real backend such as a Django app is used.
-      console.log('An unhandled error occured, delete localStorage', error)
+      console.log('An unhandled error occured', error)
       toast.error(text`unhandled_error`);
       clearError();
-      localStorage.removeItem('mock-db');
     }
   }, [error]);
 

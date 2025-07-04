@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "VITE_USE_MOCKS=true vite",
+    "dev:no-mocks": "vite",
+    "build": "tsc -b && VITE_USE_MOCKS=true vite build",
+    "build:no-mocks": "tsc -b && vite build && rm -f dist/mockServiceWorker.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
