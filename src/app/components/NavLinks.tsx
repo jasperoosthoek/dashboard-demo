@@ -39,12 +39,12 @@ export const NavLinks = ({
           
           const finalPart = pathname.split('/').pop()
           // Use the given title for in case of a match use the last part of the path to display the id 
-          const title = titleBase || (matchPath(newPath, pathname) && !!Number(finalPart) && `#${finalPart}`);
+          const title = titleBase || ((matchPath(newPath, pathname) && !!Number(finalPart) && `#${finalPart}`));
 
           // Use actual path then no title is given but a match exists which means there is number in the path
           const showPath = !titleBase && matchPath(newPath, pathname) ? pathname : newPath;
 
-          const newBreadcrumb = breadcrumb === false ? false : (
+          const newBreadcrumb = breadcrumb === false ? false : title && (
             <>
               {breadcrumb}
               {breadcrumb && " / "}
