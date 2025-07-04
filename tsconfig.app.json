@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "public/mockServiceWorker.js"]
+  "include": ["src", "public/mockServiceWorker.js", "mocks"]
 }

@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import './styles.scss';
-import { worker } from './mocks/browser';
+import { worker } from '../mocks/browser';
 import App from './app/app';
 
 const root = ReactDOM.createRoot(
