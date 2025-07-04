@@ -7,10 +7,6 @@ html, body {
   overflow-x: clip; /* Better than 'hidden' for modern browsers */
 }
 
-a {
-  text-decoration: none !important;
-}
-
 html {
   overflow-y: auto; /* This will force the scrollbar to always show */
 }
@@ -23,4 +19,7 @@ html {
 	margin-right: 3px;
 }
 
+:root a {
+  text-decoration: none !important;
+}
 

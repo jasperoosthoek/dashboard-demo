@@ -1,7 +1,6 @@
-import './app.module.scss';
-
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.css';
+import './app.module.scss';
 
 import { useEffect } from 'react';
 import { DndProvider } from 'react-dnd'
