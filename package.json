@@ -7,7 +7,7 @@
     "dev": "VITE_USE_MOCKS=true vite",
     "dev:no-mocks": "vite",
     "build": "tsc -b && VITE_USE_MOCKS=true vite build",
-    "build:no-mocks": "tsc -b && vite build && rm dist/mockServiceWorker.js",
+    "build:no-mocks": "tsc -b && vite build && rm -f dist/mockServiceWorker.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
