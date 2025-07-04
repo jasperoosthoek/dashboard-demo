@@ -1,4 +1,8 @@
+
+
 /* You can add global styles to this file, and also import other style files */
+
+/* Your styles goes here. */
 
 .no-wrap {
 	white-space: nowrap;      /* Prevents wrapping and keeps text in a single line */
@@ -26,12 +30,12 @@
 }
 
 .navbar {
-	padding: 0.5rem 1rem;
+	padding: 0.5rem 1rem !important;
 }
 
 .nav-link {
 	cursor: pointer;
-	color: rgba(26,26,26,.75);
+	color: rgba(26,26,26,.75) !important;
 	margin-left: 3px;
 	margin-right: 3px;
 }

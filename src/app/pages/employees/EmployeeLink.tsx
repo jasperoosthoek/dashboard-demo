@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Employee } from '../../stores/types';
+import { type Employee } from '../../stores/types';
 import { use } from '../../stores/crudRegistry'
 
 

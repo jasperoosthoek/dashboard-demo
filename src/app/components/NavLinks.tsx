@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link, useLocation, matchPath } from 'react-router';
 import { DashboardTitle } from './Dashboard';

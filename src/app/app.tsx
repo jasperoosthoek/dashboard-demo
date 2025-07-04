@@ -1,12 +1,12 @@
+import './app.module.scss';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import './app.module.scss';
 
 import { useEffect } from 'react';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { LocalizationProvider, useLocalization, useLocalStorage, ErrorBoundary } from '@jasperoosthoek/react-toolbox';
 
 import localization from './localization/localization';

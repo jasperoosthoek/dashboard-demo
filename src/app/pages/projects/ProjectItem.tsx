@@ -15,7 +15,7 @@ import {
   DataTable,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Task, Project, Invoice } from '../../stores/types';
+import { type Project } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';

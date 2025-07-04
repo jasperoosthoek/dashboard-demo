@@ -12,7 +12,7 @@ import {
   FormEditModalButton,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Employee, Role } from '../../stores/types';
+import { type Employee } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 

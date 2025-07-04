@@ -1,6 +1,5 @@
-import { AdditionalLocalization, combineLocalization, useLocalization } from '@jasperoosthoek/react-toolbox';
-import { time } from 'console';
-import { format, Locale, parse } from 'date-fns';
+import { type AdditionalLocalization, combineLocalization, useLocalization } from '@jasperoosthoek/react-toolbox';
+import { format, type Locale, parse } from 'date-fns';
 import { enGB, nl, fr } from 'date-fns/locale';
 
 const localization = combineLocalization(

@@ -1,4 +1,4 @@
-import Axios, { Method } from "axios";
+import Axios, { type Method } from "axios";
 import { useEffect } from 'react';
 import { create } from 'zustand'
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';

@@ -12,10 +12,10 @@ import {
   FormDropdown,
   FormDate,
   DeleteConfirmButton,
-  FormDropdownProps,
+  type FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Project, Task, TaskFilterStatus } from '../../stores/types';
+import { type Project, type Task, type TaskFilterStatus } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';

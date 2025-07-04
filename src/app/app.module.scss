@@ -1,8 +1,26 @@
-/* Your styles goes here. */
 
-a { text-decoration: none; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  max-width: 100vw;
+  overflow-x: clip; /* Better than 'hidden' for modern browsers */
+}
+
+a {
+  text-decoration: none !important;
+}
 
 html {
-  overflow-y: scroll; /* This will force the scrollbar to always show */
+  overflow-y: auto; /* This will force the scrollbar to always show */
 }
+
+
+.nav-link {
+	cursor: pointer;
+	color: rgba(26,26,26,.75);
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
 

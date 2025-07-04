@@ -19,7 +19,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import { formatCurrency, useFormatDate } from '../../localization/localization';
-import { Note, Customer, Employee, Role } from '../../stores/types';
+import { type Note, type Customer, type Employee, type Role } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';

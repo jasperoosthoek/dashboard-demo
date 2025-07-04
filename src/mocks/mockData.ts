@@ -1,5 +1,5 @@
 import { addDays, differenceInDays, parseISO, format } from 'date-fns';
-import { Schema } from './schema'
+import { type Schema } from './schema'
 
 const mockData: Record<keyof Schema, any[]> = {
   role: [

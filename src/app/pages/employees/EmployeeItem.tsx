@@ -1,21 +1,15 @@
-import { useState, useEffect } from 'react';
 import { Container, Card, Row, Col, Badge, Table } from 'react-bootstrap';
 import { useParams } from 'react-router';
-import { addDays, format } from 'date-fns';
 import {
   FormModalProvider,
   useLocalization,
   SmallSpinner,
   FormEditModalButton,
-  FormDate,
-  DeleteConfirmButton,
   FormCreateModalButton,
-  FormDropdown,
-  FormTextArea,
   DataTable,
 } from '@jasperoosthoek/react-toolbox';
 
-import { Task, Employee, Invoice } from '../../stores/types';
+import { type Employee } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/NotesList';
