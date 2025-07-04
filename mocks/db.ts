@@ -1,6 +1,5 @@
 import { factory, primaryKey, oneOf } from '@mswjs/data';
 
-
 export type ValueOf<T> = T[keyof T];
 
 export type InferModel<T> = {
@@ -15,6 +14,12 @@ export type InferModel<T> = {
     : unknown;
 };
 
+export function resetDatabase(db: any) {
+  // 1. Clear all entities in the DB
+  for (const key of Object.keys(db)) {
+    (db as any)[key].deleteMany({});
+  }
+}
 
 export function persistToLocalStorage(db: any, key: string) {
   const data = Object.fromEntries(
@@ -23,17 +28,12 @@ export function persistToLocalStorage(db: any, key: string) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-export function loadFromLocalStorage<S extends Record<string, any>>(
+export function loadDatabaseDump<S extends Record<string, any>>(
   db: ReturnType<typeof factory<S>>,
   schema: S,
   mockData: Record<keyof S, any[]> = {} as Record<keyof S, any[]>,
-  key: string,
+  data: Record<string, any[]>,
 ) {
-  const raw = localStorage.getItem(key);
-  if (!raw) return;
-
-  const data = JSON.parse(raw) as Record<string, any[]>;
-
   // Load data in order of mockData keys to make sure all relations are resolved correctly
   for (const entity of Object.keys(mockData)) {
     const records = data[entity as keyof typeof data] || [];
@@ -46,7 +46,6 @@ export function loadFromLocalStorage<S extends Record<string, any>>(
 
       for (const [fieldKey, fieldDef] of Object.entries(modelDef)) {
         const relationType = (fieldDef as any)?.kind;
-
         const relatedEntity = (fieldDef as any)?.target?.modelName;
 
         if (
@@ -109,4 +108,3 @@ export function seedDatabase<S extends Record<string, any>>(
     });
   }
 }
-

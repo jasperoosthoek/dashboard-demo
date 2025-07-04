@@ -707,9 +707,11 @@ const mockData: Record<keyof Schema, any[]> = {
   ],
 };
 
+// All fields that represent dates
 const dateFields = ['created_at', 'due_date', 'start_date', 'end_date'] as const;
 
-// Updater for mockData so it the data still relevant in the future. Also add an order field to all items
+// Updater for mockData to make the data still relevant in the future.
+// Also add an order field to all items used for drag and drop
 function updateMockDates<T extends Record<string, any[]>>(
   mockData: T,
   originalStartDate: Date,
