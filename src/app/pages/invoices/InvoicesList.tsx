@@ -1,23 +1,22 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router';
 import { addDays, format } from 'date-fns';
-import { Table, Container, Badge, Button, Form, Row, Col } from 'react-bootstrap';
+import { Container, Badge } from 'react-bootstrap';
 import {
   DataTable,
   FormCreateModalButton,
   FormEditModalButton,
   FormModalProvider,
   useLocalization,
-  FormTextArea,
   SmallSpinner,
   FormDropdown,
-  type FormDropdownProps,
   FormDate,
   DeleteConfirmButton,
+  type FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
-import { type Invoice, type Project, type InvoiceFilterStatus } from '../../stores/types';
+import type { Invoice, Project, InvoiceFilterStatus } from '../../stores/types';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 
 export const useInvoiceStatusText = () => {

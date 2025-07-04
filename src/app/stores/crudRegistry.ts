@@ -2,7 +2,19 @@ import Axios, { type Method } from "axios";
 import { useEffect } from 'react';
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
 import { useCrud, createStoreRegistry, type CustomActionFunction } from "@jasperoosthoek/zustand-crud-registry";
-import type { Role, Employee, Customer, Project, Invoice, Task, Note, Instance, ProjectFilterStatus, InvoiceFilterStatus, TaskFilterStatus } from "./types";
+import type {
+  Role,
+  Employee,
+  Customer,
+  Project,
+  Invoice,
+  Task,
+  Note,
+  Instance,
+  ProjectFilterStatus,
+  InvoiceFilterStatus,
+  TaskFilterStatus,
+} from "./types";
 import { toastOnError } from './toastMessageStore';
 
 export type UseStoreOptions = {

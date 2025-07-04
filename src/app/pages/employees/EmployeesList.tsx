@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { Link } from 'react-router';
 import {
@@ -12,7 +11,7 @@ import {
   FormEditModalButton,
 } from '@jasperoosthoek/react-toolbox';
 
-import { type Employee } from '../../stores/types';
+import type { Employee } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 

@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { Container, Card, Row, Col, Badge, Table } from 'react-bootstrap';
+import { Container, Card, Row, Col, Badge } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { addDays, format } from 'date-fns';
 import {
@@ -7,15 +6,11 @@ import {
   useLocalization,
   SmallSpinner,
   FormEditModalButton,
-  FormDate,
-  DeleteConfirmButton,
   FormCreateModalButton,
-  FormDropdown,
-  FormTextArea,
   DataTable,
 } from '@jasperoosthoek/react-toolbox';
 
-import { type Project } from '../../stores/types';
+import type { Project } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';

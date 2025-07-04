@@ -13,7 +13,7 @@ import {
   FormDate,
 } from '@jasperoosthoek/react-toolbox';
 
-import { type Project, type ProjectFilterStatus } from '../../stores/types';
+import type { Project, ProjectFilterStatus } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';

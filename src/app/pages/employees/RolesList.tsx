@@ -9,7 +9,7 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
-import { type Role } from '../../stores/types';
+import type { Role } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 
 const RolesList = () => {

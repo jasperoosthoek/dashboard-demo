@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { addDays, format } from 'date-fns';
-import {
-  Container, Row, Col, Card, Button, Form, Table, Modal, Badge
-} from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import {
   DataTable,
   FormCreateModalButton,
   FormModalProvider,
-  FormDate,
   FormEditModalButton,
   useLocalization,
   DeleteConfirmButton,
   FormDropdown,
   FormTextArea,
-  type FormInputProps,
   SmallSpinner,
+  type FormInputProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import { formatCurrency, useFormatDate } from '../../localization/localization';
-import { type Note, type Customer, type Employee, type Role } from '../../stores/types';
+import { useFormatDate } from '../../localization/localization';
+import type { Note } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';

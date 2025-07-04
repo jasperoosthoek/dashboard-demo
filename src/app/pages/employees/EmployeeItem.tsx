@@ -9,7 +9,7 @@ import {
   DataTable,
 } from '@jasperoosthoek/react-toolbox';
 
-import { type Employee } from '../../stores/types';
+import type { Employee } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/NotesList';
