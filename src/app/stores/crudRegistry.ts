@@ -22,9 +22,7 @@ export type UseStoreOptions = {
 }
 
 const baseURL = import.meta.env.VITE_BASE_URL || '/api';
-const axios = Axios.create({
-    baseURL: __USE_MOCKS__ ? '/api' : baseURL,
-});
+const axios = Axios.create({ baseURL });
 
 export const getOrCreateStore = createStoreRegistry<{
   roles: Role;
