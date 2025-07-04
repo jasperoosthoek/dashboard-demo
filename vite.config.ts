@@ -37,4 +37,7 @@ export default defineConfig({
     alias,
     preserveSymlinks: false, // equivalent to webpack's `symlinks: false`
   },
+  define: {
+    __USE_MOCKS__: JSON.stringify(process.env.VITE_USE_MOCKS === 'true'),
+  },
 });

@@ -12,3 +12,8 @@ npm install
 npm run dev
 ```
 
+### Development with backend mocking enabled
+
+```bash
+npm run dev:mocks
+```
