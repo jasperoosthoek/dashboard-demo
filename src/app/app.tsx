@@ -9,9 +9,8 @@ import { ToastContainer } from 'react-toastify';
 import { LocalizationProvider, useLocalization, useLocalStorage, ErrorBoundary } from '@jasperoosthoek/react-toolbox';
 
 import localization from './localization/localization';
-
 import BrowserRouter from "./router";
-import { setToastMessage } from './stores/crudRegistry';
+import { setToastMessage } from './stores/toastMessageStore';
 
 const SetToastMessageOnChangeLanguage = () => {
   const { lang, text } = useLocalization()

@@ -1,10 +1,9 @@
 import Axios, { type Method } from "axios";
 import { useEffect } from 'react';
-import { create } from 'zustand'
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
 import { useCrud, createStoreRegistry, type CustomActionFunction } from "@jasperoosthoek/zustand-crud-registry";
 import type { Role, Employee, Customer, Project, Invoice, Task, Note, Instance, ProjectFilterStatus, InvoiceFilterStatus, TaskFilterStatus } from "./types";
-import { toast } from 'react-toastify';
+import { toastOnError } from './toastMessageStore';
 
 export type UseStoreOptions = {
   listAsObject?: boolean;
@@ -13,27 +12,10 @@ const axios = Axios.create({
   // In real like, replace by 
   // baseURL: process.env.NX_BASE_URL,
 
-  // Use mock database which is handled by src/mockServiceWorker.js
+  // Use mock database which is handled by /src/mockServiceWorker.js and gets its data from /mocks
   baseURL: '/api',
 });
 
-interface ToastMessageStore {
-  getMessage: () => string;
-  setMessage: (fn: () => string) => void;
-}
-
-export const toastMessageStore = create<ToastMessageStore>((set) => ({
-  getMessage: () => 'default message',
-  setMessage: (fn) => set({ getMessage: fn }),
-}));
-
-export const setToastMessage = (message: string) => toastMessageStore.getState().setMessage(() => message);
-
-export const toastOnError = (error: any) => {
-  toast.error(toastMessageStore.getState().getMessage());
-  
-  console.error(error)
-};
 
 export const getOrCreateStore = createStoreRegistry<{
   roles: Role;
@@ -58,6 +40,28 @@ const defaultConfig = {
 };
 
 
+type WithMove<T> = {
+  move: CustomActionFunction<T>
+};
+
+// Reusable function to be used directly inside of the DataTable component
+export const onMove = <T extends Instance>(store: WithMove<T>) => ({ item, target, reset }: OnMoveProps<T>) => {
+  store.move(
+    // Data sent to both the route and prepare function supplied by moveConfig() below.
+    {
+      item,
+      target,
+      // Use same convention as django-ordered-model
+      position: item.order > target.order ? 'above' : 'below',
+    },
+    {
+        callback: reset,
+        onError: reset,
+    }
+  )
+}
+
+// Reusable config for the move function
 const moveConfig = (key: string) => (
   {
     route: ({ item }: any) => `/${key}/${item?.id}/move`,
@@ -65,6 +69,8 @@ const moveConfig = (key: string) => (
     prepare: ({ target, position }: any) => ({ target, position }),
   }
 )
+
+// Create all the CRUD stores
 const s = {
   employees: getOrCreateStore(
     'employees',
@@ -115,12 +121,11 @@ const s = {
     ...defaultConfig,
       route: '/customers',
       actions: {
+        // As customers are not modified in the app, only the getList() function is needed
+        // although the api endpoints are available
         getList: true,
       },
       includeRecord: true,
-      customActions: {
-        move: moveConfig('customers'),
-      },
     },
   ),
 
@@ -189,20 +194,19 @@ export const use = {
     const roles = useCrud(s.roles);
     useGetListWhenEmpty(employees)
     useGetListWhenEmpty(roles)
+    // Demonstrate the possibility to get all the roles after an employee is updated or created
     employees.update.onResponse = () => roles.getList();
     employees.create.onResponse = () => roles.getList();
 
+    // Get the patchList function from the store which modifies existing instances.
     const patchList = s.employees((s) => s.patchList);
+    // Note that that the api only returns objects of the type { id: number, order: number }
     employees.move.onResponse = (list: Partial<Employee>[]) => patchList(list)
     return employees
   },
   roles: () => {
     const roles = useCrud(s.roles);
-    const employees = useCrud(s.employees);
-    useGetListWhenEmpty(employees)
     useGetListWhenEmpty(roles)
-    roles.update.onResponse = () => employees.getList();
-    roles.create.onResponse = () => employees.getList();
 
     const patchList = s.roles((s) => s.patchList);
     roles.move.onResponse = (list: Partial<Role>[]) => patchList(list)
@@ -218,8 +222,6 @@ export const use = {
   customers: () => {
     const customers = useCrud(s.customers)
     useGetListOnMount(customers);
-    const patchList = s.customers((s) => s.patchList);
-    customers.move.onResponse = (list: Partial<Customer>[]) => patchList(list)
     return customers;
   },
   invoices: () => {
@@ -243,23 +245,4 @@ export const use = {
     tasks.move.onResponse = (list: Partial<Task>[]) => patchList(list)
     return tasks;
   },
-}
-
-type WithMove<T> = {
-  move: CustomActionFunction<T>
-};
-
-export const onMove = <T extends Instance>(store: WithMove<T>) => ({ item, target, reset }: OnMoveProps<T>) => {
-  store.move(
-    {
-      item,
-      target,
-      // Use same convention as django-ordered-model
-      position: item.order > target.order ? 'above' : 'below',
-    },
-    {
-        callback: reset,
-        onError: reset,
-    }
-  )
 }
