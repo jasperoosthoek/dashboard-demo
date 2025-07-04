@@ -73,8 +73,6 @@ const DashboardPage = () => {
     <Container className='container-list'>
       {(!employees.list || !invoices.list || !projects.list || !tasks.list || !notes.list || !projects.record || !roles.record)? <SmallSpinner /> : 
         <>
-          <h2>{text`dashboard`}</h2>
-
           {/* KPI Cards */}
           <Row className="mb-4">
             <Col md={3} title={runningProjects?.map(({ name }) => name)?.join('\n')}>
