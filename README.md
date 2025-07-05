@@ -5,7 +5,7 @@ This is a demo of a of Dashboard app using React. The demo has a React frontend 
 ### Rapid development using two related modules
 The Dashboard-Demo app also demonstrates the use of, and can be used to develop these two `npm` modules:
 - [`@jasperoosthoek/react-toolbox`](https://github.com/jasperoosthoek/react-toolbox): A library of UX components based on [`react-bootstrap`](https://react-bootstrap.github.io/)
-- [`@jasperoosthoek/zustand-crud-registry`](https://github.com/jasperoosthoek/zustand-crud-registry): A entity store based on [`zustand`](https://zustand.docs.pmnd.rs/getting-started/introduction) that interacts directly with a standard CRUD api using [`axios`](https://axios-http.com/docs/intro), for instance a (`ModelViewSet`)[https://www.django-rest-framework.org/api-guide/viewsets/] in the [Django REST framework](https://www.django-rest-framework.org/)
+- [`@jasperoosthoek/zustand-crud-registry`](https://github.com/jasperoosthoek/zustand-crud-registry): A entity store based on [`zustand`](https://zustand.docs.pmnd.rs/getting-started/introduction) that interacts directly with a standard CRUD api using [`axios`](https://axios-http.com/docs/intro), for instance a (`ModelViewSet`)[https://www.django-rest-framework.org/api-guide/viewsets/) in the [Django REST framework](https://www.django-rest-framework.org/)
 
 These two modules provide a platform for rapid development of React components that need to manage different types of data.
 
