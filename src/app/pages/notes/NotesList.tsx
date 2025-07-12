@@ -10,7 +10,7 @@ import {
   useLocalization,
   DeleteConfirmButton,
   FormDropdown,
-  FormTextArea,
+  FormTextarea,
   SmallSpinner,
   type FormInputProps,
 } from '@jasperoosthoek/react-toolbox';
@@ -32,7 +32,7 @@ export const  useNoteFormFields = ({ excludeEmployee }: { excludeEmployee?: bool
   return {
     content: {
       label: text`content`,
-      component: FormTextArea,
+      component: FormTextarea,
       formProps: {
         rows: 5,
       } as FormInputProps,

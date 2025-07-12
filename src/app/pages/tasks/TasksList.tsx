@@ -7,7 +7,7 @@ import {
   FormEditModalButton,
   FormModalProvider,
   useLocalization,
-  FormTextArea,
+  FormTextarea,
   SmallSpinner,
   FormDropdown,
   FormDate,
@@ -61,7 +61,7 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
     },
     description: {
       label: text`description`,
-      component: FormTextArea,
+      component: FormTextarea,
     },
     status: {
       formProps: {
