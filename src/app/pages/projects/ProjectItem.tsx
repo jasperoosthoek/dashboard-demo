@@ -65,7 +65,7 @@ const ProjectsList = () => {
   const customer = customers.record && customers?.record[project?.customer_id || ''];
   return (
     <Container className='container-list mt-4'>
-      {(!projects.list || !customers.list || !employees.list || !tasks.list || !invoices.list || !projectFormFields)
+      {(!customer || !projects.list || !customers.list || !employees.list || !tasks.list || !invoices.list || !projectFormFields)
         ? <SmallSpinner />
         : !project 
         ? <NotFound />
@@ -76,7 +76,7 @@ const ProjectsList = () => {
                 loading={projects.update.isLoading}
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
-                onUpdate={(project, closeModal: () => void) => {
+                onUpdate={(project, closeModal) => {
                   projects.update(project, { callback: closeModal});
                 }}
               >
@@ -115,10 +115,10 @@ const ProjectsList = () => {
                 loading={tasks.create.isLoading || tasks.update.isLoading}
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
-                onCreate={(task, closeModal: () => void) => {
+                onCreate={(task, closeModal) => {
                   tasks.create(task, { callback: closeModal});
                 }}
-                onUpdate={(task, closeModal: () => void) => {
+                onUpdate={(task, closeModal) => {
                   tasks.update(task, { callback: closeModal});
                 }}
               >
@@ -153,10 +153,10 @@ const ProjectsList = () => {
                 loading={invoices.create.isLoading || invoices.update.isLoading}
                 editModalTitle={text`edit_invoice`}
                 formFields={invoiceFormFields}
-                onCreate={(invoice, closeModal: () => void) => {
+                onCreate={(invoice, closeModal) => {
                   invoices.create(invoice, { callback: closeModal});
                 }}
-                onUpdate={(invoice, closeModal: () => void) => {
+                onUpdate={(invoice, closeModal) => {
                   invoices.update(invoice, { callback: closeModal});
                 }}
               >

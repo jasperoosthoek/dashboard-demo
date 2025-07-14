@@ -7,7 +7,7 @@ import {
   FormEditModalButton,
   FormModalProvider,
   useLocalization,
-  FormTextArea,
+  FormTextarea,
   SmallSpinner,
   FormDropdown,
   FormDate,
@@ -61,7 +61,7 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
     },
     description: {
       label: text`description`,
-      component: FormTextArea,
+      component: FormTextarea,
     },
     status: {
       formProps: {
@@ -146,7 +146,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
         {
           name: text`project`,
           selector: ({ project_id }: Task) => {
-            const project = projects.record[project_id];
+            const project = projects.record && projects.record[project_id];
             return (
               project
                 ? <Link to={`/projects/${project.id}`}>
@@ -162,7 +162,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
         {
           name: text`assigned_to_employee`,
           selector: ({ employee_id }: Task) => {
-            const employee = employees.record[employee_id];
+            const employee = employees.record && employees.record[employee_id];
             return (
               employee
                 ? <EmployeeLink employee={employee} />
@@ -248,10 +248,10 @@ const TasksList = () => {
           createModalTitle={text`create_new_task`}
           editModalTitle={text`edit_task`}
           formFields={taskFormFields}
-          onCreate={(task, closeModal: () => void) => {
+          onCreate={(task, closeModal) => {
             tasks.create(task, { callback: closeModal});
           }}
-          onUpdate={(task, closeModal: () => void) => {
+          onUpdate={(task, closeModal) => {
             tasks.update(task, { callback: closeModal});
           }}
         >
@@ -270,8 +270,8 @@ const TasksList = () => {
             filterColumn={[
               'title',
               'status',
-              ({ employee_id }: Task) => employees.record[employee_id]?.name || '',
-              ({ project_id }: Task) => projects.record[project_id]?.name || '',
+              ({ employee_id }: Task) => employees.record && employees.record[employee_id]?.name || '',
+              ({ project_id }: Task) => projects.record && projects.record[project_id]?.name || '',
               ({ status }: Task) => taskStatusText(status) || '',
             ]}
             columns={taskColumns}

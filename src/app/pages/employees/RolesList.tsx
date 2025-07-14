@@ -33,10 +33,10 @@ const RolesList = () => {
               required: true,
             },
           }}
-          onCreate={(role, closeModal: () => void) => {
+          onCreate={(role, closeModal) => {
             roles.create(role, { callback: closeModal});
           }}
-          onUpdate={(role, closeModal: () => void) => {
+          onUpdate={(role, closeModal) => {
             roles.update(role, { callback: closeModal});
           }}
         >

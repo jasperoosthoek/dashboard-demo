@@ -80,7 +80,7 @@ const DashboardPage = () => {
                 {text`active_projects`} <strong>{runningProjects?.length}</strong>
                 </Card>
             </Col>
-            <Col md={3} title={openInvoices?.map(({ project_id, amount }) => `${projects.record[project_id]?.name}: ${formatCurrency(amount)}`)?.join('\n')}>
+            <Col md={3} title={openInvoices?.map(({ project_id, amount }) => `${projects.record && projects.record[project_id]?.name}: ${formatCurrency(amount)}`)?.join('\n')}>
               <Card body>
                 {text`outstanding_invoices`} <strong>{formatCurrency(openInvoices?.reduce((sum, inv) => sum + inv.amount, 0) || 0)}</strong>
                 </Card>
@@ -91,7 +91,7 @@ const DashboardPage = () => {
                 </Card>
             </Col>
             <Col md={3}>
-              <Card body title={activeEmployees?.map(({ name, role_id }) => `${name} (${roles.record[role_id]?.name || text`not_found`})`)?.join('\n')}>
+              <Card body title={activeEmployees?.map(({ name, role_id }) => `${name} (${roles.record && roles.record[role_id]?.name || text`not_found`})`)?.join('\n')}>
                 {text`active_employees`} <strong>{activeEmployees?.length}</strong>
                 </Card>
             </Col>
