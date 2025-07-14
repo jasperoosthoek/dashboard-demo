@@ -120,7 +120,7 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseTaskColum
         {
           name: text`project`,
           selector: ({ project_id }: Invoice) => {
-            const project = projects.record[project_id];
+            const project = projects.record && projects.record[project_id];
             return (
               project
                 ? <Link to={`/projects/${project.id}`}>
@@ -206,10 +206,10 @@ const InvoiceList = () => {
           createModalTitle={text`create_new_invoice`}
           editModalTitle={text`edit_invoice`}
           formFields={invoiceFormFields}
-          onCreate={(invoice, closeModal: () => void) => {
+          onCreate={(invoice, closeModal) => {
             invoices.create(invoice, { callback: closeModal});
           }}
-          onUpdate={(invoice, closeModal: () => void) => {
+          onUpdate={(invoice, closeModal) => {
             invoices.update(invoice, { callback: closeModal});
           }}
         >
@@ -228,7 +228,7 @@ const InvoiceList = () => {
             filterColumn={[
               'id',
               'amount',
-              ({ project_id }: Invoice) => projects.record[project_id]?.name || '',
+              ({ project_id }: Invoice) => projects.record && projects.record[project_id]?.name || '',
               ({ status }: Invoice) => invoiceStatusText(status) || '',
             ]}
             columns={invoiceColumns}

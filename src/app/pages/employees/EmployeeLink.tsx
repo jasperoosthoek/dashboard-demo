@@ -8,7 +8,7 @@ const EmployeeLink = ({ employee }: { employee: Employee }) => {
   return (
     <Link
       to={`/employees/${employee.id}`}
-      title={`${employee.name} (${roles.record[employee.role_id]?.name})`}
+      title={`${employee.name} (${roles.record && roles.record[employee.role_id]?.name})`}
     >
       {employee.name}
     </Link>

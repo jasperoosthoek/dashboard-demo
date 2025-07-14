@@ -80,7 +80,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
         {
           name: text`employee`,
           selector: ({ employee_id }: Note) => {
-            const employee = employees.record[employee_id];
+            const employee = employees.record && employees.record[employee_id];
             return (
               employee
                 ? <Link to={`/employees/${employee.id}`}>
@@ -95,7 +95,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
       {
         name: text`customer`,
         selector: ({ customer_id }: Note) => {
-          const customer = customers.record[customer_id];
+          const customer = customers.record && customers.record[customer_id];
           return (
             customer
               ? customer.name
@@ -158,10 +158,10 @@ const NotesList = () => {
           createModalTitle={text`create_new_note`}
           editModalTitle={text`edit_note`}
           formFields={noteFormFields}
-          onCreate={(note, closeModal: () => void) => {
+          onCreate={(note, closeModal) => {
             notes.create(note, { callback: closeModal});
           }}
-          onUpdate={(note, closeModal: () => void) => {
+          onUpdate={(note, closeModal) => {
             notes.update(note, { callback: closeModal});
           }}
         >
@@ -179,8 +179,8 @@ const NotesList = () => {
             }}
             filterColumn={[
               'content',
-              ({ employee_id }: Note) => employees.record[employee_id]?.name || '',
-              ({ customer_id }: Note) => customers.record[customer_id]?.name || '',
+              ({ employee_id }: Note) => employees.record && employees.record[employee_id]?.name || '',
+              ({ customer_id }: Note) => customers.record && customers.record[customer_id]?.name || '',
             ]}
             columns={noteColumns}
             data={notes.list} //.filter(inv => filterStatus === null || inv.status === filterStatus)}

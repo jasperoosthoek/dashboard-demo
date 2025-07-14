@@ -51,7 +51,7 @@ const EmployeesList = () => {
                 loading={employees.update.isLoading}
                 editModalTitle={text`edit_employee`}
                 formFields={employeeFormFields}
-                onUpdate={(employee, closeModal: () => void) => {
+                onUpdate={(employee, closeModal) => {
                   employees.update(employee, { callback: closeModal});
                 }}
               >
@@ -76,7 +76,7 @@ const EmployeesList = () => {
                   <Row className="mt-2">
                     <Col>{text`role`}:</Col>
                     <Col>
-                      {roles.record[employee.role_id]?.name || <NotFound />}
+                      {roles.record && roles.record[employee.role_id]?.name || <NotFound />}
                     </Col>
                   </Row>
                 </Card.Body>
@@ -90,10 +90,10 @@ const EmployeesList = () => {
                 loading={projects.create.isLoading || projects.update.isLoading}
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
-                onCreate={(project, closeModal: () => void) => {
+                onCreate={(project, closeModal) => {
                   projects.create(project, { callback: closeModal});
                 }}
-                onUpdate={(project, closeModal: () => void) => {
+                onUpdate={(project, closeModal) => {
                   projects.update(project, { callback: closeModal});
                 }}
               >
@@ -127,10 +127,10 @@ const EmployeesList = () => {
                 loading={tasks.create.isLoading || tasks.update.isLoading}
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
-                onCreate={(task, closeModal: () => void) => {
+                onCreate={(task, closeModal) => {
                   tasks.create(task, { callback: closeModal});
                 }}
-                onUpdate={(task, closeModal: () => void) => {
+                onUpdate={(task, closeModal) => {
                   tasks.update(task, { callback: closeModal});
                 }}
               >
@@ -163,10 +163,10 @@ const EmployeesList = () => {
                 loading={notes.create.isLoading || notes.update.isLoading}
                 editModalTitle={text`edit_note`}
                 formFields={noteFormFields}
-                onCreate={(note, closeModal: () => void) => {
+                onCreate={(note, closeModal) => {
                   notes.create(note, { callback: closeModal});
                 }}
-                onUpdate={(note, closeModal: () => void) => {
+                onUpdate={(note, closeModal) => {
                   notes.update(note, { callback: closeModal});
                 }}
               >

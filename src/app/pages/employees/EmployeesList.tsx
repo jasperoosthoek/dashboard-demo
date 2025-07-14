@@ -28,7 +28,7 @@ export const useEmployeeFormList = () => {
 
   return (
       employees.list?.sort((e1, e2) => e1.name > e2.name ? 1 : -1) || []
-    ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record[e.role_id]?.name || <NotFound />})` }))
+    ).map((e: Employee) => ({ ...e, name: `${e.name} (${roles.record && roles.record[e.role_id]?.name || <NotFound />})` }))
 }
 
 export const useEmployeeFormFields = () => {
@@ -83,10 +83,10 @@ const EmployeesList = () => {
               }
             }
           }}
-          onCreate={(employee, closeModal: () => void) => {
+          onCreate={(employee, closeModal) => {
             employees.create(employee, { callback: closeModal});
           }}
-          onUpdate={(employee, closeModal: () => void) => {
+          onUpdate={(employee, closeModal) => {
             employees.update(employee, { callback: closeModal});
           }}
         >
@@ -105,7 +105,7 @@ const EmployeesList = () => {
             filterColumn={[
               'name',
               'email',
-              ({ role_id }: Employee) => roles.record[role_id]?.name || '',
+              ({ role_id }: Employee) => roles.record && roles.record[role_id]?.name || '',
             ]}
             columns={[
               {
@@ -125,7 +125,7 @@ const EmployeesList = () => {
               {
                 name: text`role`,
                 selector: ({ role_id }: Employee) => (
-                  roles.record[role_id]?.name || <NotFound />
+                  roles.record && roles.record[role_id]?.name || <NotFound />
                 ),
                 orderBy: 'role',
               },

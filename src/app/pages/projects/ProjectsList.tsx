@@ -129,7 +129,7 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
       {
         name: text`customer`,
         selector: ({ customer_id }: Project) => {
-          const customer = customers.record[customer_id];
+          const customer = customers.record && customers.record[customer_id];
           return (
             customer
               ? <div title={`${customer?.name} (${customer?.contact_person})`}>
@@ -138,20 +138,20 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
               : <NotFound />
           );
         },
-        orderBy: ({ customer_id }: Project) => customers.record[customer_id]?.name || customer_id,
+        orderBy: ({ customer_id }: Project) => customers.record && customers.record[customer_id]?.name || customer_id,
       },
       ...!excludeEmployee ? [
         {
           name: text`employee`,
           selector: ({ employee_id }: Project) => {
-            const employee = employees.record[employee_id];
+            const employee = employees.record && employees.record[employee_id];
             return (
               employee
                 ? <EmployeeLink employee={employee} />
                 : <NotFound />
             );
           },
-          orderBy: ({ employee_id }: Project) => employees.record[employee_id]?.name || employee_id,
+          orderBy: ({ employee_id }: Project) => employees.record && employees.record[employee_id]?.name || employee_id,
         },
       ] : [],
       {
@@ -240,10 +240,10 @@ const ProjectsList = () => {
           createModalTitle={text`create_new_project`}
           editModalTitle={text`edit_project`}
           formFields={projectFormFields}
-          onCreate={(project, closeModal: () => void) => {
+          onCreate={(project, closeModal) => {
             projects.create(project, { callback: closeModal});
           }}
-          onUpdate={(project, closeModal: () => void) => {
+          onUpdate={(project, closeModal) => {
             projects.update(project, { callback: closeModal});
           }}
         >
@@ -263,8 +263,8 @@ const ProjectsList = () => {
               'name',
               'amount',
               ({ status }: Project) => projectStatusText(status),
-              ({ customer_id }: Project) => customers.record[customer_id]?.name || '',
-              ({ employee_id }: Project) => employees.record[employee_id]?.name || '',
+              ({ customer_id }: Project) => customers.record && customers.record[customer_id]?.name || '',
+              ({ employee_id }: Project) => employees.record && employees.record[employee_id]?.name || '',
             ]}
             columns={projectColumns}
             data={projects.list.filter(project => filterStatus === null || project.status === filterStatus)}
