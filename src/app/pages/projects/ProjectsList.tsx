@@ -240,10 +240,10 @@ const ProjectsList = () => {
           createModalTitle={text`create_new_project`}
           editModalTitle={text`edit_project`}
           formFields={projectFormFields}
-          onCreate={(project, closeModal) => {
+          onCreate={(project: Project, closeModal: () => void) => {
             projects.create(project, { callback: closeModal});
           }}
-          onUpdate={(project, closeModal) => {
+          onUpdate={(project: Project, closeModal: () => void) => {
             projects.update(project, { callback: closeModal});
           }}
         >

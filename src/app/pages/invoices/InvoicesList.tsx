@@ -206,10 +206,10 @@ const InvoiceList = () => {
           createModalTitle={text`create_new_invoice`}
           editModalTitle={text`edit_invoice`}
           formFields={invoiceFormFields}
-          onCreate={(invoice, closeModal) => {
+          onCreate={(invoice: Invoice, closeModal: () => void) => {
             invoices.create(invoice, { callback: closeModal});
           }}
-          onUpdate={(invoice, closeModal) => {
+          onUpdate={(invoice: Invoice, closeModal: () => void) => {
             invoices.update(invoice, { callback: closeModal});
           }}
         >

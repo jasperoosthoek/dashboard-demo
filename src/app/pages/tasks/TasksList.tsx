@@ -248,10 +248,10 @@ const TasksList = () => {
           createModalTitle={text`create_new_task`}
           editModalTitle={text`edit_task`}
           formFields={taskFormFields}
-          onCreate={(task, closeModal) => {
+          onCreate={(task: Task, closeModal: () => void) => {
             tasks.create(task, { callback: closeModal});
           }}
-          onUpdate={(task, closeModal) => {
+          onUpdate={(task: Task, closeModal: () => void) => {
             tasks.update(task, { callback: closeModal});
           }}
         >

@@ -158,10 +158,10 @@ const NotesList = () => {
           createModalTitle={text`create_new_note`}
           editModalTitle={text`edit_note`}
           formFields={noteFormFields}
-          onCreate={(note, closeModal) => {
+          onCreate={(note: Note, closeModal: () => void) => {
             notes.create(note, { callback: closeModal});
           }}
-          onUpdate={(note, closeModal) => {
+          onUpdate={(note: Note, closeModal: () => void) => {
             notes.update(note, { callback: closeModal});
           }}
         >

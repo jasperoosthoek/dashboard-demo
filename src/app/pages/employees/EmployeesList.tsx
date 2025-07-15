@@ -83,10 +83,10 @@ const EmployeesList = () => {
               }
             }
           }}
-          onCreate={(employee, closeModal) => {
+          onCreate={(employee: Employee, closeModal: () => void) => {
             employees.create(employee, { callback: closeModal});
           }}
-          onUpdate={(employee, closeModal) => {
+          onUpdate={(employee: Employee, closeModal: () => void) => {
             employees.update(employee, { callback: closeModal});
           }}
         >
