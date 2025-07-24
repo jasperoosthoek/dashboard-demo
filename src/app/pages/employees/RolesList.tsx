@@ -53,12 +53,12 @@ const RolesList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={({ name }: Role) => `${name}`}
             columns={[
               {
                 name: text`name`,
                 selector: 'name',
                 orderBy: 'name',
+                search: ({ name }: Role) => `${name}`,
               },
               {
                 name: text`actions`,

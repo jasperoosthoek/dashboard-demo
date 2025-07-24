@@ -131,6 +131,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
   if (!tasks.list || !employees.record || !projects.record) {
     return [];
   }
+  
   return (
     [
       {
@@ -141,6 +142,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
           </div>
         ),
         orderBy: 'title',
+        search: 'title',
       },
       ...!excludeProject ? [
         {
@@ -156,6 +158,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
             );
           },
           orderBy: 'project_id',
+          search: ({ project_id }: Task) => projects.record && projects.record[project_id]?.name || '',
         }
       ] : [],
       ...!excludeEmployee ? [
@@ -169,6 +172,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
                 : <NotFound />
             );
           },
+          search: ({ employee_id }: Task) => employees.record && employees.record[employee_id]?.name || '',
           orderBy: 'employee_id',
         }
       ] : [],
@@ -181,6 +185,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
         name: text`status`,
         selector: (task: Task) => taskStatus(task),
         orderBy: 'status',
+        search: ({ status }: Task) => taskStatusText(status) || '',
         ...filterStatus ? (
           {
             optionsDropdown: {
@@ -267,13 +272,6 @@ const TasksList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={[
-              'title',
-              'status',
-              ({ employee_id }: Task) => employees.record && employees.record[employee_id]?.name || '',
-              ({ project_id }: Task) => projects.record && projects.record[project_id]?.name || '',
-              ({ status }: Task) => taskStatusText(status) || '',
-            ]}
             columns={taskColumns}
             data={tasks.list.filter(task => filterStatus === null || task.status === filterStatus)}
             onMove={onMove(tasks)}
