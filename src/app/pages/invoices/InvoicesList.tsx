@@ -109,12 +109,14 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseTaskColum
   if (!invoices.list || !projects.record) {
     return [];
   }
+  
   return (
     [
       {
         name: text`invoice_id`,
         selector: ({ id }: Invoice) => `#${id}`,
         orderBy: 'id',
+        search: 'id',
       },
       ...!excludeProject ? [
         {
@@ -130,12 +132,14 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseTaskColum
             );
           },
           orderBy: 'project_id',
+          search: ({ project_id }: Invoice) => projects.record && projects.record[project_id]?.name || '',
         }
       ] : [],
       {
         name: text`amount`,
         selector: ({ amount }: Invoice) => formatCurrency(amount),
         orderBy: 'amount',
+        search: 'amount',
       },
       {
         name: text`due_date`,
@@ -146,6 +150,7 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseTaskColum
         name: 'status',
         selector: (invoice: Invoice) => invoiceStatus(invoice),
         orderBy: 'status',
+        search: ({ status }: Invoice) => invoiceStatusText(status) || '',
         ...filterStatus ? (
           {
             optionsDropdown: {
@@ -206,10 +211,10 @@ const InvoiceList = () => {
           createModalTitle={text`create_new_invoice`}
           editModalTitle={text`edit_invoice`}
           formFields={invoiceFormFields}
-          onCreate={(invoice, closeModal) => {
+          onCreate={(invoice: Invoice, closeModal: () => void) => {
             invoices.create(invoice, { callback: closeModal});
           }}
-          onUpdate={(invoice, closeModal) => {
+          onUpdate={(invoice: Invoice, closeModal: () => void) => {
             invoices.update(invoice, { callback: closeModal});
           }}
         >
@@ -225,12 +230,6 @@ const InvoiceList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={[
-              'id',
-              'amount',
-              ({ project_id }: Invoice) => projects.record && projects.record[project_id]?.name || '',
-              ({ status }: Invoice) => invoiceStatusText(status) || '',
-            ]}
             columns={invoiceColumns}
             data={invoices.list.filter(inv => filterStatus === null || inv.status === filterStatus)}
             onMove={onMove(invoices)}

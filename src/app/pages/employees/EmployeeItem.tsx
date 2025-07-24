@@ -9,7 +9,7 @@ import {
   DataTable,
 } from '@jasperoosthoek/react-toolbox';
 
-import type { Employee } from '../../stores/types';
+import type { Employee, Project, Task, Note } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/NotesList';
@@ -51,7 +51,7 @@ const EmployeesList = () => {
                 loading={employees.update.isLoading}
                 editModalTitle={text`edit_employee`}
                 formFields={employeeFormFields}
-                onUpdate={(employee, closeModal) => {
+                onUpdate={(employee: Employee, closeModal: () => void) => {
                   employees.update(employee, { callback: closeModal});
                 }}
               >
@@ -90,10 +90,10 @@ const EmployeesList = () => {
                 loading={projects.create.isLoading || projects.update.isLoading}
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
-                onCreate={(project, closeModal) => {
+                onCreate={(project: Project, closeModal: () => void) => {
                   projects.create(project, { callback: closeModal});
                 }}
-                onUpdate={(project, closeModal) => {
+                onUpdate={(project: Project, closeModal: () => void) => {
                   projects.update(project, { callback: closeModal});
                 }}
               >
@@ -127,10 +127,10 @@ const EmployeesList = () => {
                 loading={tasks.create.isLoading || tasks.update.isLoading}
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
-                onCreate={(task, closeModal) => {
+                onCreate={(task: Task, closeModal: () => void) => {
                   tasks.create(task, { callback: closeModal});
                 }}
-                onUpdate={(task, closeModal) => {
+                onUpdate={(task: Task, closeModal: () => void) => {
                   tasks.update(task, { callback: closeModal});
                 }}
               >
@@ -163,10 +163,10 @@ const EmployeesList = () => {
                 loading={notes.create.isLoading || notes.update.isLoading}
                 editModalTitle={text`edit_note`}
                 formFields={noteFormFields}
-                onCreate={(note, closeModal) => {
+                onCreate={(note: Note, closeModal: () => void) => {
                   notes.create(note, { callback: closeModal});
                 }}
-                onUpdate={(note, closeModal) => {
+                onUpdate={(note: Note, closeModal: () => void) => {
                   notes.update(note, { callback: closeModal});
                 }}
               >

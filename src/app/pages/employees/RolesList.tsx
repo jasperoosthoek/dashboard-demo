@@ -33,11 +33,11 @@ const RolesList = () => {
               required: true,
             },
           }}
-          onCreate={(role, closeModal) => {
-            roles.create(role, { callback: closeModal});
+          onCreate={(role: Role, closeModal: () => void) => {
+            roles.create(role, { callback: closeModal });
           }}
-          onUpdate={(role, closeModal) => {
-            roles.update(role, { callback: closeModal});
+          onUpdate={(role: Role, closeModal: () => void) => {
+            roles.update(role, { callback: closeModal });
           }}
         >
           <DataTable
@@ -53,12 +53,12 @@ const RolesList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={({ name }: Role) => `${name}`}
             columns={[
               {
                 name: text`name`,
                 selector: 'name',
                 orderBy: 'name',
+                search: ({ name }: Role) => `${name}`,
               },
               {
                 name: text`actions`,

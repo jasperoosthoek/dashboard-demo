@@ -69,12 +69,14 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
   if (!customers.record || !notes.list || !employees.record) {
     return [];
   }
+  
   return (
     [
       {
         name: text`content`,
         selector: ({ content }: Note) => content,
         orderBy: 'content',
+        search: 'content',
       },
       ...!excludeEmployee ? [
         {
@@ -90,6 +92,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
             );
           },
           orderBy: 'employee_id',
+          search: ({ employee_id }: Note) => employees.record && employees.record[employee_id]?.name || '',
         }
       ] : [],
       {
@@ -103,6 +106,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
           );
         },
         orderBy: 'customer_id',
+          search: ({ customer_id }: Note) => customers.record && customers.record[customer_id]?.name || '',
       },
       {
         name: text`created_at`,
@@ -158,10 +162,10 @@ const NotesList = () => {
           createModalTitle={text`create_new_note`}
           editModalTitle={text`edit_note`}
           formFields={noteFormFields}
-          onCreate={(note, closeModal) => {
+          onCreate={(note: Note, closeModal: () => void) => {
             notes.create(note, { callback: closeModal});
           }}
-          onUpdate={(note, closeModal) => {
+          onUpdate={(note: Note, closeModal: () => void) => {
             notes.update(note, { callback: closeModal});
           }}
         >
@@ -177,11 +181,6 @@ const NotesList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={[
-              'content',
-              ({ employee_id }: Note) => employees.record && employees.record[employee_id]?.name || '',
-              ({ customer_id }: Note) => customers.record && customers.record[customer_id]?.name || '',
-            ]}
             columns={noteColumns}
             data={notes.list} //.filter(inv => filterStatus === null || inv.status === filterStatus)}
             onMove={onMove(notes)}

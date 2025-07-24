@@ -83,10 +83,10 @@ const EmployeesList = () => {
               }
             }
           }}
-          onCreate={(employee, closeModal) => {
+          onCreate={(employee: Employee, closeModal: () => void) => {
             employees.create(employee, { callback: closeModal});
           }}
-          onUpdate={(employee, closeModal) => {
+          onUpdate={(employee: Employee, closeModal: () => void) => {
             employees.update(employee, { callback: closeModal});
           }}
         >
@@ -102,15 +102,11 @@ const EmployeesList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={[
-              'name',
-              'email',
-              ({ role_id }: Employee) => roles.record && roles.record[role_id]?.name || '',
-            ]}
             columns={[
               {
                 // Display column name
                 name: text`name`,
+                search: 'name',
                 // Select by key
                 selector: (employee) => (
                   <Link to={`/employees/${employee.id}`}>
@@ -121,6 +117,7 @@ const EmployeesList = () => {
               {
                 name: text`email_address`,
                 selector: ({ email }: Employee) => email,
+                search: 'email',
               },
               {
                 name: text`role`,
@@ -128,6 +125,7 @@ const EmployeesList = () => {
                   roles.record && roles.record[role_id]?.name || <NotFound />
                 ),
                 orderBy: 'role',
+                search: ({ role_id }: Employee) => roles.record && roles.record[role_id]?.name || '',
               },
               {
                 name: text`actions`,

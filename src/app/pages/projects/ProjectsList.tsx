@@ -110,6 +110,7 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
   
   const projectStatus = useProjectStatus();
   const projectStatusText = useProjectStatusText();
+  
   return (
     [
       {
@@ -120,11 +121,13 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
           </Link>
         ),
         orderBy: 'name',
+        search: 'name',
       },
       {
         name: text`amount`,
         selector: ({ amount }: Project) => formatCurrency(amount),
         orderBy: 'amount',
+        search: 'amount',
       },
       {
         name: text`customer`,
@@ -139,6 +142,7 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
           );
         },
         orderBy: ({ customer_id }: Project) => customers.record && customers.record[customer_id]?.name || customer_id,
+        search: ({ customer_id }: Project) => customers.record && customers.record[customer_id]?.name || '',
       },
       ...!excludeEmployee ? [
         {
@@ -152,6 +156,7 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
             );
           },
           orderBy: ({ employee_id }: Project) => employees.record && employees.record[employee_id]?.name || employee_id,
+          search: ({ employee_id }: Project) => employees.record && employees.record[employee_id]?.name || '',
         },
       ] : [],
       {
@@ -172,6 +177,7 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
         name: text`status`,
         selector: (project: Project) => projectStatus(project),
         orderBy: 'status',
+        search: ({ status }: Project) => projectStatusText(status),
         ...filterStatus ? (
           {
             optionsDropdown: {
@@ -240,10 +246,10 @@ const ProjectsList = () => {
           createModalTitle={text`create_new_project`}
           editModalTitle={text`edit_project`}
           formFields={projectFormFields}
-          onCreate={(project, closeModal) => {
+          onCreate={(project: Project, closeModal: () => void) => {
             projects.create(project, { callback: closeModal});
           }}
-          onUpdate={(project, closeModal) => {
+          onUpdate={(project: Project, closeModal: () => void) => {
             projects.update(project, { callback: closeModal});
           }}
         >
@@ -259,13 +265,6 @@ const ProjectsList = () => {
                 </FormCreateModalButton> 
               )
             }}
-            filterColumn={[
-              'name',
-              'amount',
-              ({ status }: Project) => projectStatusText(status),
-              ({ customer_id }: Project) => customers.record && customers.record[customer_id]?.name || '',
-              ({ employee_id }: Project) => employees.record && employees.record[employee_id]?.name || '',
-            ]}
             columns={projectColumns}
             data={projects.list.filter(project => filterStatus === null || project.status === filterStatus)}
             onMove={onMove(projects)}

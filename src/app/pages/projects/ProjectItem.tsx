@@ -10,7 +10,7 @@ import {
   DataTable,
 } from '@jasperoosthoek/react-toolbox';
 
-import type { Project } from '../../stores/types';
+import type { Project, Task, Invoice } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
@@ -76,7 +76,7 @@ const ProjectsList = () => {
                 loading={projects.update.isLoading}
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
-                onUpdate={(project, closeModal) => {
+                onUpdate={(project: Project, closeModal: () => void) => {
                   projects.update(project, { callback: closeModal});
                 }}
               >
@@ -115,10 +115,10 @@ const ProjectsList = () => {
                 loading={tasks.create.isLoading || tasks.update.isLoading}
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
-                onCreate={(task, closeModal) => {
+                onCreate={(task: Task, closeModal: () => void) => {
                   tasks.create(task, { callback: closeModal});
                 }}
-                onUpdate={(task, closeModal) => {
+                onUpdate={(task: Task, closeModal: () => void) => {
                   tasks.update(task, { callback: closeModal});
                 }}
               >
@@ -153,10 +153,10 @@ const ProjectsList = () => {
                 loading={invoices.create.isLoading || invoices.update.isLoading}
                 editModalTitle={text`edit_invoice`}
                 formFields={invoiceFormFields}
-                onCreate={(invoice, closeModal) => {
+                onCreate={(invoice: Invoice, closeModal: () => void) => {
                   invoices.create(invoice, { callback: closeModal});
                 }}
-                onUpdate={(invoice, closeModal) => {
+                onUpdate={(invoice: Invoice, closeModal: () => void) => {
                   invoices.update(invoice, { callback: closeModal});
                 }}
               >
