@@ -9,9 +9,10 @@ import {
   FormDropdown,
   SmallSpinner,
   FormEditModalButton,
+  type FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import type { Employee } from '../../stores/types';
+import type { Employee, Role } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 
@@ -46,8 +47,14 @@ export const useEmployeeFormFields = () => {
         required: true,
       },
       role_id: {
-        formProps: { list: roles.list?.sort((r1, r2) => r1.name > r2.name ? 1 : -1) || [] },
-        component: FormDropdown,
+        component: (props: FormDropdownProps<Role>) => (
+          <FormDropdown
+            {...props}
+            idKey='id'
+            nameKey='name'
+            list={roles.list?.sort((r1, r2) => r1.name > r2.name ? 1 : -1) || []}
+          />
+        ),
         label: text`role`,
       }
     }

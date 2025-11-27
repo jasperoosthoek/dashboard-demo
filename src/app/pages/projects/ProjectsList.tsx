@@ -11,9 +11,10 @@ import {
   SmallSpinner,
   FormDropdown,
   FormDate,
+  type FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import type { Project, ProjectFilterStatus } from '../../stores/types';
+import type { Project, ProjectFilterStatus, Employee, Customer, MapStatus } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
@@ -45,40 +46,54 @@ export const useProjectFormFields = ({ excludeEmployee }: { excludeEmployee?: bo
       },
       status: {
         formProps: {
-          list: [
-            {
-              id: 'pending',
-              name: projectStatusText('pending'),
-            },
-            {
-              id: 'in_progress',
-              name: projectStatusText('in_progress'),
-            },
-            {
-              id: 'completed',
-              name: projectStatusText('completed'),
-            },
-          ],
         },
-        component: FormDropdown,
+        component: (props: FormDropdownProps<MapStatus<Project['status']>>) => (
+          <FormDropdown
+            {...props}
+            idKey='id'
+            nameKey='name'
+            list={[
+              {
+                id: 'pending',
+                name: projectStatusText('pending'),
+              },
+              {
+                id: 'in_progress',
+                name: projectStatusText('in_progress'),
+              },
+              {
+                id: 'completed',
+                name: projectStatusText('completed'),
+              },
+            ]}
+          />
+        ),
         label: text`status`,
         required: true,
       },
       customer_id: {
-        formProps: {
-          list: customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || [],
-        },
-        component: FormDropdown,
+        component: (props: FormDropdownProps<Customer>) => (
+          <FormDropdown
+            {...props}
+            idKey='id'
+            nameKey='name'
+            list={customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || []}
+          />
+        ),
         label: text`customer`,
         required: true,
       },
       ...!excludeEmployee
         ? {
             employee_id: {
-              formProps: {
-                list: employeeList,
-              },
-              component: FormDropdown,
+              component: (props: FormDropdownProps<Employee>) => (
+                <FormDropdown
+                  {...props}
+                  idKey='id'
+                  nameKey='name'
+                  list={employeeList || []}
+                />
+              ),
               label: text`employee`,
             },
           }

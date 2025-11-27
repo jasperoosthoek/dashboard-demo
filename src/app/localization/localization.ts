@@ -300,5 +300,7 @@ export const useFormatDate = () => {
 }
 
 export const formatCurrency = (number: number | string) => {
-  return `€ ${Number(number).toLocaleString()}`;
+  // For simplicity, ignore errors in formatting as this is normally handled by validation in the database.
+  const n = Number(number);
+  return `€ ${Number.isNaN(n) ? number : n.toLocaleString()}`;
 }
