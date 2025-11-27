@@ -16,7 +16,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
-import type { Invoice, Project, InvoiceFilterStatus } from '../../stores/types';
+import type { Invoice, Project, InvoiceFilterStatus, MapStatus } from '../../stores/types';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 
 export const useInvoiceStatusText = () => {
@@ -58,19 +58,23 @@ export const  useInvoiceFormFields = ({ excludeProject }: { excludeProject?: boo
       },
     },
     status: {
-      formProps: {
-        list: [
-          {
-            id: 'open',
-            name: invoiceStatusText('open'),
-          },
-          {
-            id: 'paid',
-            name: invoiceStatusText('paid'),
-          },
-        ],
-      },
-      component: FormDropdown,
+      component: (props: FormDropdownProps<MapStatus<Invoice['status']>>) => (
+        <FormDropdown
+          {...props}
+          idKey='id'
+          nameKey='name'
+          list={[
+            {
+              id: 'open',
+              name: invoiceStatusText('open'),
+            },
+            {
+              id: 'paid',
+              name: invoiceStatusText('paid'),
+            },
+          ]}
+        />
+      ),
       label: text`status`,
       required: true,
     },
@@ -82,12 +86,16 @@ export const  useInvoiceFormFields = ({ excludeProject }: { excludeProject?: boo
     ...!excludeProject
       ? {
           project_id: {
-            formProps: {
-              list: projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || [],
-              // Disable changing project when already saved i.e. project has an id
-              disabled: ({ state: project }) => !!project.id,
-            } as Partial<FormDropdownProps<Project>>,
-            component: FormDropdown,
+            component: (props: FormDropdownProps<Project>) => (
+              <FormDropdown
+                {...props}
+                idKey='id'
+                nameKey='name'
+                list={projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || []}
+                // Disable changing project when already saved i.e. project has an id
+                disabled={({ state: project }) => !!project.id}
+              />
+            ),
             label: text`project`,
             required: true,
           },

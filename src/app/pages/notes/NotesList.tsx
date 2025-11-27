@@ -13,10 +13,11 @@ import {
   FormTextarea,
   SmallSpinner,
   type FormInputProps,
+  type FormDropdownProps
 } from '@jasperoosthoek/react-toolbox';
 
 import { useFormatDate } from '../../localization/localization';
-import type { Note } from '../../stores/types';
+import type { Note, Employee, Customer } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
@@ -40,19 +41,27 @@ export const  useNoteFormFields = ({ excludeEmployee }: { excludeEmployee?: bool
     ...!excludeEmployee ? (
       {
         employee_id: {
-          formProps: {
-            list: employeeList,
-          },
-          component: FormDropdown,
+          component: (props: FormDropdownProps<Employee>) => (
+            <FormDropdown
+              {...props}
+              idKey='id'
+              nameKey='name'
+              list={employeeList || []}
+            />
+          ),
           label: text`employee`,
         },
       }
      ) : {},
     customer_id: {
-      formProps: {
-        list: customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || [],
-      },
-      component: FormDropdown,
+      component: (props: FormDropdownProps<Customer>) => (
+        <FormDropdown
+          {...props}
+          idKey='id'
+          nameKey='name'
+          list={customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || []}
+        />
+      ),
       label: text`customer`,
       required: true,
     },

@@ -23,6 +23,8 @@ export interface Customer extends Instance {
   email: string;
 };
 
+export type MapStatus<T> = { id: T; name: string };
+
 export interface Project extends Instance {
   name: string;
   amount: number;

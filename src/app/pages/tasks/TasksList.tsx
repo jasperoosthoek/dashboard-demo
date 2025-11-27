@@ -15,7 +15,7 @@ import {
   type FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
 
-import type { Project, Task, TaskFilterStatus } from '../../stores/types';
+import type { Project, Task, TaskFilterStatus, Employee, MapStatus } from '../../stores/types';
 import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
 import { useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
@@ -64,23 +64,27 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
       component: FormTextarea,
     },
     status: {
-      formProps: {
-        list: [
-          {
-            id: 'todo',
-            name: taskStatusText('todo'),
-          },
-          {
-            id: 'in_progress',
-            name: taskStatusText('in_progress'),
-          },
-          {
-            id: 'done',
-            name: taskStatusText('done'),
-          },
-        ],
-      },
-      component: FormDropdown,
+      component: (props: FormDropdownProps<MapStatus<Task['status']>>) => (
+        <FormDropdown
+          {...props}
+          idKey='id'
+          nameKey='name'
+          list={[
+            {
+              id: 'todo',
+              name: taskStatusText('todo'),
+            },
+            {
+              id: 'in_progress',
+              name: taskStatusText('in_progress'),
+            },
+            {
+              id: 'done',
+              name: taskStatusText('done'),
+            },
+          ]}
+        />
+      ),
       label: text`status`,
       required: true,
     },
@@ -93,12 +97,16 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
     ...!excludeProject
       ? {
           project_id: {
-            formProps: {
-              list: projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || [],
-              // Disable changing project when already saved i.e. project has an id
-              disabled: ({ state: project }) => !!project.id,
-            } as FormDropdownProps<Project>,
-            component: FormDropdown,
+            component: (props: FormDropdownProps<Project>) => (
+              <FormDropdown
+                {...props}
+                idKey='id'
+                nameKey='name'
+                list={projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || []}
+                // Disable changing project when already saved i.e. project has an id
+                disabled={({ state: project }) => !!project.id}
+              />
+            ),
             label: text`project`,
           },
         }
@@ -106,10 +114,14 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
     ...!excludeEmployee
       ? {
           employee_id: {
-            formProps: {
-              list: employeeList,
-            },
-            component: FormDropdown,
+            component: (props: FormDropdownProps<Employee>) => (
+              <FormDropdown
+                {...props}
+                idKey='id'
+                nameKey='name'
+                list={employeeList || []}
+              />
+            ),
             label: text`assigned_to_employee`,
             required: true,
           },
