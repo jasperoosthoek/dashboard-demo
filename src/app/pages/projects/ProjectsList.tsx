@@ -229,14 +229,14 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
   )
 }
 
-export const projectInitialState = (
+export const projectInitialState: Partial<Project> = (
   {
     name: '',
     status: 'pending',
     start_date: new Date().toISOString().split('T')[0],
     end_date: new Date().toISOString().split('T')[0],
   }
-) as Partial<Project>
+)
 
 const ProjectsList = () => {
   const { text } = useLocalization();

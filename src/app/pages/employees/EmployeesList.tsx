@@ -81,13 +81,11 @@ const EmployeesList = () => {
           createModalTitle={text`create_new_employee`}
           editModalTitle={text`edit_employee`}
           formFields={employeeFormFields}
-          validate={({ email }) => {
+          validate={({ email, role_id }: Employee) => {
             // You can add more sophisticated validation here
-            const es = email.split('@')
-            if (es.length !== 2) {
-              return {
-                email: text`error_email_requires_at`,
-              }
+            return {
+              email: email.split('@').length !== 2 && text`error_email_requires_at`,
+              role_id: !role_id && text`error_select_role`,
             }
           }}
           onCreate={(employee: Employee, closeModal: () => void) => {

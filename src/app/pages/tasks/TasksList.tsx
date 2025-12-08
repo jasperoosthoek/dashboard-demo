@@ -234,13 +234,12 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
   )
 }
 
-export const taskInitialState = (
+export const taskInitialState: Partial<Task> = (
   {
-    name: '',
+    title: '',
     status: 'todo',
-    start_date: new Date().toISOString().split('T')[0],
-    end_date: new Date().toISOString().split('T')[0],
-  } as Partial<Task>
+    due_date: new Date().toISOString().split('T')[0],
+  }
 )
 const TasksList = () => {
   const { text } = useLocalization();

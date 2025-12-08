@@ -144,13 +144,12 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
   )
 }
 
-export const noteInitialState = (
+export const noteInitialState: Partial<Note> = (
   {
-    name: '',
-    status: 'open',
-    due_date: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
+    content: '',
+    created_at: format(new Date(), 'yyyy-MM-dd'),
   }
-) as Partial<Note>
+)
 
 const NotesList = () => {
   const { text } = useLocalization();
