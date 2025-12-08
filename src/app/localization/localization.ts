@@ -78,7 +78,7 @@ const localization = combineLocalization(
       create_new_task: 'Nieuwe taak aanmaken',
       edit_task: 'Taak bewerken',
       delete_task: (title) => `Taak "${title}" verwijderen?`,
-      created_at: 'Created at',
+      created_at: 'Aangemaakt op',
       assigned_to_employee: 'Toegewezen aan',
 
       invoices: 'Facturen',
