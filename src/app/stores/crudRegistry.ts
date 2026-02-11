@@ -1,7 +1,12 @@
 import Axios, { type Method } from "axios";
 import { useEffect } from 'react';
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
-import { useCrud, createStoreRegistry, useStore, type CustomActionFunction } from "@jasperoosthoek/zustand-crud-registry";
+import {
+  useCrud,
+  createStoreRegistry,
+  type
+  CustomActionFunction
+} from "@jasperoosthoek/zustand-crud-registry";
 import type {
   Role,
   Employee,
@@ -17,12 +22,14 @@ import type {
 } from "./types";
 import { toastOnError } from './toastMessageStore';
 
-export type UseStoreOptions = {
-  listAsObject?: boolean;
-}
 
 const baseURL = import.meta.env.VITE_BASE_URL || '/api';
 const axios = Axios.create({ baseURL });
+
+// Simulate network latency for the mock API to make loading states visible
+axios.interceptors.request.use(
+  (config) => new Promise((resolve) => setTimeout(() => resolve(config), 300))
+);
 
 export const getOrCreateStore = createStoreRegistry<{
   roles: Role;
@@ -206,24 +213,22 @@ export const use = {
     employees.create.onResponse = () => roles.getList();
 
     // Get the patchList function from the store which modifies existing instances.
-    const { patchList } = useStore(s.employees)
     // Note that that the api only returns objects of the type { id: number, order: number }
-    employees.move.onResponse = (list: Partial<Employee>[]) => patchList(list)
+    employees.move.onResponse = (list: Partial<Employee>[]) => s.employees.getState().patchList(list)
+                                                                
     return employees
   },
   roles: () => {
     const roles = useCrud(s.roles);
     useGetListWhenEmpty(roles)
 
-    const { patchList } = useStore(s.roles);
-    roles.move.onResponse = (list: Partial<Role>[]) => patchList(list)
+    roles.move.onResponse = (list: Partial<Role>[]) => s.roles.getState().patchList(list)
     return roles
   }, 
   projects: () => {
     const projects = useCrud(s.projects)
     useGetListOnMount(projects);
-    const { patchList } = useStore(s.projects);
-    projects.move.onResponse = (list: Partial<Project>[]) => patchList(list)
+    projects.move.onResponse = (list: Partial<Project>[]) => s.projects.getState().patchList(list)
     return projects;
   },
   customers: () => {
@@ -234,22 +239,19 @@ export const use = {
   invoices: () => {
     const invoices = useCrud(s.invoices)
     useGetListOnMount(invoices);
-    const { patchList } = useStore(s.invoices);
-    invoices.move.onResponse = (list: Partial<Invoice>[]) => patchList(list)
+    invoices.move.onResponse = (list: Partial<Invoice>[]) => s.invoices.getState().patchList(list)
     return invoices;
   },
   notes: () => {
     const notes = useCrud(s.notes)
     useGetListOnMount(notes);
-    const { patchList } = useStore(s.notes);
-    notes.move.onResponse = (list: Partial<Note>[]) => patchList(list)
+    notes.move.onResponse = (list: Partial<Note>[]) => s.notes.getState().patchList(list)
     return notes;
   },
   tasks: () => {
     const tasks = useCrud(s.tasks)
     useGetListOnMount(tasks);
-    const { patchList } = useStore(s.tasks);
-    tasks.move.onResponse = (list: Partial<Task>[]) => patchList(list)
+    tasks.move.onResponse = (list: Partial<Task>[]) => s.tasks.getState().patchList(list)
     return tasks;
   },
 }
