@@ -20,7 +20,7 @@ if (process.env.DEVELOP_REACT_TOOLBOX === 'true') {
 }
 
 // 🔁 ZUSTAND CRUD REGISTRY
-if (process.env.DEVELOP_ZUSTAND_CRUD_REPOSITORY === 'true') {
+if (process.env.DEVELOP_ZUSTAND_CRUD_REGISTRY === 'true') {
   const zustandCrudPath = path.resolve(__dirname, '../zustand-crud-registry/src');
 
   if (fs.existsSync(zustandCrudPath)) {

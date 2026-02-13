@@ -43,6 +43,7 @@ export const getOrCreateStore = createStoreRegistry<{
 
 const defaultConfig = {
   axios,
+  includeList: true,
   actions: {
     getList: true,
     create: true,
