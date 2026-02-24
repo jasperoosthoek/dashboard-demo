@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { createBrowserRouter, Outlet, RouterProvider, type RouteObject } from 'react-router';
 
 import Dashboard from './components/Dashboard';
@@ -21,7 +22,7 @@ export type RouteDef = RouteObject & {
 export const useNavRoutes = () => {
   const { text } = useLocalization();
 
-  return [
+  return useMemo(() => [
     {
       path: 'employees',
       title: text`link_employees`,
@@ -90,13 +91,13 @@ export const useNavRoutes = () => {
         },
       ],
     },
-  ] as RouteDef[];
+  ] as RouteDef[], [text]);
 }
 
 const BrowserRouter = () => {
-  const navRoutes = useNavRoutes();   
-    
-  const router = createBrowserRouter([
+  const navRoutes = useNavRoutes();
+
+  const router = useMemo(() => createBrowserRouter([
     {
       path: '/',
       Component: Dashboard, // layout route
@@ -112,7 +113,7 @@ const BrowserRouter = () => {
       path: '*',
       Component: NoMatchPage,
     },
-  ]);
+  ]), [navRoutes]);
   return <RouterProvider router={router} />;
 }
 

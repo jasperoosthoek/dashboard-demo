@@ -18,7 +18,7 @@ const SetToastMessageOnChangeLanguage = () => {
   useEffect(() => {
     // Make sure the error mesage that react-toastify shows is in the correct language
     setToastMessage(text`on_error`)
-  }, [lang, !!text])
+  }, [lang])
   return null;
 }
 export function App() {
