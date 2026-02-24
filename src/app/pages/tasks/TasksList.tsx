@@ -16,7 +16,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Project, Task, TaskFilterStatus, Employee, MapStatus } from '../../stores/types';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 import { useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
@@ -247,8 +247,6 @@ const TasksList = () => {
   const employees = use.employees();
   const customers = use.customers();
   const roles = use.roles();
-  const projects = use.projects();
-  useGetListOnMount(tasks, employees, customers, projects, roles)
   const taskFormFields = useTaskFormFields();
   const taskColumns = useTaskColumns({ filterStatus: true });
   const taskStatusText = useTaskStatusText();

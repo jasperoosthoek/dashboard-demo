@@ -10,7 +10,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Employee, Project, Task, Note } from '../../stores/types';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/NotesList';
 import { useEmployeeFormFields } from './EmployeesList';
@@ -26,7 +26,6 @@ const EmployeesList = () => {
   const projects = use.projects();
   const tasks = use.tasks();
   const roles = use.roles(); // Required by noteFormFields
-  useGetListOnMount(employees, employees, customers, notes, invoices, roles, projects, tasks)
   const noteFormFields = useNoteFormFields({ excludeEmployee: true });
   const noteColumns = useNoteColumns({ excludeEmployee: true });
   const employeeFormFields = useEmployeeFormFields();

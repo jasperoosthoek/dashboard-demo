@@ -13,7 +13,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Employee, Role } from '../../stores/types';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 
 // Returns a list of employees with their roles formatted for display in a form
@@ -65,7 +65,6 @@ const EmployeesList = () => {
   const { text } = useLocalization();
   const employees = use.employees();
   const roles = use.roles();
-  useGetListOnMount(employees, roles)
   const employeeFormFields = useEmployeeFormFields();
 
   return (

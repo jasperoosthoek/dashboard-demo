@@ -18,7 +18,7 @@ import {
 
 import { useFormatDate } from '../../localization/localization';
 import type { Note, Employee, Customer } from '../../stores/types';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/EmployeesList';
 
@@ -156,8 +156,6 @@ const NotesList = () => {
   const notes = use.notes();
   const employees = use.employees();
   const customers = use.customers();
-  const roles = use.roles();
-  useGetListOnMount(notes,employees, customers, roles)
   const noteFormFields = useNoteFormFields();
   const noteColumns = useNoteColumns();
 

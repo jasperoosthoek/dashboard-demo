@@ -15,7 +15,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Project, ProjectFilterStatus, Employee, Customer, MapStatus } from '../../stores/types';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectStatus, useProjectStatusText } from './ProjectItem';
@@ -120,7 +120,6 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
   const employees = use.employees();
   const customers = use.customers();
   const roles = use.roles();
-  useGetListOnMount(projects, employees, customers, roles);
   const formatDate = useFormatDate();
   
   const projectStatus = useProjectStatus();
@@ -244,8 +243,6 @@ const ProjectsList = () => {
   const employees = use.employees();
   const customers = use.customers();
   const roles = use.roles();
-  useGetListOnMount(projects, employees, customers, roles)
-  
   const projectColumns = useProjectColumns({ filterStatus: true });
   const projectFormFields = useProjectFormFields();
   const projectStatusText = useProjectStatusText();

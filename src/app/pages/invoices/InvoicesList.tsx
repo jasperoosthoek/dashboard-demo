@@ -14,7 +14,7 @@ import {
   DeleteConfirmButton,
   type FormDropdownProps,
 } from '@jasperoosthoek/react-toolbox';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
 import type { Invoice, Project, InvoiceFilterStatus, MapStatus } from '../../stores/types';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
@@ -199,7 +199,6 @@ const InvoiceList = () => {
   const projects = use.projects();
   const customers = use.customers();
   const invoices = use.invoices();
-  useGetListOnMount(projects, customers, invoices)
   const invoiceFormFields = useInvoiceFormFields();
   const invoiceColumns = useInvoiceColumns({ filterStatus: true });
   const invoiceStatusText = useInvoiceStatusText()

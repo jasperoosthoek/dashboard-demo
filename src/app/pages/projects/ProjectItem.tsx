@@ -11,7 +11,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Project, Task, Invoice } from '../../stores/types';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 import { formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields } from './ProjectsList';
@@ -52,7 +52,6 @@ const ProjectsList = () => {
   const tasks = use.tasks();
   const invoices = use.invoices();
   const roles = use.roles(); // Required by projectFormFields
-  useGetListOnMount(projects, employees, customers, tasks, invoices, roles)
   const projectStatus = useProjectStatus();
   const projectFormFields = useProjectFormFields();
   const taskFormFields = useTaskFormFields();

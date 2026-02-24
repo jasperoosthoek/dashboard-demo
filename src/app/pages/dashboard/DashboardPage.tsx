@@ -7,7 +7,7 @@ import {
   useLocalization,
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
-import { use, useGetListOnMount } from '../../stores/crudRegistry'
+import { use } from '../../stores/crudRegistry'
 import { useProjectStatusText } from '../projects/ProjectItem';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 
