@@ -14,35 +14,9 @@ import type { Project, Task, Invoice } from '../../stores/types';
 import { use, onMove } from '../../stores/crudRegistry'
 import { formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
-import { useProjectFormFields } from './ProjectsList';
-import {useTaskColumns, useTaskFormFields } from '../tasks/TasksList';
-import { useInvoiceColumns, useInvoiceFormFields } from '../invoices/InvoicesList';
-
-export const useProjectStatusText = () => {
-  const { text } = useLocalization(); 
-  const projectStatusTexts = (
-    {
-      pending: text`project_status_pending`,
-      in_progress: text`project_status_in_progress`,
-      completed: text`project_status_completed`,
-    }
-  )
-  return (status: Project['status']) => projectStatusTexts[status] || '';
-}
-
-export const useProjectStatus = () => {
-  const { text } = useLocalization(); 
-  return (
-    ({ status }: Project) => {
-      switch (status) {
-        case 'pending': return <Badge bg='secondary'>{text`project_status_pending`}</Badge>;
-        case 'in_progress': return <Badge bg='warning'>{text`project_status_in_progress`}</Badge>;
-        case 'completed': return <Badge bg='success'>{text`project_status_completed`}</Badge>;
-        default: return status;
-      }
-    }
-  );
-}
+import { useProjectFormFields, useProjectStatus } from './projectHooks';
+import { useTaskColumns, useTaskFormFields } from '../tasks/taskHooks';
+import { useInvoiceColumns, useInvoiceFormFields } from '../invoices/invoiceHooks';
 
 const ProjectsList = () => {
   const { text } = useLocalization();
@@ -66,7 +40,7 @@ const ProjectsList = () => {
     <Container className='container-list mt-4'>
       {(!customer || !projects.list || !customers.list || !employees.list || !tasks.list || !invoices.list || !projectFormFields)
         ? <SmallSpinner />
-        : !project 
+        : !project
         ? <NotFound />
         : (
             <>
@@ -124,7 +98,7 @@ const ProjectsList = () => {
                 <Card className="mb-4">
                   <Card.Header>
                     {text`linked_tasks`}
-                    
+
                     <FormCreateModalButton>
                       {/* {text`create_new_task`} */}
                     </FormCreateModalButton>
@@ -141,8 +115,8 @@ const ProjectsList = () => {
                   </Card.Body>
                 </Card>
               </FormModalProvider>
-              
-              
+
+
               <FormModalProvider
                 initialState={{
                   due_date: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
@@ -162,7 +136,7 @@ const ProjectsList = () => {
                 <Card className="mb-4">
                   <Card.Header>
                     {text`linked_invoices`}
-                    
+
                     <FormCreateModalButton>
                       {/* {text`create_new_invoice`} */}
                     </FormCreateModalButton>

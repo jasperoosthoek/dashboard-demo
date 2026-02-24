@@ -12,10 +12,10 @@ import {
 import type { Employee, Project, Task, Note } from '../../stores/types';
 import { use, onMove } from '../../stores/crudRegistry'
 import NotFound from '../../components/NotFound';
-import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/NotesList';
-import { useEmployeeFormFields } from './EmployeesList';
-import { useProjectFormFields, useProjectColumns, projectInitialState } from '../projects/ProjectsList';
-import { useTaskFormFields, useTaskColumns, taskInitialState } from '../tasks/TasksList';
+import { useEmployeeFormFields } from './employeeHooks';
+import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/noteHooks';
+import { useProjectFormFields, useProjectColumns, projectInitialState } from '../projects/projectHooks';
+import { useTaskFormFields, useTaskColumns, taskInitialState } from '../tasks/taskHooks';
 
 const EmployeesList = () => {
   const { text } = useLocalization();
@@ -36,12 +36,12 @@ const EmployeesList = () => {
 
   const { id } = useParams<{ id: string }>();
   const employee = employees.record && employees?.record[id || ''] as Employee | undefined;
-  
+
   return (
     <Container className='container-list mt-4'>
       {(!employees.list || !customers.list || !employees.list || !notes.list || !invoices.list || !noteFormFields || !roles.record || !projects.list || !tasks.list)
         ? <SmallSpinner />
-        : !employee 
+        : !employee
         ? <NotFound />
         : (
             <>
@@ -99,7 +99,7 @@ const EmployeesList = () => {
                 <Card className="mb-4">
                   <Card.Header>
                     {text`projects`}
-                    
+
                     <FormCreateModalButton>
                       {/* {text`create_new_project`} */}
                     </FormCreateModalButton>
@@ -136,7 +136,7 @@ const EmployeesList = () => {
                 <Card className="mb-4">
                   <Card.Header>
                     {text`tasks`}
-                    
+
                     <FormCreateModalButton>
                       {/* {text`create_new_task`} */}
                     </FormCreateModalButton>
@@ -172,7 +172,7 @@ const EmployeesList = () => {
                 <Card className="mb-4">
                   <Card.Header>
                     {text`notes`}
-                    
+
                     <FormCreateModalButton>
                       {/* {text`create_new_note`} */}
                     </FormCreateModalButton>

@@ -295,7 +295,7 @@ export const useFormatDate = () => {
           { locale: (locales[lang] || enGB) as Locale }
         )
       } catch (error) {
-        console.error('Error formatting currency:', error);
+        console.error('Error formatting date:', error);
         return `Invalid timestamp: ${date}`;
       }
     }

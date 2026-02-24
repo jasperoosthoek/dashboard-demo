@@ -41,15 +41,13 @@ window.addEventListener('customError', (e) => {
 });
 
 export const handlers = [
-  ...createRestHandlers(db, schema, 'employee', '/api/employees'),
-  ...createRestHandlers(db, schema, 'role', '/api/roles'),
   ...createRestHandlers(db, schema, 'employee', '/api/employees', {
-    // onDelete: (employee) => {
-    //   // Delete related entities
-    //   db.note.deleteMany({ where: { employee: { id: { equals: employee.id } } } });
-    //   db.task.deleteMany({ where: { employee: { id: { equals: employee.id } } } });
-    // },
+    onDelete: (employee) => {
+      db.note.deleteMany({ where: { employee: { id: { equals: employee.id } } } });
+      db.task.deleteMany({ where: { employee: { id: { equals: employee.id } } } });
+    },
   }),
+  ...createRestHandlers(db, schema, 'role', '/api/roles'),
   ...createRestHandlers(db, schema, 'project', '/api/projects'),
   ...createRestHandlers(db, schema, 'customer', '/api/customers'),
   ...createRestHandlers(db, schema, 'invoice', '/api/invoices'),

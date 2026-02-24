@@ -8,7 +8,7 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 import { use } from '../../stores/crudRegistry'
-import { useProjectStatusText } from '../projects/ProjectItem';
+import { useProjectStatusText } from '../projects/projectHooks';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 
 const DashboardPage = () => {
