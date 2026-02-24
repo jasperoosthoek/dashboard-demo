@@ -10,13 +10,11 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Role } from '../../stores/types';
-import { use, useGetListOnMount, onMove } from '../../stores/crudRegistry'
+import { use, onMove } from '../../stores/crudRegistry'
 
 const RolesList = () => {
   const { text } = useLocalization();
   const roles = use.roles();
-  useGetListOnMount(roles)
-
   return (
     <Container className='container-list'>
       {(!roles.list || !roles.list) ? <SmallSpinner /> : 

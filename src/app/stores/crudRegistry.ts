@@ -1,8 +1,9 @@
 import Axios, { type Method } from "axios";
-import { useEffect } from 'react';
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
 import {
   useCrud,
+  useGet,
+  useGetList,
   createStoreRegistry,
   type
   CustomActionFunction
@@ -182,77 +183,89 @@ const s = {
   ),
 };
 
-
-type WithGetList = { getList: () => void, list: any[] | null };
-
-export function useGetListOnMount(...stores: WithGetList[]) {
-  useEffect(() => {
-    stores.forEach((store) => {
-      if (typeof store.getList === 'function') {
-        store.getList();
-      }
-    });
-  }, []);
-}
-
-export function useGetListWhenEmpty(store: WithGetList) {
-  useEffect(() => {
-    if (!store.list && typeof store.getList === 'function') {
-      store.getList();
-    }
-  }, [!!store.list]);
-}
+// Wire move.onResponse to patchList — replaces 6 identical copy-pasted lines
+const withMovePatchList = <T,>(
+  store: { getState: () => { patchList: (list: Partial<T>[]) => void } },
+  crud: { move: { onResponse?: (list: Partial<T>[]) => void } },
+) => {
+  crud.move.onResponse = (list) => store.getState().patchList(list);
+};
 
 export const use = {
-  employees: () => {
-    const employees = useCrud(s.employees);
-    const roles = useCrud(s.roles);
-    useGetListWhenEmpty(employees)
-    useGetListWhenEmpty(roles)
-    // Demonstrate the possibility to get all the roles after an employee is updated or created
-    employees.update.onResponse = () => roles.getList();
-    employees.create.onResponse = () => roles.getList();
-
-    // Get the patchList function from the store which modifies existing instances.
-    // Note that that the api only returns objects of the type { id: number, order: number }
-    employees.move.onResponse = (list: Partial<Employee>[]) => s.employees.getState().patchList(list)
-                                                                
-    return employees
-  },
-  roles: () => {
-    const roles = useCrud(s.roles);
-    useGetListWhenEmpty(roles)
-
-    roles.move.onResponse = (list: Partial<Role>[]) => s.roles.getState().patchList(list)
-    return roles
-  }, 
-  projects: () => {
-    const projects = useCrud(s.projects)
-    useGetListOnMount(projects);
-    projects.move.onResponse = (list: Partial<Project>[]) => s.projects.getState().patchList(list)
-    return projects;
-  },
+  employees: Object.assign(
+    () => {
+      const employees = useCrud(s.employees);
+      const roles = useCrud(s.roles);
+      useGetList(s.employees);
+      useGetList(s.roles);
+      // Refetch roles after an employee is updated or created
+      employees.update.onResponse = () => roles.getList();
+      employees.create.onResponse = () => roles.getList();
+      withMovePatchList(s.employees, employees);
+      return employees;
+    },
+    {
+      get: (id?: string | number) => useGet(s.employees, id),
+    }
+  ),
+  roles: Object.assign(
+    () => {
+      const roles = useCrud(s.roles);
+      useGetList(s.roles);
+      withMovePatchList(s.roles, roles);
+      return roles;
+    },
+    {
+      get: (id?: string | number) => useGet(s.roles, id),
+    }
+  ),
+  projects: Object.assign(
+    () => {
+      const projects = useCrud(s.projects);
+      useGetList(s.projects);
+      withMovePatchList(s.projects, projects);
+      return projects;
+    },
+    {
+      get: (id?: string | number) => useGet(s.projects, id),
+    }
+  ),
   customers: () => {
-    const customers = useCrud(s.customers)
-    useGetListOnMount(customers);
+    const customers = useCrud(s.customers);
+    useGetList(s.customers);
     return customers;
   },
-  invoices: () => {
-    const invoices = useCrud(s.invoices)
-    useGetListOnMount(invoices);
-    invoices.move.onResponse = (list: Partial<Invoice>[]) => s.invoices.getState().patchList(list)
-    return invoices;
-  },
-  notes: () => {
-    const notes = useCrud(s.notes)
-    useGetListOnMount(notes);
-    notes.move.onResponse = (list: Partial<Note>[]) => s.notes.getState().patchList(list)
-    return notes;
-  },
-  tasks: () => {
-    const tasks = useCrud(s.tasks)
-    useGetListOnMount(tasks);
-    tasks.move.onResponse = (list: Partial<Task>[]) => s.tasks.getState().patchList(list)
-    return tasks;
-  },
+  invoices: Object.assign(
+    () => {
+      const invoices = useCrud(s.invoices);
+      useGetList(s.invoices);
+      withMovePatchList(s.invoices, invoices);
+      return invoices;
+    },
+    {
+      get: (id?: string | number) => useGet(s.invoices, id),
+    }
+  ),
+  notes: Object.assign(
+    () => {
+      const notes = useCrud(s.notes);
+      useGetList(s.notes);
+      withMovePatchList(s.notes, notes);
+      return notes;
+    },
+    {
+      get: (id?: string | number) => useGet(s.notes, id),
+    }
+  ),
+  tasks: Object.assign(
+    () => {
+      const tasks = useCrud(s.tasks);
+      useGetList(s.tasks);
+      withMovePatchList(s.tasks, tasks);
+      return tasks;
+    },
+    {
+      get: (id?: string | number) => useGet(s.tasks, id),
+    }
+  ),
 }
