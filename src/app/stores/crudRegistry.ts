@@ -2,7 +2,6 @@ import Axios, { type Method } from "axios";
 import { type OnMoveProps } from '@jasperoosthoek/react-toolbox';
 import {
   useCrud,
-  useGet,
   useGetList,
   createStoreRegistry,
   type
@@ -183,89 +182,32 @@ const s = {
   ),
 };
 
-// Wire move.onResponse to patchList — replaces 6 identical copy-pasted lines
-const withMovePatchList = <T,>(
-  store: { getState: () => { patchList: (list: Partial<T>[]) => void } },
-  crud: { move: { onResponse?: (list: Partial<T>[]) => void } },
-) => {
-  crud.move.onResponse = (list) => store.getState().patchList(list);
+// Call useCrud + useGetList, wire move.onResponse → store.patchList
+const useCrudWithMove = <S extends Parameters<typeof useCrud>[0]>(store: S) => {
+  const crud = useCrud(store);
+  useGetList(store);
+  (crud as any).move.onResponse = (list: any[]) => (store as any).patchList(list);
+  return crud;
 };
 
 export const use = {
-  employees: Object.assign(
-    () => {
-      const employees = useCrud(s.employees);
-      const roles = useCrud(s.roles);
-      useGetList(s.employees);
-      useGetList(s.roles);
-      // Refetch roles after an employee is updated or created
-      employees.update.onResponse = () => roles.getList();
-      employees.create.onResponse = () => roles.getList();
-      withMovePatchList(s.employees, employees);
-      return employees;
-    },
-    {
-      get: (id?: string | number) => useGet(s.employees, id),
-    }
-  ),
-  roles: Object.assign(
-    () => {
-      const roles = useCrud(s.roles);
-      useGetList(s.roles);
-      withMovePatchList(s.roles, roles);
-      return roles;
-    },
-    {
-      get: (id?: string | number) => useGet(s.roles, id),
-    }
-  ),
-  projects: Object.assign(
-    () => {
-      const projects = useCrud(s.projects);
-      useGetList(s.projects);
-      withMovePatchList(s.projects, projects);
-      return projects;
-    },
-    {
-      get: (id?: string | number) => useGet(s.projects, id),
-    }
-  ),
+  employees: () => {
+    const employees = useCrudWithMove(s.employees);
+    const roles = useCrud(s.roles);
+    useGetList(s.roles);
+    // Refetch roles after an employee is updated or created
+    employees.update.onResponse = () => roles.getList();
+    employees.create.onResponse = () => roles.getList();
+    return employees;
+  },
+  roles: () => useCrudWithMove(s.roles),
+  projects: () => useCrudWithMove(s.projects),
   customers: () => {
     const customers = useCrud(s.customers);
     useGetList(s.customers);
     return customers;
   },
-  invoices: Object.assign(
-    () => {
-      const invoices = useCrud(s.invoices);
-      useGetList(s.invoices);
-      withMovePatchList(s.invoices, invoices);
-      return invoices;
-    },
-    {
-      get: (id?: string | number) => useGet(s.invoices, id),
-    }
-  ),
-  notes: Object.assign(
-    () => {
-      const notes = useCrud(s.notes);
-      useGetList(s.notes);
-      withMovePatchList(s.notes, notes);
-      return notes;
-    },
-    {
-      get: (id?: string | number) => useGet(s.notes, id),
-    }
-  ),
-  tasks: Object.assign(
-    () => {
-      const tasks = useCrud(s.tasks);
-      useGetList(s.tasks);
-      withMovePatchList(s.tasks, tasks);
-      return tasks;
-    },
-    {
-      get: (id?: string | number) => useGet(s.tasks, id),
-    }
-  ),
+  invoices: () => useCrudWithMove(s.invoices),
+  notes: () => useCrudWithMove(s.notes),
+  tasks: () => useCrudWithMove(s.tasks),
 }
