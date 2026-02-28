@@ -182,32 +182,59 @@ const s = {
   ),
 };
 
-// Call useCrud + useGetList, wire move.onResponse → store.patchList
-const useCrudWithMove = <S extends Parameters<typeof useCrud>[0]>(store: S) => {
-  const crud = useCrud(store);
-  useGetList(store);
-  (crud as any).move.onResponse = (list: any[]) => (store as any).patchList(list);
-  return crud;
+// Wire move.onResponse to patchList for a given store + crud pair
+const withMove = <T,>(
+  store: { getState: () => { patchList: (list: Partial<T>[]) => void } },
+  crud: { move: { onResponse?: (list: Partial<T>[]) => void } },
+) => {
+  crud.move.onResponse = (list) => store.getState().patchList(list);
 };
 
 export const use = {
   employees: () => {
-    const employees = useCrudWithMove(s.employees);
+    const employees = useCrud(s.employees);
     const roles = useCrud(s.roles);
+    useGetList(s.employees);
     useGetList(s.roles);
     // Refetch roles after an employee is updated or created
     employees.update.onResponse = () => roles.getList();
     employees.create.onResponse = () => roles.getList();
+    withMove(s.employees, employees);
     return employees;
   },
-  roles: () => useCrudWithMove(s.roles),
-  projects: () => useCrudWithMove(s.projects),
+  roles: () => {
+    const roles = useCrud(s.roles);
+    useGetList(s.roles);
+    withMove(s.roles, roles);
+    return roles;
+  },
+  projects: () => {
+    const projects = useCrud(s.projects);
+    useGetList(s.projects);
+    withMove(s.projects, projects);
+    return projects;
+  },
   customers: () => {
     const customers = useCrud(s.customers);
     useGetList(s.customers);
     return customers;
   },
-  invoices: () => useCrudWithMove(s.invoices),
-  notes: () => useCrudWithMove(s.notes),
-  tasks: () => useCrudWithMove(s.tasks),
+  invoices: () => {
+    const invoices = useCrud(s.invoices);
+    useGetList(s.invoices);
+    withMove(s.invoices, invoices);
+    return invoices;
+  },
+  notes: () => {
+    const notes = useCrud(s.notes);
+    useGetList(s.notes);
+    withMove(s.notes, notes);
+    return notes;
+  },
+  tasks: () => {
+    const tasks = useCrud(s.tasks);
+    useGetList(s.tasks);
+    withMove(s.tasks, tasks);
+    return tasks;
+  },
 }
