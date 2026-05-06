@@ -216,7 +216,7 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
           {
             optionsDropdown: {
               selected: projects.state.filterStatus,
-              onSelect: (status: string | null) => projects.setState({ filterStatus: status as ProjectFilterStatus }),
+              onSelect: (status: string | null) => projects.patchState({ filterStatus: status as ProjectFilterStatus }),
               options: {
                 pending: projectStatusText('pending'),
                 in_progress: projectStatusText('in_progress'),

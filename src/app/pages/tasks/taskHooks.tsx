@@ -197,7 +197,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
           {
             optionsDropdown: {
               selected: tasks.state.filterStatus,
-              onSelect: (status: string | null) => tasks.setState({ filterStatus: status as TaskFilterStatus }),
+              onSelect: (status: string | null) => tasks.patchState({ filterStatus: status as TaskFilterStatus }),
               options: {
                 todo: taskStatusText('todo'),
                 in_progress: taskStatusText('in_progress'),
