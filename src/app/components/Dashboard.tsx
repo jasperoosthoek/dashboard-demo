@@ -28,40 +28,30 @@ const Dashboard = () => {
         <Link to='../'>
           <Navbar.Brand>{text`dashboard`}</Navbar.Brand>
         </Link>
-        <MenuButton
-          className='p-0 d-md-none ms-3 menu-button'
-          size='lg'
-          onClick={() => setShowMenu(!showMenu)}
-        />
         <Nav className='mr-auto'>
           <Navbar.Text id='dashboard-title'>
             <div />
           </Navbar.Text>
         </Nav>
-        <Navbar.Collapse className='justify-content-end'>
-          <Navbar.Text>
-          </Navbar.Text>
-          &nbsp;
-          
-          <Navbar.Text>
-            <LanguageDropdown />
-          </Navbar.Text>
-          {/* <Nav.Link onClick={() => logout()}>{text`logout`}</Nav.Link> */}
-        </Navbar.Collapse>
+        <Nav className='ms-auto align-items-center gap-3'>
+          <LanguageDropdown />
+          <MenuButton
+            className='p-0 d-md-none menu-button'
+            size='lg'
+            iconSize='24'
+            onClick={() => setShowMenu(!showMenu)}
+          />
+        </Nav>
       </Navbar>
 
       {showMenu &&
-        // Mobile menu that can be opened by clicking on MenuButton
         <div className='nav-menu bg-light'>
-          <div className='p-0 d-md-none ms-3'>
-            <div className='divider' />
-            <Nav className='d-block'>
-              <NavLinks
-                routes={navRoutes}
-                breadcrumb={false}
-                onClick={() => setShowMenu(!showMenu)}
-              />
-            </Nav>
+          <div className='p-3 d-md-none'>
+            <NavLinks
+              routes={navRoutes}
+              breadcrumb={false}
+              onClick={() => setShowMenu(!showMenu)}
+            />
           </div>
         </div>
       }
