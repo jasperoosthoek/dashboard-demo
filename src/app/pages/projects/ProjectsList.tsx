@@ -22,7 +22,7 @@ const ProjectsList = () => {
   const projectFormFields = useProjectFormFields();
   const projectStatusText = useProjectStatusText();
   const { filterStatus } = projects.state;
-  useEffect(() => projects.setState({ filterStatus: null }), [])
+  useEffect(() => projects.patchState({ filterStatus: null }), [])
 
   return (
     <Container className='container-list'>

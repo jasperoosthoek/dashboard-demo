@@ -22,7 +22,7 @@ const TasksList = () => {
   const taskColumns = useTaskColumns({ filterStatus: true });
   const taskStatusText = useTaskStatusText();
   const { filterStatus } = tasks.state;
-  useEffect(() => tasks.setState({ filterStatus: null }), [])
+  useEffect(() => tasks.patchState({ filterStatus: null }), [])
 
   return (
     <Container className='container-list'>

@@ -4,8 +4,10 @@ import {
   useCrud,
   useGetList,
   createStoreRegistry,
+  type CrudStore,
+  type Config,
+  type ValidatedConfig,
   type CustomActionFunction,
-  type UseCrudReturn,
 } from "@jasperoosthoek/zustand-crud-registry";
 import type {
   Role,
@@ -183,12 +185,13 @@ const s = {
 };
 
 // Call useCrud + useGetList, wire move.onResponse → store.patchList
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const useCrudWithMove = <S extends { getState: () => any }>(store: S) => {
-  const crud = useCrud(store as any);
-  useGetList(store as any);
-  (crud as any).move.onResponse = (list: any[]) => store.getState().patchList(list);
-  return crud as UseCrudReturn<S>;
+const useCrudWithMove = <T, K extends string, C extends Config<K, T>>(
+  store: CrudStore<T, K, C, ValidatedConfig<K, T, C>>
+) => {
+  const crud = useCrud(store);
+  useGetList(store);
+  (crud as any).move.onResponse = (list: Partial<T>[]) => store.patchList(list);
+  return crud;
 };
 
 export const use = {

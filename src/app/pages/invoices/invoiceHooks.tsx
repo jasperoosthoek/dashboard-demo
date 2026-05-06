@@ -157,7 +157,7 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseInvoiceCo
           {
             optionsDropdown: {
               selected: invoices.state.filterStatus,
-              onSelect: (status: string | null) => invoices.setState({ filterStatus: status as InvoiceFilterStatus }),
+              onSelect: (status: string | null) => invoices.patchState({ filterStatus: status as InvoiceFilterStatus }),
               options: {
                 open: invoiceStatusText('open'),
                 paid: invoiceStatusText('paid'),

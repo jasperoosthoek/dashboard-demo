@@ -22,7 +22,7 @@ const InvoiceList = () => {
   const invoiceColumns = useInvoiceColumns({ filterStatus: true });
   const invoiceStatusText = useInvoiceStatusText()
   const { filterStatus } = invoices.state;
-  useEffect(() => invoices.setState({ filterStatus: null }), [])
+  useEffect(() => invoices.patchState({ filterStatus: null }), [])
 
   return (
     <Container className='container-list'>
