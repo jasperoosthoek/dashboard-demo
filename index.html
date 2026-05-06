@@ -13,6 +13,29 @@
     <link rel="icon" type="image/x-icon" href="favicon.png" />
     <link rel="apple-touch-icon" href="icons/icon-180.png" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <script>
+      window.__pwaInstallObserved = false;
+      window.__pwaInstalled = false;
+      window.__pwaPromptEvent = null;
+      window.addEventListener('beforeinstallprompt', function (e) {
+        window.__pwaInstallObserved = true;
+        window.__pwaPromptEvent = e;
+        console.log('[PWA] beforeinstallprompt fired', {
+          platforms: e.platforms,
+          isSecureContext: window.isSecureContext,
+          serviceWorkerSupported: 'serviceWorker' in navigator,
+        });
+      });
+      window.addEventListener('appinstalled', function () {
+        window.__pwaInstalled = true;
+        console.log('[PWA] appinstalled fired');
+      });
+      console.log('[PWA] diagnostic ready', {
+        isSecureContext: window.isSecureContext,
+        serviceWorkerSupported: 'serviceWorker' in navigator,
+        displayModeStandalone: window.matchMedia('(display-mode: standalone)').matches,
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
