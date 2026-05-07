@@ -7,7 +7,7 @@
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "background_color": "#ffffff",
-  "theme_color": "#0d6efd",
+  "theme_color": "#2C3E50",
   "description": "Dashboard demo built with React, Zustand and React-Bootstrap.",
   "icons": [
     {

@@ -1,5 +1,6 @@
 import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.css';
+// import 'bootstrap/dist/css/bootstrap.css';
+import '../assets/css/bootstrap.min.flatly.css';
 import './app.module.scss';
 
 import { useEffect } from 'react';
