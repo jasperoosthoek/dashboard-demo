@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@jasperoosthoek/react-toolbox": "^0.11.8",
-    "@jasperoosthoek/tanstack-query-crud": "0.1.3",
+    "@jasperoosthoek/tanstack-query-crud": "^0.1.4",
     "@jasperoosthoek/zustand-crud-registry": "^0.3.2",
     "@mswjs/data": "^0.16.2",
     "@tanstack/react-query": "^5.101.4",
