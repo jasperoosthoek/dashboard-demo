@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { Pie, Bar } from 'react-chartjs-2';
@@ -7,28 +6,28 @@ import {
   useLocalization,
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
-import { use } from '../../stores/crudRegistry'
+import { r } from '../../resources';
 import { useProjectStatusText } from '../projects/projectHooks';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 
 const DashboardPage = () => {
   const { text, lang } = useLocalization();
-  const employees = use.employees();
-  const invoices = use.invoices();
-  const projects = use.projects();
-  const tasks = use.tasks();
-  const notes = use.notes();
-  const roles = use.roles();
+  const employees = r.employees.useList();
+  const invoices = r.invoices.useList();
+  const projects = r.projects.useList();
+  const tasks = r.tasks.useList();
+  const notes = r.notes.useList();
+  const roles = r.roles.useList();
   const projectStatusText = useProjectStatusText();
   const formatDate = useFormatDate();
 
-  const activeEmployees = employees.list?.filter(e => e.active);
-  const openInvoices = invoices.list?.filter(inv => inv.status === 'open');
-  const runningProjects = projects.list?.filter(p => p.status === 'in_progress');
-  const overdueTasks = tasks.list?.filter(t => t.status !== 'done' && new Date(t.due_date) < new Date());
+  const activeEmployees = employees.data?.filter(e => e.active);
+  const openInvoices = invoices.data?.filter(inv => inv.status === 'open');
+  const runningProjects = projects.data?.filter(p => p.status === 'in_progress');
+  const overdueTasks = tasks.data?.filter(t => t.status !== 'done' && new Date(t.due_date) < new Date());
 
   // Chart: projects by status
-  const projectStatusCounts = projects.list?.reduce((acc: Record<string, number>, p) => {
+  const projectStatusCounts = projects.data?.reduce((acc: Record<string, number>, p) => {
     acc[projectStatusText(p.status)] = (acc[p.status] || 0) + 1;
     return acc;
   }, {}) || {};
@@ -43,7 +42,7 @@ const DashboardPage = () => {
   };
 
   // Chart: invoice amounts per month
-  const monthlyTotals = invoices.list?.reduce((acc: Record<string, number>, inv) => {
+  const monthlyTotals = invoices.data?.reduce((acc: Record<string, number>, inv) => {
     const month = new Date(inv.due_date).toLocaleDateString(lang, { month: 'short', year: 'numeric' });
     acc[month] = (acc[month] || 0) + inv.amount;
     return acc;
@@ -59,19 +58,19 @@ const DashboardPage = () => {
   };
 
   const latestProjects = (
-    projects.list && [...projects.list].sort(
+    projects.data && [...projects.data].sort(
       (a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
     ).slice(0, 5)
   );
   const latestNotes = (
-    notes.list && [...notes.list].sort(
+    notes.data && [...notes.data].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ).slice(0, 5)
   );
 
   return (
     <Container className='container-list'>
-      {(!employees.list || !invoices.list || !projects.list || !tasks.list || !notes.list || !projects.record || !roles.record)? <SmallSpinner /> : 
+      {(!employees.data || !invoices.data || !projects.data || !tasks.data || !notes.data || !roles.data)? <SmallSpinner /> :
         <>
           {/* KPI Cards */}
           <Row className="mb-4">
@@ -80,7 +79,7 @@ const DashboardPage = () => {
                 {text`active_projects`} <strong>{runningProjects?.length}</strong>
                 </Card>
             </Col>
-            <Col md={3} title={openInvoices?.map(({ project_id, amount }) => `${projects.record && projects.record[project_id]?.name}: ${formatCurrency(amount)}`)?.join('\n')}>
+            <Col md={3} title={openInvoices?.map(({ project_id, amount }) => `${projects.find(project_id)?.name}: ${formatCurrency(amount)}`)?.join('\n')}>
               <Card body>
                 {text`outstanding_invoices`} <strong>{formatCurrency(openInvoices?.reduce((sum, inv) => sum + inv.amount, 0) || 0)}</strong>
                 </Card>
@@ -91,7 +90,7 @@ const DashboardPage = () => {
                 </Card>
             </Col>
             <Col md={3}>
-              <Card body title={activeEmployees?.map(({ name, role_id }) => `${name} (${roles.record && roles.record[role_id]?.name || text`not_found`})`)?.join('\n')}>
+              <Card body title={activeEmployees?.map(({ name, role_id }) => `${name} (${roles.find(role_id)?.name || text`not_found`})`)?.join('\n')}>
                 {text`active_employees`} <strong>{activeEmployees?.length}</strong>
                 </Card>
             </Col>

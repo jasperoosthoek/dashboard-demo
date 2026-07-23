@@ -10,7 +10,7 @@ dev:
 # dev-local: Start dev server with local @jasperoosthoek modules.
 dev-local:
     @echo "Starting dev server with local modules..."
-    @DEVELOP_REACT_TOOLBOX=true DEVELOP_ZUSTAND_CRUD_REGISTRY=true npm run dev
+    @DEVELOP_REACT_TOOLBOX=true DEVELOP_TANSTACK_QUERY_CRUD=true npm run dev
 
 # dev-no-mocks: Start dev server without mock API.
 dev-no-mocks:

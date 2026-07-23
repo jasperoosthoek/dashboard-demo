@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { addDays, format } from 'date-fns';
 import { Container } from 'react-bootstrap';
 import {
@@ -9,26 +9,28 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
-import type { Invoice } from '../../stores/types';
-import { use, onMove } from '../../stores/crudRegistry'
-import { useInvoiceFormFields, useInvoiceColumns, useInvoiceStatusText } from './invoiceHooks';
+import type { Invoice, InvoiceFilterStatus } from '../../stores/types';
+import { r } from '../../resources';
+import { onMove } from '../../resources/move';
+import { useInvoiceFormFields, useInvoiceColumns } from './invoiceHooks';
 
 const InvoiceList = () => {
   const { text } = useLocalization();
-  const projects = use.projects();
-  const customers = use.customers();
-  const invoices = use.invoices();
+  const projects = r.projects.useList();
+  const customers = r.customers.useList();
+  const invoices = r.invoices.useList();
+  const createInvoice = r.invoices.useCreate();
+  const updateInvoice = r.invoices.useUpdate();
+  const moveInvoice = r.invoices.useMove();
   const invoiceFormFields = useInvoiceFormFields();
-  const invoiceColumns = useInvoiceColumns({ filterStatus: true });
-  const invoiceStatusText = useInvoiceStatusText()
-  const { filterStatus } = invoices.state;
-  useEffect(() => invoices.patchState({ filterStatus: null }), [])
+  const [filterStatus, setFilterStatus] = useState<InvoiceFilterStatus>(null);
+  const invoiceColumns = useInvoiceColumns({ filterStatus, onFilterStatusChange: setFilterStatus });
 
   return (
     <Container className='container-list'>
-      {(!invoices.list || !customers.list || !projects.record)? <SmallSpinner /> :
+      {(!invoices.data || !customers.data || !projects.data)? <SmallSpinner /> :
         <FormModalProvider
-          loading={invoices.create.isLoading || invoices.update.isLoading}
+          loading={createInvoice.isPending || updateInvoice.isPending}
           initialState={{
             name: '',
             status: 'open',
@@ -38,10 +40,10 @@ const InvoiceList = () => {
           editModalTitle={text`edit_invoice`}
           formFields={invoiceFormFields}
           onCreate={(invoice: Invoice, closeModal: () => void) => {
-            invoices.create(invoice, { callback: closeModal});
+            createInvoice.mutate(invoice, { onSuccess: closeModal });
           }}
           onUpdate={(invoice: Invoice, closeModal: () => void) => {
-            invoices.update(invoice, { callback: closeModal});
+            updateInvoice.mutate(invoice, { onSuccess: closeModal });
           }}
         >
           <DataTable
@@ -57,8 +59,8 @@ const InvoiceList = () => {
               )
             }}
             columns={invoiceColumns}
-            data={invoices.list.filter(inv => filterStatus === null || inv.status === filterStatus)}
-            onMove={onMove(invoices)}
+            data={invoices.data.filter(inv => filterStatus === null || inv.status === filterStatus)}
+            onMove={onMove(moveInvoice)}
           />
         </FormModalProvider>
       }

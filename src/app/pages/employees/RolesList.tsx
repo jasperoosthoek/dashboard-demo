@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import {
   DataTable,
@@ -10,16 +9,22 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Role } from '../../stores/types';
-import { use, onMove } from '../../stores/crudRegistry'
+import { r } from '../../resources';
+import { onMove } from '../../resources/move';
 
 const RolesList = () => {
   const { text } = useLocalization();
-  const roles = use.roles();
+  const roles = r.roles.useList();
+  const createRole = r.roles.useCreate();
+  const updateRole = r.roles.useUpdate();
+  const deleteRole = r.roles.useDelete();
+  const moveRole = r.roles.useMove();
+
   return (
     <Container className='container-list'>
-      {(!roles.list || !roles.list) ? <SmallSpinner /> : 
+      {!roles.data ? <SmallSpinner /> :
         <FormModalProvider
-          loading={roles.create.isLoading || roles.update.isLoading}
+          loading={createRole.isPending || updateRole.isPending}
           initialState={{
             name: '',
           }}
@@ -32,10 +37,10 @@ const RolesList = () => {
             },
           }}
           onCreate={(role: Role, closeModal: () => void) => {
-            roles.create(role, { callback: closeModal });
+            createRole.mutate(role, { onSuccess: closeModal });
           }}
           onUpdate={(role: Role, closeModal: () => void) => {
-            roles.update(role, { callback: closeModal });
+            updateRole.mutate(role, { onSuccess: closeModal });
           }}
         >
           <DataTable
@@ -48,7 +53,7 @@ const RolesList = () => {
               customHeader: (
                 <FormCreateModalButton>
                   {text`create_new_role`}
-                </FormCreateModalButton> 
+                </FormCreateModalButton>
               )
             }}
             columns={[
@@ -62,17 +67,17 @@ const RolesList = () => {
                 name: text`actions`,
                 selector: (role) => (
                   <DeleteConfirmButton
-                    loading={roles.delete.isLoading && roles.delete.id === role.id}
+                    loading={deleteRole.isPending}
                     modalTitle={text`delete_role${role.name}`}
                     onDelete={() => {
-                      roles.delete(role);
+                      deleteRole.mutate(role);
                     }}
                   />
                 )
               }
             ]}
-            data={roles.list}
-            onMove={onMove(roles)}
+            data={roles.data}
+            onMove={onMove(moveRole)}
           />
         </FormModalProvider>
       }

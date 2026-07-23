@@ -10,7 +10,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Project, ProjectFilterStatus, Employee, Customer, MapStatus } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { r } from '../../resources';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/employeeHooks';
@@ -43,12 +43,12 @@ export const useProjectStatus = () => {
 }
 
 export const useProjectFormFields = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {
-  const customers = use.customers();
+  const customers = r.customers.useList();
   const { text } = useLocalization();
   const employeeList = useEmployeeFormList();
   const projectStatusText = useProjectStatusText();
 
-  if (!customers.list || !employeeList) {
+  if (!customers.data || !employeeList) {
     return [];
   }
   return (
@@ -97,7 +97,7 @@ export const useProjectFormFields = ({ excludeEmployee }: { excludeEmployee?: bo
             {...props}
             idKey='id'
             nameKey='name'
-            list={customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || []}
+            list={[...customers.data].sort((c1, c2) => c1.name > c2.name ? 1 : -1)}
           />
         ),
         label: text`customer`,
@@ -132,14 +132,18 @@ export const useProjectFormFields = ({ excludeEmployee }: { excludeEmployee?: bo
   )
 }
 
-export type UseProjectColumnsProps = { excludeEmployee?: boolean; filterStatus?: boolean }
+export type UseProjectColumnsProps = {
+  excludeEmployee?: boolean;
+  filterStatus?: ProjectFilterStatus;
+  onFilterStatusChange?: (status: ProjectFilterStatus) => void;
+};
 
-export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectColumnsProps = {}) => {
+export const useProjectColumns = ({ excludeEmployee, filterStatus, onFilterStatusChange }: UseProjectColumnsProps = {}) => {
   const { text } = useLocalization();
-  const projects = use.projects();
-  const employees = use.employees();
-  const customers = use.customers();
-  const roles = use.roles();
+  const deleteProject = r.projects.useDelete();
+  const employees = r.employees.useList();
+  const customers = r.customers.useList();
+  const roles = r.roles.useList();
   const formatDate = useFormatDate();
 
   const projectStatus = useProjectStatus();
@@ -166,7 +170,7 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
       {
         name: text`customer`,
         selector: ({ customer_id }: Project) => {
-          const customer = customers.record && customers.record[customer_id];
+          const customer = customers.find(customer_id);
           return (
             customer
               ? <div title={`${customer?.name} (${customer?.contact_person})`}>
@@ -175,22 +179,22 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
               : <NotFound />
           );
         },
-        orderBy: ({ customer_id }: Project) => customers.record && customers.record[customer_id]?.name || customer_id,
-        search: ({ customer_id }: Project) => customers.record && customers.record[customer_id]?.name || '',
+        orderBy: ({ customer_id }: Project) => customers.find(customer_id)?.name || customer_id,
+        search: ({ customer_id }: Project) => customers.find(customer_id)?.name || '',
       },
       ...!excludeEmployee ? [
         {
           name: text`employee`,
           selector: ({ employee_id }: Project) => {
-            const employee = employees.record && employees.record[employee_id];
+            const employee = employees.find(employee_id);
             return (
               employee
-                ? <EmployeeLink employee={employee} />
+                ? <EmployeeLink employee={employee} role={roles.find(employee.role_id)} />
                 : <NotFound />
             );
           },
-          orderBy: ({ employee_id }: Project) => employees.record && employees.record[employee_id]?.name || employee_id,
-          search: ({ employee_id }: Project) => employees.record && employees.record[employee_id]?.name || '',
+          orderBy: ({ employee_id }: Project) => employees.find(employee_id)?.name || employee_id,
+          search: ({ employee_id }: Project) => employees.find(employee_id)?.name || '',
         },
       ] : [],
       {
@@ -212,11 +216,11 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
         selector: (project: Project) => projectStatus(project),
         orderBy: 'status',
         search: ({ status }: Project) => projectStatusText(status),
-        ...filterStatus ? (
+        ...onFilterStatusChange ? (
           {
             optionsDropdown: {
-              selected: projects.state.filterStatus,
-              onSelect: (status: string | null) => projects.patchState({ filterStatus: status as ProjectFilterStatus }),
+              selected: filterStatus ?? null,
+              onSelect: (status: string | null) => onFilterStatusChange(status as ProjectFilterStatus),
               options: {
                 pending: projectStatusText('pending'),
                 in_progress: projectStatusText('in_progress'),
@@ -235,10 +239,10 @@ export const useProjectColumns = ({ excludeEmployee, filterStatus }: UseProjectC
               title={text`edit_project`}
             />
             <DeleteConfirmButton
-              loading={projects.delete.isLoading && projects.delete.id === project.id}
+              loading={deleteProject.isPending}
               modalTitle={text`delete_project${project.name}`}
               onDelete={() => {
-                projects.delete(project);
+                deleteProject.mutate(project);
               }}
             />
           </>

@@ -1,4 +1,4 @@
-import { Container, Card, Row, Col, Badge, Table } from 'react-bootstrap';
+import { Container, Card, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import {
   FormModalProvider,
@@ -10,22 +10,33 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Employee, Project, Task, Note } from '../../stores/types';
-import { use, onMove } from '../../stores/crudRegistry'
+import { r } from '../../resources';
+import { onMove } from '../../resources/move';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormFields } from './employeeHooks';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from '../notes/noteHooks';
 import { useProjectFormFields, useProjectColumns, projectInitialState } from '../projects/projectHooks';
 import { useTaskFormFields, useTaskColumns, taskInitialState } from '../tasks/taskHooks';
 
-const EmployeesList = () => {
+const EmployeeItem = () => {
   const { text } = useLocalization();
-  const employees = use.employees();
-  const customers = use.customers();
-  const notes = use.notes();
-  const invoices = use.invoices();
-  const projects = use.projects();
-  const tasks = use.tasks();
-  const roles = use.roles(); // Required by noteFormFields
+  const employees = r.employees.useList();
+  const updateEmployee = r.employees.useUpdate();
+  const customers = r.customers.useList();
+  const notes = r.notes.useList();
+  const createNote = r.notes.useCreate();
+  const updateNote = r.notes.useUpdate();
+  const moveNote = r.notes.useMove();
+  const invoices = r.invoices.useList();
+  const projects = r.projects.useList();
+  const createProject = r.projects.useCreate();
+  const updateProject = r.projects.useUpdate();
+  const moveProject = r.projects.useMove();
+  const tasks = r.tasks.useList();
+  const createTask = r.tasks.useCreate();
+  const updateTask = r.tasks.useUpdate();
+  const moveTask = r.tasks.useMove();
+  const roles = r.roles.useList(); // Required by noteFormFields
   const noteFormFields = useNoteFormFields({ excludeEmployee: true });
   const noteColumns = useNoteColumns({ excludeEmployee: true });
   const employeeFormFields = useEmployeeFormFields();
@@ -35,11 +46,11 @@ const EmployeesList = () => {
   const taskColumns = useTaskColumns({ excludeEmployee: true });
 
   const { id } = useParams<{ id: string }>();
-  const employee = employees.record && employees?.record[id || ''] as Employee | undefined;
+  const employee = id && employees.find(id);
 
   return (
     <Container className='container-list mt-4'>
-      {(!employees.list || !customers.list || !employees.list || !notes.list || !invoices.list || !noteFormFields || !roles.record || !projects.list || !tasks.list)
+      {(!employees.data || !customers.data || !notes.data || !invoices.data || !noteFormFields || !roles.data || !projects.data || !tasks.data)
         ? <SmallSpinner />
         : !employee
         ? <NotFound />
@@ -47,11 +58,11 @@ const EmployeesList = () => {
             <>
               <FormModalProvider
                 initialState={employee || {}}
-                loading={employees.update.isLoading}
+                loading={updateEmployee.isPending}
                 editModalTitle={text`edit_employee`}
                 formFields={employeeFormFields}
                 onUpdate={(employee: Employee, closeModal: () => void) => {
-                  employees.update(employee, { callback: closeModal});
+                  updateEmployee.mutate(employee, { onSuccess: closeModal });
                 }}
               >
                 <h2>
@@ -75,7 +86,7 @@ const EmployeesList = () => {
                   <Row className="mt-2">
                     <Col>{text`role`}:</Col>
                     <Col>
-                      {roles.record && roles.record[employee.role_id]?.name || <NotFound />}
+                      {roles.find(employee.role_id)?.name || <NotFound />}
                     </Col>
                   </Row>
                 </Card.Body>
@@ -86,14 +97,14 @@ const EmployeesList = () => {
                   ...projectInitialState,
                   employee_id: employee.id,
                 }}
-                loading={projects.create.isLoading || projects.update.isLoading}
+                loading={createProject.isPending || updateProject.isPending}
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
                 onCreate={(project: Project, closeModal: () => void) => {
-                  projects.create(project, { callback: closeModal});
+                  createProject.mutate(project, { onSuccess: closeModal });
                 }}
                 onUpdate={(project: Project, closeModal: () => void) => {
-                  projects.update(project, { callback: closeModal});
+                  updateProject.mutate(project, { onSuccess: closeModal });
                 }}
               >
                 <Card className="mb-4">
@@ -110,8 +121,8 @@ const EmployeesList = () => {
                       rowsPerPage={null}
                       orderByDefault='order'
                       columns={projectColumns}
-                      data={projects.list.filter(({ employee_id }) => employee_id === employee.id)}
-                      onMove={onMove(projects)}
+                      data={projects.data.filter(({ employee_id }) => employee_id === employee.id)}
+                      onMove={onMove(moveProject)}
                     />
                   </Card.Body>
                 </Card>
@@ -123,14 +134,14 @@ const EmployeesList = () => {
                   ...taskInitialState,
                   employee_id: employee.id,
                 }}
-                loading={tasks.create.isLoading || tasks.update.isLoading}
+                loading={createTask.isPending || updateTask.isPending}
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
                 onCreate={(task: Task, closeModal: () => void) => {
-                  tasks.create(task, { callback: closeModal});
+                  createTask.mutate(task, { onSuccess: closeModal });
                 }}
                 onUpdate={(task: Task, closeModal: () => void) => {
-                  tasks.update(task, { callback: closeModal});
+                  updateTask.mutate(task, { onSuccess: closeModal });
                 }}
               >
                 <Card className="mb-4">
@@ -147,8 +158,8 @@ const EmployeesList = () => {
                       rowsPerPage={null}
                       orderByDefault='order'
                       columns={taskColumns}
-                      data={tasks.list.filter(({ employee_id }) => employee_id === employee.id)}
-                      onMove={onMove(tasks)}
+                      data={tasks.data.filter(({ employee_id }) => employee_id === employee.id)}
+                      onMove={onMove(moveTask)}
                     />
                   </Card.Body>
                 </Card>
@@ -159,14 +170,14 @@ const EmployeesList = () => {
                   ...noteInitialState,
                   employee_id: employee.id,
                 }}
-                loading={notes.create.isLoading || notes.update.isLoading}
+                loading={createNote.isPending || updateNote.isPending}
                 editModalTitle={text`edit_note`}
                 formFields={noteFormFields}
                 onCreate={(note: Note, closeModal: () => void) => {
-                  notes.create(note, { callback: closeModal});
+                  createNote.mutate(note, { onSuccess: closeModal });
                 }}
                 onUpdate={(note: Note, closeModal: () => void) => {
-                  notes.update(note, { callback: closeModal});
+                  updateNote.mutate(note, { onSuccess: closeModal });
                 }}
               >
                 <Card className="mb-4">
@@ -183,8 +194,8 @@ const EmployeesList = () => {
                       rowsPerPage={null}
                       orderByDefault='order'
                       columns={noteColumns}
-                      data={notes.list.filter(({ employee_id }) => employee_id === employee.id)}
-                      onMove={onMove(notes)}
+                      data={notes.data.filter(({ employee_id }) => employee_id === employee.id)}
+                      onMove={onMove(moveNote)}
                     />
                   </Card.Body>
                 </Card>
@@ -197,4 +208,4 @@ const EmployeesList = () => {
   )
 }
 
-export default EmployeesList;
+export default EmployeeItem;
