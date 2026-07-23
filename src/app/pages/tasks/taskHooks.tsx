@@ -11,7 +11,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Project, Task, TaskFilterStatus, Employee, MapStatus } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { r } from '../../resources';
 import { useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/employeeHooks';
@@ -46,7 +46,7 @@ export const useTaskStatus = () => {
 export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { excludeProject?: boolean, excludeEmployee?: boolean } = {}) => {
   const { text } = useLocalization();
   const employeeList = useEmployeeFormList();
-  const projects = use.projects()
+  const projects = r.projects.useList();
   const taskStatusText = useTaskStatusText();
 
   return {
@@ -97,7 +97,7 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
                 {...props}
                 idKey='id'
                 nameKey='name'
-                list={projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || []}
+                list={projects.data ? [...projects.data].sort((p1, p2) => p1.name > p2.name ? 1 : -1) : []}
                 // Disable changing project when already saved i.e. project has an id
                 disabled={({ state: project }) => !!project.id}
               />
@@ -125,17 +125,23 @@ export const  useTaskFormFields = ({ excludeProject, excludeEmployee }: { exclud
   };
 }
 
-export type UseTaskColumnsProps = { excludeProject?: boolean, excludeEmployee?: boolean; filterStatus?: boolean }
-export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }: UseTaskColumnsProps = {}) => {
+export type UseTaskColumnsProps = {
+  excludeProject?: boolean;
+  excludeEmployee?: boolean;
+  filterStatus?: TaskFilterStatus;
+  onFilterStatusChange?: (status: TaskFilterStatus) => void;
+};
+export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus, onFilterStatusChange }: UseTaskColumnsProps = {}) => {
   const { text } = useLocalization();
-  const employees = use.employees();
-  const tasks = use.tasks();
+  const employees = r.employees.useList();
+  const deleteTask = r.tasks.useDelete();
   const taskStatus = useTaskStatus();
-  const projects = use.projects();
+  const projects = r.projects.useList();
+  const roles = r.roles.useList();
   const formatDate = useFormatDate();
   const taskStatusText = useTaskStatusText();
 
-  if (!tasks.list || !employees.record || !projects.record) {
+  if (!employees.data || !projects.data) {
     return [];
   }
 
@@ -155,7 +161,7 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
         {
           name: text`project`,
           selector: ({ project_id }: Task) => {
-            const project = projects.record && projects.record[project_id];
+            const project = projects.find(project_id);
             return (
               project
                 ? <Link to={`/projects/${project.id}`}>
@@ -165,21 +171,21 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
             );
           },
           orderBy: 'project_id',
-          search: ({ project_id }: Task) => projects.record && projects.record[project_id]?.name || '',
+          search: ({ project_id }: Task) => projects.find(project_id)?.name || '',
         }
       ] : [],
       ...!excludeEmployee ? [
         {
           name: text`assigned_to_employee`,
           selector: ({ employee_id }: Task) => {
-            const employee = employees.record && employees.record[employee_id];
+            const employee = employees.find(employee_id);
             return (
               employee
-                ? <EmployeeLink employee={employee} />
+                ? <EmployeeLink employee={employee} role={roles.find(employee.role_id)} />
                 : <NotFound />
             );
           },
-          search: ({ employee_id }: Task) => employees.record && employees.record[employee_id]?.name || '',
+          search: ({ employee_id }: Task) => employees.find(employee_id)?.name || '',
           orderBy: 'employee_id',
         }
       ] : [],
@@ -193,11 +199,11 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
         selector: (task: Task) => taskStatus(task),
         orderBy: 'status',
         search: ({ status }: Task) => taskStatusText(status) || '',
-        ...filterStatus ? (
+        ...onFilterStatusChange ? (
           {
             optionsDropdown: {
-              selected: tasks.state.filterStatus,
-              onSelect: (status: string | null) => tasks.patchState({ filterStatus: status as TaskFilterStatus }),
+              selected: filterStatus ?? null,
+              onSelect: (status: string | null) => onFilterStatusChange(status as TaskFilterStatus),
               options: {
                 todo: taskStatusText('todo'),
                 in_progress: taskStatusText('in_progress'),
@@ -216,10 +222,10 @@ export const useTaskColumns = ({ excludeProject, excludeEmployee, filterStatus }
               title={text`edit_task`}
             />
             <DeleteConfirmButton
-              loading={tasks.delete.isLoading && tasks.delete.id === task.id}
+              loading={deleteTask.isPending}
               modalTitle={text`delete_task${task.title}`}
               onDelete={() => {
-                tasks.delete(task);
+                deleteTask.mutate(task);
               }}
             />
           </>

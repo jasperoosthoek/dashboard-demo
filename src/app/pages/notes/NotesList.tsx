@@ -3,37 +3,40 @@ import {
   DataTable,
   FormCreateModalButton,
   FormModalProvider,
-  FormEditModalButton,
   useLocalization,
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Note } from '../../stores/types';
-import { use, onMove } from '../../stores/crudRegistry'
+import { r } from '../../resources';
+import { onMove } from '../../resources/move';
 import { useNoteFormFields, useNoteColumns, noteInitialState } from './noteHooks';
 
 const NotesList = () => {
   const { text } = useLocalization();
-  const notes = use.notes();
-  const employees = use.employees();
-  const customers = use.customers();
+  const notes = r.notes.useList();
+  const createNote = r.notes.useCreate();
+  const updateNote = r.notes.useUpdate();
+  const moveNote = r.notes.useMove();
+  const employees = r.employees.useList();
+  const customers = r.customers.useList();
   const noteFormFields = useNoteFormFields();
   const noteColumns = useNoteColumns();
 
   return (
     <Container className='container-list'>
-      {(!notes.list || !employees.list || !customers.list) ? <SmallSpinner /> :
+      {(!notes.data || !employees.data || !customers.data) ? <SmallSpinner /> :
         <FormModalProvider
-          loading={notes.create.isLoading || notes.update.isLoading}
+          loading={createNote.isPending || updateNote.isPending}
           initialState={noteInitialState}
           createModalTitle={text`create_new_note`}
           editModalTitle={text`edit_note`}
           formFields={noteFormFields}
           onCreate={(note: Note, closeModal: () => void) => {
-            notes.create(note, { callback: closeModal});
+            createNote.mutate(note, { onSuccess: closeModal });
           }}
           onUpdate={(note: Note, closeModal: () => void) => {
-            notes.update(note, { callback: closeModal});
+            updateNote.mutate(note, { onSuccess: closeModal });
           }}
         >
           <DataTable
@@ -49,8 +52,8 @@ const NotesList = () => {
               )
             }}
             columns={noteColumns}
-            data={notes.list}
-            onMove={onMove(notes)}
+            data={notes.data}
+            onMove={onMove(moveNote)}
           />
         </FormModalProvider>
       }

@@ -10,7 +10,7 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Invoice, Project, InvoiceFilterStatus, MapStatus } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { r } from '../../resources';
 import { formatCurrency, useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 
@@ -40,7 +40,7 @@ export const useInvoiceStatus = () => {
 
 export const  useInvoiceFormFields = ({ excludeProject }: { excludeProject?: boolean } = {}) => {
   const { text } = useLocalization();
-  const projects = use.projects()
+  const projects = r.projects.useList();
   const invoiceStatusText = useInvoiceStatusText();
 
   return {
@@ -85,7 +85,7 @@ export const  useInvoiceFormFields = ({ excludeProject }: { excludeProject?: boo
                 {...props}
                 idKey='id'
                 nameKey='name'
-                list={projects.list?.sort((p1, p2) => p1.name > p2.name ? 1 : -1) || []}
+                list={projects.data ? [...projects.data].sort((p1, p2) => p1.name > p2.name ? 1 : -1) : []}
                 // Disable changing project when already saved i.e. project has an id
                 disabled={({ state: project }) => !!project.id}
               />
@@ -98,17 +98,21 @@ export const  useInvoiceFormFields = ({ excludeProject }: { excludeProject?: boo
   };
 }
 
-export type UseInvoiceColumnsProps = { excludeProject?: boolean; filterStatus?: boolean };
+export type UseInvoiceColumnsProps = {
+  excludeProject?: boolean;
+  filterStatus?: InvoiceFilterStatus;
+  onFilterStatusChange?: (status: InvoiceFilterStatus) => void;
+};
 
-export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseInvoiceColumnsProps = {}) => {
+export const useInvoiceColumns = ({ excludeProject, filterStatus, onFilterStatusChange }: UseInvoiceColumnsProps = {}) => {
   const { text } = useLocalization();
-  const invoices = use.invoices();
+  const deleteInvoice = r.invoices.useDelete();
   const invoiceStatus = useInvoiceStatus();
   const invoiceStatusText = useInvoiceStatusText();
-  const projects = use.projects();
+  const projects = r.projects.useList();
   const formatDate = useFormatDate();
 
-  if (!invoices.list || !projects.record) {
+  if (!projects.data) {
     return [];
   }
 
@@ -124,7 +128,7 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseInvoiceCo
         {
           name: text`project`,
           selector: ({ project_id }: Invoice) => {
-            const project = projects.record && projects.record[project_id];
+            const project = projects.find(project_id);
             return (
               project
                 ? <Link to={`/projects/${project.id}`}>
@@ -134,7 +138,7 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseInvoiceCo
             );
           },
           orderBy: 'project_id',
-          search: ({ project_id }: Invoice) => projects.record && projects.record[project_id]?.name || '',
+          search: ({ project_id }: Invoice) => projects.find(project_id)?.name || '',
         }
       ] : [],
       {
@@ -153,11 +157,11 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseInvoiceCo
         selector: (invoice: Invoice) => invoiceStatus(invoice),
         orderBy: 'status',
         search: ({ status }: Invoice) => invoiceStatusText(status) || '',
-        ...filterStatus ? (
+        ...onFilterStatusChange ? (
           {
             optionsDropdown: {
-              selected: invoices.state.filterStatus,
-              onSelect: (status: string | null) => invoices.patchState({ filterStatus: status as InvoiceFilterStatus }),
+              selected: filterStatus ?? null,
+              onSelect: (status: string | null) => onFilterStatusChange(status as InvoiceFilterStatus),
               options: {
                 open: invoiceStatusText('open'),
                 paid: invoiceStatusText('paid'),
@@ -175,10 +179,10 @@ export const useInvoiceColumns = ({ excludeProject, filterStatus }: UseInvoiceCo
               title={text`edit_invoice`}
             />
             <DeleteConfirmButton
-              loading={invoices.delete.isLoading && invoices.delete.id === invoice.id}
+              loading={deleteInvoice.isPending}
               modalTitle={text`delete_invoice${invoice.id}`}
               onDelete={() => {
-                invoices.delete(invoice);
+                deleteInvoice.mutate(invoice);
               }}
             />
           </>

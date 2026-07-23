@@ -1,4 +1,4 @@
-import { Container, Card, Row, Col, Badge } from 'react-bootstrap';
+import { Container, Card, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { addDays, format } from 'date-fns';
 import {
@@ -11,21 +11,29 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Project, Task, Invoice } from '../../stores/types';
-import { use, onMove } from '../../stores/crudRegistry'
+import { r } from '../../resources';
+import { onMove } from '../../resources/move';
 import { formatCurrency } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useProjectFormFields, useProjectStatus } from './projectHooks';
 import { useTaskColumns, useTaskFormFields } from '../tasks/taskHooks';
 import { useInvoiceColumns, useInvoiceFormFields } from '../invoices/invoiceHooks';
 
-const ProjectsList = () => {
+const ProjectItem = () => {
   const { text } = useLocalization();
-  const projects = use.projects();
-  const employees = use.employees();
-  const customers = use.customers();
-  const tasks = use.tasks();
-  const invoices = use.invoices();
-  const roles = use.roles(); // Required by projectFormFields
+  const projects = r.projects.useList();
+  const updateProject = r.projects.useUpdate();
+  const employees = r.employees.useList();
+  const customers = r.customers.useList();
+  const tasks = r.tasks.useList();
+  const createTask = r.tasks.useCreate();
+  const updateTask = r.tasks.useUpdate();
+  const moveTask = r.tasks.useMove();
+  const invoices = r.invoices.useList();
+  const createInvoice = r.invoices.useCreate();
+  const updateInvoice = r.invoices.useUpdate();
+  const moveInvoice = r.invoices.useMove();
+  const roles = r.roles.useList(); // Required by projectFormFields
   const projectStatus = useProjectStatus();
   const projectFormFields = useProjectFormFields();
   const taskFormFields = useTaskFormFields();
@@ -34,11 +42,11 @@ const ProjectsList = () => {
   const invoiceColumns = useInvoiceColumns({ excludeProject: true });
 
   const { id } = useParams<{ id: string }>();
-  const project = projects.record && projects?.record[id || ''] as Project | undefined;
-  const customer = customers.record && customers?.record[project?.customer_id || ''];
+  const project = id && projects.find(id);
+  const customer = project && customers.find(project.customer_id);
   return (
     <Container className='container-list mt-4'>
-      {(!customer || !projects.list || !customers.list || !employees.list || !tasks.list || !invoices.list || !projectFormFields)
+      {(!customer || !projects.data || !customers.data || !employees.data || !tasks.data || !invoices.data || !roles.data)
         ? <SmallSpinner />
         : !project
         ? <NotFound />
@@ -46,11 +54,11 @@ const ProjectsList = () => {
             <>
               <FormModalProvider
                 initialState={project || {}}
-                loading={projects.update.isLoading}
+                loading={updateProject.isPending}
                 editModalTitle={text`edit_project`}
                 formFields={projectFormFields}
                 onUpdate={(project: Project, closeModal: () => void) => {
-                  projects.update(project, { callback: closeModal});
+                  updateProject.mutate(project, { onSuccess: closeModal });
                 }}
               >
                 <h2>
@@ -85,14 +93,14 @@ const ProjectsList = () => {
                   project_id: project.id,
                   status: 'todo',
                 }}
-                loading={tasks.create.isLoading || tasks.update.isLoading}
+                loading={createTask.isPending || updateTask.isPending}
                 editModalTitle={text`edit_task`}
                 formFields={taskFormFields}
                 onCreate={(task: Task, closeModal: () => void) => {
-                  tasks.create(task, { callback: closeModal});
+                  createTask.mutate(task, { onSuccess: closeModal });
                 }}
                 onUpdate={(task: Task, closeModal: () => void) => {
-                  tasks.update(task, { callback: closeModal});
+                  updateTask.mutate(task, { onSuccess: closeModal });
                 }}
               >
                 <Card className="mb-4">
@@ -109,8 +117,8 @@ const ProjectsList = () => {
                       rowsPerPage={null}
                       orderByDefault='order'
                       columns={taskColumns}
-                      data={tasks.list.filter(({ project_id }) => project_id === project.id)}
-                      onMove={onMove(tasks)}
+                      data={tasks.data.filter(({ project_id }) => project_id === project.id)}
+                      onMove={onMove(moveTask)}
                     />
                   </Card.Body>
                 </Card>
@@ -123,14 +131,14 @@ const ProjectsList = () => {
                   project_id: project.id,
                   status: 'open',
                 }}
-                loading={invoices.create.isLoading || invoices.update.isLoading}
+                loading={createInvoice.isPending || updateInvoice.isPending}
                 editModalTitle={text`edit_invoice`}
                 formFields={invoiceFormFields}
                 onCreate={(invoice: Invoice, closeModal: () => void) => {
-                  invoices.create(invoice, { callback: closeModal});
+                  createInvoice.mutate(invoice, { onSuccess: closeModal });
                 }}
                 onUpdate={(invoice: Invoice, closeModal: () => void) => {
-                  invoices.update(invoice, { callback: closeModal});
+                  updateInvoice.mutate(invoice, { onSuccess: closeModal });
                 }}
               >
                 <Card className="mb-4">
@@ -147,8 +155,8 @@ const ProjectsList = () => {
                       rowsPerPage={null}
                       orderByDefault='order'
                       columns={invoiceColumns}
-                      data={invoices.list.filter(({ project_id }) => project_id === project.id)}
-                      onMove={onMove(invoices)}
+                      data={invoices.data.filter(({ project_id }) => project_id === project.id)}
+                      onMove={onMove(moveInvoice)}
                     />
                   </Card.Body>
                 </Card>
@@ -179,4 +187,4 @@ const ProjectsList = () => {
   )
 }
 
-export default ProjectsList;
+export default ProjectItem;

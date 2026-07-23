@@ -11,17 +11,17 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Note, Employee, Customer } from '../../stores/types';
-import { use } from '../../stores/crudRegistry'
+import { r } from '../../resources';
 import { useFormatDate } from '../../localization/localization';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormList } from '../employees/employeeHooks';
 
 export const  useNoteFormFields = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {
   const { text } = useLocalization();
-  const customers = use.customers()
+  const customers = r.customers.useList();
   const employeeList = useEmployeeFormList();
 
-  if (!customers.list || (excludeEmployee && !employeeList)) return [];
+  if (!customers.data || (excludeEmployee && !employeeList)) return [];
 
   return {
     content: {
@@ -52,7 +52,7 @@ export const  useNoteFormFields = ({ excludeEmployee }: { excludeEmployee?: bool
           {...props}
           idKey='id'
           nameKey='name'
-          list={customers.list?.sort((c1, c2) => c1.name > c2.name ? 1 : -1) || []}
+          list={[...customers.data].sort((c1, c2) => c1.name > c2.name ? 1 : -1)}
         />
       ),
       label: text`customer`,
@@ -63,12 +63,12 @@ export const  useNoteFormFields = ({ excludeEmployee }: { excludeEmployee?: bool
 
 export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean } = {}) => {
   const { text } = useLocalization();
-  const notes = use.notes();
-  const employees = use.employees();
-  const customers = use.customers();
+  const deleteNote = r.notes.useDelete();
+  const employees = r.employees.useList();
+  const customers = r.customers.useList();
   const formatDate = useFormatDate();
 
-  if (!customers.record || !notes.list || !employees.record) {
+  if (!customers.data || !employees.data) {
     return [];
   }
 
@@ -84,7 +84,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
         {
           name: text`employee`,
           selector: ({ employee_id }: Note) => {
-            const employee = employees.record && employees.record[employee_id];
+            const employee = employees.find(employee_id);
             return (
               employee
                 ? <Link to={`/employees/${employee.id}`}>
@@ -94,13 +94,13 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
             );
           },
           orderBy: 'employee_id',
-          search: ({ employee_id }: Note) => employees.record && employees.record[employee_id]?.name || '',
+          search: ({ employee_id }: Note) => employees.find(employee_id)?.name || '',
         }
       ] : [],
       {
         name: text`customer`,
         selector: ({ customer_id }: Note) => {
-          const customer = customers.record && customers.record[customer_id];
+          const customer = customers.find(customer_id);
           return (
             customer
               ? customer.name
@@ -108,7 +108,7 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
           );
         },
         orderBy: 'customer_id',
-          search: ({ customer_id }: Note) => customers.record && customers.record[customer_id]?.name || '',
+          search: ({ customer_id }: Note) => customers.find(customer_id)?.name || '',
       },
       {
         name: text`created_at`,
@@ -124,10 +124,10 @@ export const useNoteColumns = ({ excludeEmployee }: { excludeEmployee?: boolean 
               title={text`edit_note`}
             />
             <DeleteConfirmButton
-              loading={notes.delete.isLoading && notes.delete.id === note.id}
+              loading={deleteNote.isPending}
               modalTitle={text`delete_note${note.id}`}
               onDelete={() => {
-                notes.delete(note);
+                deleteNote.mutate(note);
               }}
             />
           </>

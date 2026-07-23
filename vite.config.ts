@@ -6,36 +6,55 @@ import path from 'path';
 import fs from 'fs';
 
 const alias: Record<string, string> = {};
+const localModulePaths: string[] = [];
+const optimizeDepsExclude: string[] = [];
 
-// 🔁 REACT TOOLBOX
-if (process.env.DEVELOP_REACT_TOOLBOX === 'true') {
-  const reactToolboxPath = path.resolve(__dirname, '../react-toolbox/src');
+// Helper to register a local module for development
+const registerLocalModule = (
+  envVar: string,
+  packageName: string,
+  relativePath: string
+) => {
+  if (process.env[envVar] !== 'true') return;
 
-  if (fs.existsSync(reactToolboxPath)) {
-    console.log(`✅ Loading @jasperoosthoek/react-toolbox from ${reactToolboxPath}`);
-    Object.assign(alias, { '@jasperoosthoek/react-toolbox': reactToolboxPath });
+  const localPath = path.resolve(__dirname, relativePath);
+
+  if (fs.existsSync(localPath)) {
+    console.log(`✅ Loading ${packageName} from ${localPath}`);
+    alias[packageName] = localPath;
+    localModulePaths.push(path.dirname(localPath)); // Parent dir of src/
+    optimizeDepsExclude.push(packageName);
   } else {
-    console.warn('❌ Failed to locate @jasperoosthoek/react-toolbox at', reactToolboxPath);
+    console.warn(`❌ Failed to locate ${packageName} at`, localPath);
   }
-}
+};
 
-// 🔁 ZUSTAND CRUD REGISTRY
-if (process.env.DEVELOP_ZUSTAND_CRUD_REGISTRY === 'true') {
-  const zustandCrudPath = path.resolve(__dirname, '../zustand-crud-registry/src');
+// Build fs.allow list only when local modules are used
+const getFsAllow = () => {
+  if (localModulePaths.length === 0) return undefined;
+  return [
+    __dirname, // dashboard-demo/
+    path.resolve(__dirname, 'node_modules'), // dashboard-demo/node_modules
+    ...localModulePaths,
+  ];
+};
 
-  if (fs.existsSync(zustandCrudPath)) {
-    console.log(`✅ Loading @jasperoosthoek/zustand-crud-registry from ${zustandCrudPath}`);
-    Object.assign(alias, { '@jasperoosthoek/zustand-crud-registry': zustandCrudPath });
-  } else {
-    console.warn('❌ Failed to locate @jasperoosthoek/zustand-crud-registry at', zustandCrudPath);
-  }
-}
+// 🔁 Register local modules
+registerLocalModule('DEVELOP_REACT_TOOLBOX', '@jasperoosthoek/react-toolbox', '../react-toolbox/src');
+registerLocalModule('DEVELOP_TANSTACK_QUERY_CRUD', '@jasperoosthoek/tanstack-query-crud', '../tanstack-query-crud/src');
+
+const fsAllow = getFsAllow();
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
     alias,
-    preserveSymlinks: false, // equivalent to webpack's `symlinks: false`
+  },
+  optimizeDeps: optimizeDepsExclude.length > 0 ? {
+    exclude: optimizeDepsExclude,
+  } : undefined,
+  server: {
+    fs: fsAllow ? { allow: fsAllow } : undefined,
   },
   define: {
     __USE_MOCKS__: JSON.stringify(process.env.VITE_USE_MOCKS === 'true'),

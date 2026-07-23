@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import {
   DataTable,
@@ -8,36 +8,38 @@ import {
   SmallSpinner,
 } from '@jasperoosthoek/react-toolbox';
 
-import type { Task } from '../../stores/types';
-import { use, onMove } from '../../stores/crudRegistry'
-import { useTaskFormFields, useTaskColumns, useTaskStatusText, taskInitialState } from './taskHooks';
+import type { Task, TaskFilterStatus } from '../../stores/types';
+import { r } from '../../resources';
+import { onMove } from '../../resources/move';
+import { useTaskFormFields, useTaskColumns, taskInitialState } from './taskHooks';
 
 const TasksList = () => {
   const { text } = useLocalization();
-  const tasks = use.tasks();
-  const employees = use.employees();
-  const customers = use.customers();
-  const roles = use.roles();
+  const tasks = r.tasks.useList();
+  const createTask = r.tasks.useCreate();
+  const updateTask = r.tasks.useUpdate();
+  const moveTask = r.tasks.useMove();
+  const employees = r.employees.useList();
+  const customers = r.customers.useList();
+  const roles = r.roles.useList();
   const taskFormFields = useTaskFormFields();
-  const taskColumns = useTaskColumns({ filterStatus: true });
-  const taskStatusText = useTaskStatusText();
-  const { filterStatus } = tasks.state;
-  useEffect(() => tasks.patchState({ filterStatus: null }), [])
+  const [filterStatus, setFilterStatus] = useState<TaskFilterStatus>(null);
+  const taskColumns = useTaskColumns({ filterStatus, onFilterStatusChange: setFilterStatus });
 
   return (
     <Container className='container-list'>
-      {(!tasks.list || !customers.list || !employees.list || !roles.record)? <SmallSpinner /> :
+      {(!tasks.data || !customers.data || !employees.data || !roles.data)? <SmallSpinner /> :
         <FormModalProvider
-          loading={tasks.create.isLoading || tasks.update.isLoading}
+          loading={createTask.isPending || updateTask.isPending}
           initialState={taskInitialState}
           createModalTitle={text`create_new_task`}
           editModalTitle={text`edit_task`}
           formFields={taskFormFields}
           onCreate={(task: Task, closeModal: () => void) => {
-            tasks.create(task, { callback: closeModal});
+            createTask.mutate(task, { onSuccess: closeModal });
           }}
           onUpdate={(task: Task, closeModal: () => void) => {
-            tasks.update(task, { callback: closeModal});
+            updateTask.mutate(task, { onSuccess: closeModal });
           }}
         >
           <DataTable
@@ -53,8 +55,8 @@ const TasksList = () => {
               )
             }}
             columns={taskColumns}
-            data={tasks.list.filter(task => filterStatus === null || task.status === filterStatus)}
-            onMove={onMove(tasks)}
+            data={tasks.data.filter(task => filterStatus === null || task.status === filterStatus)}
+            onMove={onMove(moveTask)}
           />
         </FormModalProvider>
       }

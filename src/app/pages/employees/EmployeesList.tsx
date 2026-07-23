@@ -11,21 +11,26 @@ import {
 } from '@jasperoosthoek/react-toolbox';
 
 import type { Employee } from '../../stores/types';
-import { use, onMove } from '../../stores/crudRegistry'
+import { r } from '../../resources';
+import { onMove } from '../../resources/move';
 import NotFound from '../../components/NotFound';
 import { useEmployeeFormFields } from './employeeHooks';
 
 const EmployeesList = () => {
   const { text } = useLocalization();
-  const employees = use.employees();
-  const roles = use.roles();
+  const employees = r.employees.useList();
+  const createEmployee = r.employees.useCreate();
+  const updateEmployee = r.employees.useUpdate();
+  const deleteEmployee = r.employees.useDelete();
+  const moveEmployee = r.employees.useMove();
+  const roles = r.roles.useList();
   const employeeFormFields = useEmployeeFormFields();
 
   return (
     <Container className='container-list'>
-      {(!employees.list || !roles.list || !roles.record) ? <SmallSpinner /> :
+      {(!employees.data || !roles.data) ? <SmallSpinner /> :
         <FormModalProvider
-          loading={employees.create.isLoading || employees.update.isLoading}
+          loading={createEmployee.isPending || updateEmployee.isPending}
           initialState={{
             name: '',
             email: '',
@@ -42,10 +47,10 @@ const EmployeesList = () => {
             }
           }}
           onCreate={(employee: Employee, closeModal: () => void) => {
-            employees.create(employee, { callback: closeModal});
+            createEmployee.mutate(employee, { onSuccess: closeModal });
           }}
           onUpdate={(employee: Employee, closeModal: () => void) => {
-            employees.update(employee, { callback: closeModal});
+            updateEmployee.mutate(employee, { onSuccess: closeModal });
           }}
         >
           <DataTable
@@ -80,10 +85,10 @@ const EmployeesList = () => {
               {
                 name: text`role`,
                 selector: ({ role_id }: Employee) => (
-                  roles.record && roles.record[role_id]?.name || <NotFound />
+                  roles.find(role_id)?.name || <NotFound />
                 ),
                 orderBy: 'role',
-                search: ({ role_id }: Employee) => roles.record && roles.record[role_id]?.name || '',
+                search: ({ role_id }: Employee) => roles.find(role_id)?.name || '',
               },
               {
                 name: text`actions`,
@@ -94,18 +99,18 @@ const EmployeesList = () => {
                       title={text`edit_employee`}
                     />
                     <DeleteConfirmButton
-                      loading={employees.delete.isLoading && employees.delete.id === employee.id}
+                      loading={deleteEmployee.isPending}
                       modalTitle={text`delete_employee${employee.name}`}
                       onDelete={() => {
-                        employees.delete(employee);
+                        deleteEmployee.mutate(employee);
                       }}
                     />
                   </>
                   )
               }
             ]}
-            data={employees.list}
-            onMove={onMove(employees)}
+            data={employees.data}
+            onMove={onMove(moveEmployee)}
           />
         </FormModalProvider>
     }
