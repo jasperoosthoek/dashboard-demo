@@ -21,6 +21,25 @@ const DashboardPage = () => {
   const projectStatusText = useProjectStatusText();
   const formatDate = useFormatDate();
 
+  // TEMPORARY DIAGNOSTIC - remove once "X.filter/find is not a function"
+  // is root-caused. Logs the actual runtime shape of .data the instant it's
+  // truthy but not an array, instead of just where the resulting crash lands.
+  for (const [resourceName, data] of [
+    ['employees', employees.data],
+    ['invoices', invoices.data],
+    ['projects', projects.data],
+    ['tasks', tasks.data],
+    ['notes', notes.data],
+    ['roles', roles.data],
+  ] as const) {
+    if (data !== undefined && !Array.isArray(data)) {
+      console.error(
+        `[DIAGNOSTIC] ${resourceName}.data is not an array`,
+        { typeofData: typeof data, data, dataJSON: JSON.stringify(data)?.slice(0, 500) },
+      );
+    }
+  }
+
   const activeEmployees = employees.data?.filter(e => e.active);
   const openInvoices = invoices.data?.filter(inv => inv.status === 'open');
   const runningProjects = projects.data?.filter(p => p.status === 'in_progress');
