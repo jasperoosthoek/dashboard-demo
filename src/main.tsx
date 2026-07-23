@@ -13,6 +13,17 @@ const queryClient = new QueryClient();
 
 async function main() {
   if (__USE_MOCKS__) {
+    // Paired with sw.js's skipWaiting()/clients.claim(): if a new deploy's
+    // worker takes control of an already-open tab mid-session, reload once
+    // rather than continuing to run old JS against a new worker (or vice
+    // versa). Registered before worker.start() so it can't miss the event.
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+
     const { worker } = await import('../mocks/browser');
     await worker.start({
       serviceWorker: {
